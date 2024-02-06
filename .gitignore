@@ -1,0 +1,16 @@
+﻿.vs/
+bin/
+data/
+extensions/
+harmony/
+lang/
+logs/
+managed/
+modules/
+obj/
+reports/
+temp/
+tools/
+carbonauto.cfg
+config.json
+config_client.json
