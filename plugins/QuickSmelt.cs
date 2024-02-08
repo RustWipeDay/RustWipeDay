@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 
 namespace Oxide.Plugins
 {
-    [Info("Quick Smelt", "misticos + WhiteThunder", "5.1.10")]
+    [Info("Quick Smelt", "misticos", "5.1.5")]
     [Description("Increases the speed of the furnace smelting")]
     class QuickSmelt : RustPlugin
     {
@@ -205,14 +205,6 @@ namespace Oxide.Plugins
             oven.gameObject.AddComponent<FurnaceController>();
         }
 
-        // Electric furnaces can be started via electricity.
-        // Normal furnaces can be started via igniter.
-        private object OnOvenStart(StorageContainer oven)
-        {
-            oven.gameObject.GetComponent<FurnaceController>().StartCooking();
-            return false;
-        }
-
         private object OnOvenToggle(StorageContainer oven, BasePlayer player)
         {
             if (oven is BaseFuelLightSource || oven.needsBuildingPrivilegeToUse && !player.CanBuild())
@@ -258,6 +250,8 @@ namespace Oxide.Plugins
 
         public class FurnaceController : FacepunchBehaviour
         {
+            private int _ticks;
+
             private BaseOven _oven;
 
             private BaseOven Furnace
@@ -280,8 +274,6 @@ namespace Oxide.Plugins
             private int _smeltingFrequency;
 
             private Dictionary<string, float> _outputModifiers;
-
-            private List<Item> _itemsToCook = new List<Item>();
 
             private float OutputMultiplier(string shortname)
             {
@@ -319,7 +311,7 @@ namespace Oxide.Plugins
                     !_config.SpeedMultipliers.TryGetValue("global", out modifierF))
                     modifierF = 1.0f;
 
-                _speedMultiplier = modifierF;
+                _speedMultiplier = 0.5f / modifierF;
 
                 if (!_config.FuelSpeedMultipliers.TryGetValue(Furnace.ShortPrefabName, out modifierF) &&
                     !_config.FuelSpeedMultipliers.TryGetValue("global", out modifierF))
@@ -384,11 +376,13 @@ namespace Oxide.Plugins
                     return;
                 }
 
-                if (itemBurnable == null && !Furnace.CanRunWithNoFuel)
+                if (itemBurnable == null)
                 {
                     StopCooking();
                     return;
                 }
+
+                SmeltItems();
 
                 foreach (var itemCooking in _oven.inventory.itemList)
                 {
@@ -401,30 +395,27 @@ namespace Oxide.Plugins
                     }
                 }
 
-                SmeltItems();
-
                 var slot = Furnace.GetSlot(BaseEntity.Slot.FireMod);
                 if (slot)
                 {
                     slot.SendMessage("Cook", 0.5f, SendMessageOptions.DontRequireReceiver);
                 }
 
-                if (itemBurnable != null)
+                var burnable = itemBurnable.info.GetComponent<ItemModBurnable>();
+                itemBurnable.fuel -= 0.5f * (Furnace.cookingTemperature / 200f) * _fuelSpeedMultiplier;
+
+                if (!itemBurnable.HasFlag(global::Item.Flag.OnFire))
                 {
-                    var burnable = itemBurnable.info.GetComponent<ItemModBurnable>();
-                    itemBurnable.fuel -= 0.5f * (Furnace.cookingTemperature / 200f) * _fuelSpeedMultiplier;
-
-                    if (!itemBurnable.HasFlag(global::Item.Flag.OnFire))
-                    {
-                        itemBurnable.SetFlag(global::Item.Flag.OnFire, true);
-                        itemBurnable.MarkDirty();
-                    }
-
-                    if (itemBurnable.fuel <= 0f)
-                    {
-                        ConsumeFuel(itemBurnable, burnable);
-                    }
+                    itemBurnable.SetFlag(global::Item.Flag.OnFire, true);
+                    itemBurnable.MarkDirty();
                 }
+
+                if (itemBurnable.fuel <= 0f)
+                {
+                    ConsumeFuel(itemBurnable, burnable);
+                }
+
+                _ticks++;
 
                 Interface.CallHook("OnOvenCooked", this, itemBurnable, slot);
             }
@@ -441,7 +432,7 @@ namespace Oxide.Plugins
                 {
                     var def = burnable.byproductItem;
                     var item = ItemManager.Create(def,
-                        (int)(burnable.byproductAmount * OutputMultiplier(def.shortname) * Mathf.Min(_speedMultiplier, fuel.amount))); // It's fuel multiplier
+                        (int)(burnable.byproductAmount * OutputMultiplier(def.shortname))); // It's fuel multiplier
 
                     if (!item.MoveToContainer(Furnace.inventory))
                     {
@@ -450,15 +441,13 @@ namespace Oxide.Plugins
                     }
                 }
 
-                var fuelToConsume = (int)(_fuelUsageMultiplier * _speedMultiplier);
-
-                if (fuel.amount <= fuelToConsume)
+                if (fuel.amount <= _fuelUsageMultiplier)
                 {
                     fuel.Remove();
                     return;
                 }
 
-                fuel.UseItem(fuelToConsume);
+                fuel.UseItem(_fuelUsageMultiplier);
                 fuel.fuel = burnable.fuelAmount;
                 fuel.MarkDirty();
 
@@ -467,18 +456,12 @@ namespace Oxide.Plugins
 
             private void SmeltItems()
             {
-                _itemsToCook.Clear();
+                if (_ticks % _smeltingFrequency != 0)
+                    return;
 
-                foreach (var item in Furnace.inventory.itemList)
+                for (var i = 0; i < Furnace.inventory.itemList.Count; i++)
                 {
-                    if (item.HasFlag(global::Item.Flag.Cooking))
-                    {
-                        _itemsToCook.Add(item);
-                    }
-                }
-
-                foreach (var item in _itemsToCook)
-                {
+                    var item = Furnace.inventory.itemList[i];
                     if (item == null || !item.IsValid())
                         continue;
 
@@ -492,16 +475,18 @@ namespace Oxide.Plugins
                         continue;
 
                     var temperature = item.temperature;
-                    if (!cookable.CanBeCookedByAtTemperature(temperature) && isAllowed == null || item.cookTimeLeft < 0)
+                    if (!cookable.CanBeCookedByAtTemperature(temperature) && isAllowed == null)
                     {
                         if (!cookable.setCookingFlag || !item.HasFlag(global::Item.Flag.Cooking))
                             continue;
 
                         item.SetFlag(global::Item.Flag.Cooking, false);
                         item.MarkDirty();
-
                         continue;
                     }
+
+                    if (cookable.cookTime > 0 && _ticks * 1f / _smeltingFrequency % cookable.cookTime > 0)
+                        continue;
 
                     if (cookable.setCookingFlag && !item.HasFlag(global::Item.Flag.Cooking))
                     {
@@ -509,19 +494,9 @@ namespace Oxide.Plugins
                         item.MarkDirty();
                     }
 
-                    item.cookTimeLeft -= 0.5f * _oven.GetSmeltingSpeed() / _itemsToCook.Count;
-                    if (item.cookTimeLeft > 0)
-                    {
-                        item.MarkDirty();
-                        continue;
-                    }
-
-                    var cookTimeInverted = item.cookTimeLeft * -1;
-                    var amountConsumed = (int)((1 + Mathf.FloorToInt(cookTimeInverted / cookable.cookTime)) * _speedMultiplier);
-
-                    item.cookTimeLeft = cookable.cookTime - cookTimeInverted % cookable.cookTime;
+                    // var targetPosition = item.position + 1;
+                    var amountConsumed = (int)_oven.GetSmeltingSpeed();
                     amountConsumed = Math.Min(amountConsumed, item.amount);
-
                     if (item.amount > amountConsumed)
                     {
                         item.amount -= amountConsumed;
@@ -546,13 +521,11 @@ namespace Oxide.Plugins
 
                     StopCooking();
                 }
-
-                _itemsToCook.Clear();
             }
 
             public void StartCooking()
             {
-                if (!Furnace.CanRunWithNoFuel && FindBurnable() == null)
+                if (FindBurnable() == null)
                 {
                     PrintDebug("No burnable.");
                     return;
@@ -565,7 +538,7 @@ namespace Oxide.Plugins
                 Furnace.UpdateAttachmentTemperature();
 
                 PrintDebug($"Speed Multiplier: {_speedMultiplier}");
-                Furnace.InvokeRepeating(Cook, 0.5f, 0.5f);
+                Furnace.InvokeRepeating(Cook, _speedMultiplier, _speedMultiplier);
                 Furnace.SetFlag(BaseEntity.Flags.On, true);
             }
 
