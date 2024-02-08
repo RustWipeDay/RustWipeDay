@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("Vanish", "Whispers88", "1.7.0")]
+    [Info("Vanish", "Whispers88", "1.8.0")]
     [Description("Allows players with permission to become invisible")]
     public class Vanish : CovalencePlugin
     {
@@ -536,6 +536,8 @@ namespace Oxide.Plugins
         public class VanishPositionUpdate : FacepunchBehaviour
         {
             private BasePlayer player;
+            private static int Layermask = LayerMask.GetMask(LayerMask.LayerToName((int)Layer.Construction), LayerMask.LayerToName((int)Layer.Deployed), LayerMask.LayerToName((int)Layer.Vehicle_World), LayerMask.LayerToName((int)Layer.Player_Server));
+            LootableCorpse corpse;
             GameObject child;
             SphereCollider col;
             int LayerReserved1 = (int)Layer.Reserved1;
@@ -546,6 +548,111 @@ namespace Oxide.Plugins
                 player.transform.localScale = Vector3.zero;
                 BaseEntity.Query.Server.RemovePlayer(player);
                 CreateChildGO();
+            }
+
+            private void FixedUpdate()
+            {
+                if (player == null) return;
+
+                if (corpse != null && !player.inventory.loot.IsLooting())
+                    corpse.Kill();
+
+                if (!player.serverInput.WasJustReleased(BUTTON.RELOAD)) return;
+
+                RaycastHit raycastHit;
+                if (!Physics.Raycast(player.eyes.HeadRay(), out raycastHit, 5f, Layermask))
+                    return;
+
+                BaseEntity entity = raycastHit.GetEntity() as BaseEntity;
+
+                if (entity == null) return;
+                if (entity as StorageContainer != null)
+                {
+                    StorageContainer container = (StorageContainer)entity;
+                    entity.SendAsSnapshot(player.Connection);
+                    player.inventory.loot.AddContainer(container.inventory);
+                    player.inventory.loot.entitySource = container;
+                    player.inventory.loot.PositionChecks = false;
+                    player.inventory.loot.MarkDirty();
+                    player.inventory.loot.SendImmediate();
+                    player.ClientRPCPlayer<string>(null, player, "RPC_OpenLootPanel", "generic_resizable");
+                    return;
+                }
+
+                if (entity as BasePlayer != null)
+                {
+                    BasePlayer targetplayer = (BasePlayer)entity;
+                    corpse = GameManager.server.CreateEntity(StringPool.Get(2604534927), Vector3.zero) as LootableCorpse;
+                    corpse.CancelInvoke("RemoveCorpse");
+                    corpse.syncPosition = false;
+                    corpse.limitNetworking = true;
+                    corpse.playerName = targetplayer.displayName;
+                    corpse.playerSteamID = 0;
+                    corpse.enableSaving = false;
+                    corpse.Spawn();
+                    corpse.SetFlag(BaseEntity.Flags.Locked, true);
+                    Buoyancy bouyancy;
+                    if (corpse.TryGetComponent<Buoyancy>(out bouyancy))
+                    {
+                        Destroy(bouyancy);
+                    }
+                    Rigidbody ridgidbody;
+                    if (corpse.TryGetComponent<Rigidbody>(out ridgidbody))
+                    {
+                        Destroy(ridgidbody);
+                    }
+
+                    corpse.SendAsSnapshot(player.Connection);
+
+                    player.inventory.loot.AddContainer(targetplayer.inventory.containerMain);
+                    player.inventory.loot.AddContainer(targetplayer.inventory.containerWear);
+                    player.inventory.loot.AddContainer(targetplayer.inventory.containerBelt);
+                    player.inventory.loot.entitySource = corpse;
+                    player.inventory.loot.PositionChecks = false;
+                    player.inventory.loot.MarkDirty();
+                    player.inventory.loot.SendImmediate();
+                    player.ClientRPCPlayer<string>(null, player, "RPC_OpenLootPanel", "player_corpse");
+                    return;
+                }
+
+                if (entity as Door != null)
+                {
+                    Door door = (Door)entity;
+                    if (door.IsOpen())
+                    {
+                        door.SetOpen(false, true);
+                    }
+                    else
+                    {
+                        door.SetOpen(true, false);
+                    }
+                    return;
+                }
+
+                BaseMountable component = entity.GetComponent<BaseMountable>();
+                if (!component)
+                {
+                    BaseVehicle componentInParent = entity.GetComponentInParent<BaseVehicle>();
+                    if (componentInParent)
+                    {
+                        if (!componentInParent.isServer)
+                        {
+                            componentInParent = BaseNetworkable.serverEntities.Find(componentInParent.net.ID) as BaseVehicle;
+                        }
+                        componentInParent.AttemptMount(player, true);
+                        return;
+                    }
+                }
+
+                if (component && !component.isServer)
+                {
+                    component = BaseNetworkable.serverEntities.Find(component.net.ID) as BaseMountable;
+                }
+                if (component)
+                {
+                    component.AttemptMount(player, true);
+                }
+
             }
 
             private void UpdatePos()
@@ -631,9 +738,14 @@ namespace Oxide.Plugins
             {
                 CancelInvoke(UpdatePos);
 
+                if (corpse != null)
+                    corpse.Kill();
+
                 if (player != null)
                 {
-                    player.Connection.active = true;
+                    if (player.IsConnected)
+                        player.Connection.active = true;
+
                     BaseEntity.Query.Server.AddPlayer(player);
                     player.lastAdminCheatTime = Time.realtimeSinceStartup;
                     player.transform.localScale = new Vector3(1, 1, 1);

@@ -3,7 +3,6 @@
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 using Oxide.Core;
 using Oxide.Core.Libraries;
 using Rust;
@@ -15,7 +14,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("Vehicle Decay Protection", "WhiteThunder", "2.3.0")]
+    [Info("Vehicle Decay Protection", "WhiteThunder", "2.5.0")]
     [Description("Protects vehicles from decay based on ownership and other factors.")]
     internal class VehicleDecayProtection : CovalencePlugin
     {
@@ -95,7 +94,7 @@ namespace Oxide.Plugins
 
         #region Helper Methods
 
-        private void ScheduleReplaceDecay(BaseEntity entity, VehicleInfo vehicleInfo)
+        private void ScheduleReplaceDecay(BaseEntity entity, IVehicleInfo vehicleInfo)
         {
             NextTick(() =>
             {
@@ -125,7 +124,7 @@ namespace Oxide.Plugins
                 || permission.GroupsHavePermission(userData.Groups, perm);
         }
 
-        private bool OwnerHasPermission(ulong ownerId, string vehicleSpecificNoDecayPerm)
+        private bool UserHasVehiclePermission(ulong ownerId, string vehicleSpecificNoDecayPerm)
         {
             if (ownerId == 0)
                 return false;
@@ -134,6 +133,21 @@ namespace Oxide.Plugins
 
             return UserHasPermission(userData, Permission_NoDecay_AllVehicles)
                 || UserHasPermission(userData, vehicleSpecificNoDecayPerm);
+        }
+
+        private bool VehiclePrivilegeHasPermission(BaseEntity vehicle, string vehicleSpecificNoDecayPerm)
+        {
+            var vehiclePrivilege = GetChildOfType<VehiclePrivilege>(vehicle);
+            if (vehiclePrivilege == null)
+                return false;
+
+            foreach (var entry in vehiclePrivilege.authorizedPlayers)
+            {
+                if (UserHasVehiclePermission(entry.userid, vehicleSpecificNoDecayPerm))
+                    return true;
+            }
+
+            return false;
         }
 
         private bool LockOwnerHasPermission(BaseEntity vehicle, string vehicleSpecificNoDecayPerm, out ulong lockOwnerId)
@@ -145,12 +159,24 @@ namespace Oxide.Plugins
                 return false;
 
             lockOwnerId = baseLock.OwnerID;
-            return OwnerHasPermission(baseLock.OwnerID, vehicleSpecificNoDecayPerm);
+            return UserHasVehiclePermission(baseLock.OwnerID, vehicleSpecificNoDecayPerm);
         }
 
         public static void LogInfo(string message) => Interface.Oxide.LogInfo($"[Vehicle Decay Protection] {message}");
         public static void LogError(string message) => Interface.Oxide.LogError($"[Vehicle Decay Protection] {message}");
         public static void LogWarning(string message) => Interface.Oxide.LogWarning($"[Vehicle Decay Protection] {message}");
+
+        private static T GetChildOfType<T>(BaseEntity entity) where T : BaseEntity
+        {
+            foreach (var child in entity.children)
+            {
+                var childOfType = child as T;
+                if (childOfType != null)
+                    return childOfType;
+            }
+
+            return null;
+        }
 
         private static string[] FindPrefabsOfType<T>() where T : BaseEntity
         {
@@ -174,7 +200,7 @@ namespace Oxide.Plugins
                 && (player.transform.position - entity.transform.position).sqrMagnitude < MaxDrawDistanceSquared;
         }
 
-        private static void DrawVehicleText(BasePlayer player, BaseEntity entity, VehicleInfo vehicleInfo, Color color, string text)
+        private static void DrawVehicleText(BasePlayer player, BaseEntity entity, IVehicleInfo vehicleInfo, Color color, string text)
         {
             player.SendConsoleCommand(
                 "ddraw.text",
@@ -190,11 +216,15 @@ namespace Oxide.Plugins
             component.InvokeRandomized(action, UnityEngine.Random.Range(time / 2f, time), time, time / 10f);
         }
 
-        private static bool WasRecentlyUsed(BaseEntity entity, VehicleInfo vehicleInfo)
+        private static bool WasRecentlyUsed(BaseEntity entity, IVehicleInfo vehicleInfo, float protectionMinutesAfterUse = -1)
         {
             var timeSinceLastUsed = vehicleInfo.GetTimeSinceLastUsed(entity);
             var vehicleConfig = vehicleInfo.VehicleConfig;
-            if (vehicleConfig.ProtectionMinutesAfterUse != -1 && timeSinceLastUsed >= 60 * vehicleConfig.ProtectionMinutesAfterUse)
+            if (vehicleConfig.ProtectionMinutesAfterUse != -1)
+            {
+                protectionMinutesAfterUse = vehicleConfig.ProtectionMinutesAfterUse;
+            }
+            if (protectionMinutesAfterUse != -1 && timeSinceLastUsed >= 60 * protectionMinutesAfterUse)
                 return false;
 
             #if DEBUG_SHOW
@@ -202,25 +232,25 @@ namespace Oxide.Plugins
             {
                 if (IsPlayerDrawEligible(player, entity))
                 {
-                    DrawVehicleText(player, entity, vehicleInfo, Color.green, $"{(int)timeSinceLastUsed}s < {60 * vehicleConfig.ProtectionMinutesAfterUse}s");
+                    DrawVehicleText(player, entity, vehicleInfo, Color.green, $"{(int)timeSinceLastUsed}s < {60 * protectionMinutesAfterUse}s");
                 }
             }
             #endif
 
             #if DEBUG_LOG
-            LogWarning($"{entity.ShortPrefabName} :: Recently used :: {(int)timeSinceLastUsed}s < {60 * vehicleConfig.ProtectionMinutesAfterUse}s");
+            LogWarning($"{entity.ShortPrefabName} :: Recently used :: {(int)timeSinceLastUsed}s < {60 * protectionMinutesAfterUse}s");
             #endif
 
             return true;
         }
 
-        private static bool VehicleHasPermission(VehicleDecayProtection pluginInstance, BaseEntity entity, VehicleInfo vehicleInfo)
+        private static bool VehicleHasPermission(VehicleDecayProtection pluginInstance, BaseEntity entity, IVehicleInfo vehicleInfo)
         {
             if (!pluginInstance._pluginConfig.EnablePermission)
                 return false;
 
             pluginInstance.TrackStart();
-            var ownerHasPermission = pluginInstance.OwnerHasPermission(entity.OwnerID, vehicleInfo.Permission);
+            var ownerHasPermission = pluginInstance.UserHasVehiclePermission(entity.OwnerID, vehicleInfo.Permission);
             pluginInstance.TrackEnd();
 
             if (ownerHasPermission)
@@ -266,10 +296,29 @@ namespace Oxide.Plugins
                 return true;
             }
 
+            pluginInstance.TrackStart();
+            var privilegeHasPermission = entity is Tugboat && pluginInstance.VehiclePrivilegeHasPermission(entity, vehicleInfo.Permission);
+            pluginInstance.TrackEnd();
+
+            if (privilegeHasPermission)
+            {
+                #if DEBUG_SHOW
+                foreach (var player in BasePlayer.activePlayerList)
+                {
+                    if (IsPlayerDrawEligible(player, entity))
+                    {
+                        DrawVehicleText(player, entity, vehicleInfo, Color.green, "Vehicle privilege permission");
+                    }
+                }
+                #endif
+
+                return true;
+            }
+
             return false;
         }
 
-        private static float GetInsideMultiplier(BaseEntity entity, VehicleInfo vehicleInfo, out bool isOutside, bool forceOutsideCheck)
+        private static float GetInsideMultiplier(BaseEntity entity, IVehicleInfo vehicleInfo, out bool isOutside, bool forceOutsideCheck)
         {
             isOutside = true;
 
@@ -302,7 +351,7 @@ namespace Oxide.Plugins
             return vehicleConfig.DecayMultiplierInside;
         }
 
-        private static float GetNearTCMultiplier(VehicleDecayProtection pluginInstance, BaseEntity entity, VehicleInfo vehicleInfo)
+        private static float GetNearTCMultiplier(VehicleDecayProtection pluginInstance, BaseEntity entity, IVehicleInfo vehicleInfo)
         {
             var vehicleConfig = vehicleInfo.VehicleConfig;
             if (vehicleConfig.DecayMultiplierNearTC == 1f)
@@ -335,7 +384,7 @@ namespace Oxide.Plugins
             return vehicleConfig.DecayMultiplierNearTC;
         }
 
-        private static float GetLocationMultiplier(VehicleDecayProtection pluginInstance, BaseEntity entity, VehicleInfo vehicleInfo, out bool isOutside, bool forceOutsideCheck = false)
+        private static float GetLocationMultiplier(VehicleDecayProtection pluginInstance, BaseEntity entity, IVehicleInfo vehicleInfo, out bool isOutside, bool forceOutsideCheck = false)
         {
             var multiplier = GetInsideMultiplier(entity, vehicleInfo, out isOutside, forceOutsideCheck);
             if (multiplier == 0f)
@@ -348,13 +397,13 @@ namespace Oxide.Plugins
             return multiplier;
         }
 
-        private static float GetLocationMultiplier(VehicleDecayProtection pluginInstance, BaseEntity entity, VehicleInfo vehicleInfo)
+        private static float GetLocationMultiplier(VehicleDecayProtection pluginInstance, BaseEntity entity, IVehicleInfo vehicleInfo)
         {
             bool isOutside;
             return GetLocationMultiplier(pluginInstance, entity, vehicleInfo, out isOutside);
         }
 
-        private static void DoDecayDamage(BaseCombatEntity entity, VehicleInfo vehicleInfo, float fraction, DamageType damageType = DamageType.Decay, bool useProtection = false)
+        private static void DoDecayDamage(BaseCombatEntity entity, IVehicleInfo vehicleInfo, float fraction, DamageType damageType = DamageType.Decay, bool useProtection = false)
         {
             var amount = entity.MaxHealth() * fraction * vehicleInfo.GetTimeMultiplier();
 
@@ -380,7 +429,7 @@ namespace Oxide.Plugins
             entity.Hurt(amount, damageType, entity, useProtection: false);
         }
 
-        private static void DoCarDecayDamage(ModularCar car, VehicleInfo vehicleInfo, float amount)
+        private static void DoCarDecayDamage(ModularCar car, IVehicleInfo vehicleInfo, float amount)
         {
             #if DEBUG_SHOW
             foreach (var player in BasePlayer.activePlayerList)
@@ -395,24 +444,24 @@ namespace Oxide.Plugins
             car.DoDecayDamage(amount);
         }
 
-        private static void MinicopterDecay(VehicleDecayProtection pluginInstance, MiniCopter miniCopter, VehicleInfo vehicleInfo)
+        private static void HelicopterDecay(VehicleDecayProtection pluginInstance, PlayerHelicopter heli, IVehicleInfo vehicleInfo)
         {
-            if (miniCopter.healthFraction == 0f
-                || miniCopter.IsOn()
-                || WasRecentlyUsed(miniCopter, vehicleInfo)
-                || VehicleHasPermission(pluginInstance, miniCopter, vehicleInfo))
+            if (heli.healthFraction == 0f
+                || heli.IsOn()
+                || WasRecentlyUsed(heli, vehicleInfo)
+                || VehicleHasPermission(pluginInstance, heli, vehicleInfo))
                 return;
 
             bool isOutside;
-            var multiplier = GetLocationMultiplier(pluginInstance, miniCopter, vehicleInfo, out isOutside, forceOutsideCheck: true);
+            var multiplier = GetLocationMultiplier(pluginInstance, heli, vehicleInfo, out isOutside, forceOutsideCheck: true);
             if (multiplier == 0f)
                 return;
 
-            var decayMinutes = isOutside ? MiniCopter.outsidedecayminutes : MiniCopter.insidedecayminutes;
-            DoDecayDamage(miniCopter, vehicleInfo, multiplier / decayMinutes);
+            var decayMinutes = isOutside ? PlayerHelicopter.outsidedecayminutes : PlayerHelicopter.insidedecayminutes;
+            DoDecayDamage(heli, vehicleInfo, multiplier / decayMinutes);
         }
 
-        private static void SnowmobileDecay(VehicleDecayProtection pluginInstance, Snowmobile snowmobile, VehicleInfo vehicleInfo)
+        private static void SnowmobileDecay(VehicleDecayProtection pluginInstance, Snowmobile snowmobile, IVehicleInfo vehicleInfo)
         {
             if (snowmobile.IsDead()
                 || WasRecentlyUsed(snowmobile, vehicleInfo)
@@ -426,10 +475,10 @@ namespace Oxide.Plugins
             DoDecayDamage(snowmobile, vehicleInfo, multiplier / Snowmobile.outsideDecayMinutes);
         }
 
-        private static void WaterVehicleDecay(VehicleDecayProtection pluginInstance, BaseCombatEntity waterVehicle, VehicleInfo vehicleInfo, float outsideDecayMinutes, float deepWaterDecayMinutes)
+        private static void WaterVehicleDecay(VehicleDecayProtection pluginInstance, BaseCombatEntity waterVehicle, IVehicleInfo vehicleInfo, float outsideDecayMinutes, float deepWaterDecayMinutes, float protectionMinutesAfterUse = -1)
         {
             if (waterVehicle.healthFraction == 0f
-                || WasRecentlyUsed(waterVehicle, vehicleInfo)
+                || WasRecentlyUsed(waterVehicle, vehicleInfo, protectionMinutesAfterUse)
                 || VehicleHasPermission(pluginInstance, waterVehicle, vehicleInfo))
                 return;
 
@@ -438,7 +487,7 @@ namespace Oxide.Plugins
                 return;
 
             var decayMinutes = outsideDecayMinutes;
-            var overallWaterDepth = WaterLevel.GetOverallWaterDepth(waterVehicle.transform.position);
+            var overallWaterDepth = WaterLevel.GetOverallWaterDepth(waterVehicle.transform.position, waves: true, volumes: false);
             if (overallWaterDepth > 12f)
             {
                 var divisor = Mathf.Lerp(0.1f, 1f, Mathf.InverseLerp(12f, 16f, overallWaterDepth));
@@ -448,7 +497,7 @@ namespace Oxide.Plugins
             DoDecayDamage(waterVehicle, vehicleInfo, multiplier / decayMinutes);
         }
 
-        private static void SledDecay(VehicleDecayProtection pluginInstance, Sled sled, VehicleInfo vehicleInfo)
+        private static void SledDecay(VehicleDecayProtection pluginInstance, Sled sled, IVehicleInfo vehicleInfo)
         {
             if (sled.DecayAmount == 0f
                 || sled.AnyMounted()
@@ -468,7 +517,7 @@ namespace Oxide.Plugins
 
         private class VehicleDecayReplacer : FacepunchBehaviour
         {
-            public static void AddToEntity(BaseEntity entity, VehicleInfo vehicleInfo)
+            public static void AddToEntity(BaseEntity entity, IVehicleInfo vehicleInfo)
             {
                 var component = entity.gameObject.AddComponent<VehicleDecayReplacer>();
                 component._entity = entity;
@@ -495,11 +544,11 @@ namespace Oxide.Plugins
             }
 
             private BaseEntity _entity;
-            private VehicleInfo _vehicleInfo;
+            private IVehicleInfo _vehicleInfo;
 
             private void DecayTick()
             {
-                _vehicleInfo.DecayTick(_entity, _vehicleInfo);
+                _vehicleInfo.DecayTick(_entity);
             }
         }
 
@@ -507,30 +556,40 @@ namespace Oxide.Plugins
 
         #region Vehicle Info
 
-        private class VehicleInfo
+        private interface IVehicleInfo
         {
-            public string VehicleType;
-            public VehicleConfig VehicleConfig;
-            public string[] PrefabPaths;
-            public string Permission { get; private set; }
+            uint[] PrefabIds { get; }
+            VehicleConfig VehicleConfig { get; }
+            string Permission { get; }
+
+            void OnServerInitialized(VehicleDecayProtection plugin);
+            bool IsCorrectType(BaseEntity entity);
+            float GetTimeMultiplier();
+            float GetTimeSinceLastUsed(BaseEntity entity);
+            Action GetVanillaDecayMethod(BaseEntity entity);
+            void DecayTick(BaseEntity entity);
+        }
+
+        private class VehicleInfo<T> : IVehicleInfo where T : BaseEntity
+        {
             public uint[] PrefabIds { get; private set; }
+            public VehicleConfig VehicleConfig { get; set; }
+            public string Permission { get; private set; }
 
-            public Action<BaseEntity, VehicleInfo> DecayTick = (entity, vehicleInfo) =>
+            public string VehicleType;
+            public string[] PrefabPaths;
+
+            public Func<T, float> TimeSinceLastUsed = (entity) =>
             {
                 throw new NotImplementedException();
             };
 
-            public Func<BaseEntity, bool> IsCorrectType = (entity) =>
+            public Func<T, Action> VanillaDecayMethod = (entity) =>
             {
                 throw new NotImplementedException();
             };
 
-            public Func<BaseEntity, float> GetTimeSinceLastUsed = (entity) =>
-            {
-                throw new NotImplementedException();
-            };
-
-            public Func<BaseEntity, Action> GetVanillaDecayMethod = (enitty) =>
+            public Action<T, IVehicleInfo> Decay = (entity, vehicleInfo) =>
             {
                 throw new NotImplementedException();
             };
@@ -558,9 +617,29 @@ namespace Oxide.Plugins
                 PrefabIds = prefabIds.ToArray();
             }
 
+            public bool IsCorrectType(BaseEntity entity)
+            {
+                return entity is T;
+            }
+
             public float GetTimeMultiplier()
             {
                 return VehicleConfig.DecayIntervalSeconds / VanillaDecaySeconds;
+            }
+
+            public float GetTimeSinceLastUsed(BaseEntity entity)
+            {
+                return TimeSinceLastUsed(entity as T);
+            }
+
+            public Action GetVanillaDecayMethod(BaseEntity entity)
+            {
+                return VanillaDecayMethod(entity as T);
+            }
+
+            public void DecayTick(BaseEntity entity)
+            {
+                Decay(entity as T, this);
             }
         }
 
@@ -568,7 +647,7 @@ namespace Oxide.Plugins
         {
             private VehicleDecayProtection _pluginInstance;
 
-            private readonly Dictionary<uint, VehicleInfo> _prefabIdToVehicleInfo = new Dictionary<uint, VehicleInfo>();
+            private readonly Dictionary<uint, IVehicleInfo> _prefabIdToVehicleInfo = new Dictionary<uint, IVehicleInfo>();
 
             public VehicleInfoManager(VehicleDecayProtection pluginInstance)
             {
@@ -577,36 +656,41 @@ namespace Oxide.Plugins
 
             public void OnServerInitialized(Configuration pluginConfig)
             {
-                var allVehicles = new[]
+                var allVehicles = new IVehicleInfo[]
                 {
-                    new VehicleInfo
+                    new VehicleInfo<AttackHelicopter>
+                    {
+                        VehicleType = "attackhelicopter",
+                        PrefabPaths = new[] { "assets/content/vehicles/attackhelicopter/attackhelicopter.entity.prefab" },
+                        VehicleConfig = pluginConfig.Vehicles.AttackHelicopter,
+                        TimeSinceLastUsed = heli => UnityEngine.Time.time - heli.lastEngineOnTime,
+                        VanillaDecayMethod = heli => heli.DecayTick,
+                        Decay = (heli, vehicleInfo) => HelicopterDecay(_pluginInstance, heli, vehicleInfo),
+                    },
+                    new VehicleInfo<SubmarineDuo>
                     {
                         VehicleType = "duosubmarine",
                         PrefabPaths = new[] { "assets/content/vehicles/submarine/submarineduo.entity.prefab" },
                         VehicleConfig = pluginConfig.Vehicles.DuoSubmarine,
-                        IsCorrectType = (entity) => entity is SubmarineDuo,
-                        GetTimeSinceLastUsed = (entity) => (entity as SubmarineDuo).timeSinceLastUsed,
-                        GetVanillaDecayMethod = (entity) => (entity as SubmarineDuo).SubmarineDecay,
-                        DecayTick = (entity, vehicleInfo) => WaterVehicleDecay(
+                        TimeSinceLastUsed = submarine => submarine.timeSinceLastUsed,
+                        VanillaDecayMethod = submarine => submarine.SubmarineDecay,
+                        Decay = (submarine, vehicleInfo) => WaterVehicleDecay(
                             _pluginInstance,
-                            entity as SubmarineDuo,
+                            submarine,
                             vehicleInfo,
                             BaseSubmarine.outsidedecayminutes,
                             BaseSubmarine.deepwaterdecayminutes
                         )
                     },
-                    new VehicleInfo
+                    new VehicleInfo<HotAirBalloon>
                     {
                         VehicleType = "hotairballoon",
                         PrefabPaths = new[] { "assets/prefabs/deployable/hot air balloon/hotairballoon.prefab" },
                         VehicleConfig = pluginConfig.Vehicles.HotAirBalloon,
-                        IsCorrectType = (entity) => entity is HotAirBalloon,
-                        GetTimeSinceLastUsed = (entity) => UnityEngine.Time.time - (entity as HotAirBalloon).lastBlastTime,
-                        GetVanillaDecayMethod = (entity) => (entity as HotAirBalloon).DecayTick,
-                        DecayTick = (entity, vehicleInfo) =>
+                        TimeSinceLastUsed = hab => UnityEngine.Time.time - hab.lastBlastTime,
+                        VanillaDecayMethod = hab => hab.DecayTick,
+                        Decay = (hab, vehicleInfo) =>
                         {
-                            var hab = entity as HotAirBalloon;
-
                             if (hab.healthFraction == 0f
                                 || hab.IsFullyInflated
                                 || WasRecentlyUsed(hab, vehicleInfo)
@@ -620,45 +704,40 @@ namespace Oxide.Plugins
                             DoDecayDamage(hab, vehicleInfo, multiplier / HotAirBalloon.outsidedecayminutes);
                         }
                     },
-                    new VehicleInfo
+                    new VehicleInfo<Kayak>
                     {
                         VehicleType = "kayak",
                         PrefabPaths = new[] { "assets/content/vehicles/boats/kayak/kayak.prefab" },
                         VehicleConfig = pluginConfig.Vehicles.Kayak,
-                        IsCorrectType = (entity) => entity is Kayak,
-                        GetTimeSinceLastUsed = (entity) => (entity as Kayak).timeSinceLastUsed,
-                        GetVanillaDecayMethod = (entity) => (entity as Kayak).BoatDecay,
-                        DecayTick = (entity, vehicleInfo) => WaterVehicleDecay(
+                        TimeSinceLastUsed = kayak => kayak.timeSinceLastUsed,
+                        VanillaDecayMethod = kayak => kayak.BoatDecay,
+                        Decay = (kayak, vehicleInfo) => WaterVehicleDecay(
                             _pluginInstance,
-                            entity as Kayak,
+                            kayak,
                             vehicleInfo,
                             MotorRowboat.outsidedecayminutes,
                             MotorRowboat.deepwaterdecayminutes
                         ),
                     },
-                    new VehicleInfo
+                    new VehicleInfo<Minicopter>
                     {
                         VehicleType = "minicopter",
                         PrefabPaths = new[] { "assets/content/vehicles/minicopter/minicopter.entity.prefab" },
                         VehicleConfig = pluginConfig.Vehicles.Minicopter,
-                        IsCorrectType = (entity) => entity is MiniCopter,
-                        GetTimeSinceLastUsed = (entity) => UnityEngine.Time.time - (entity as MiniCopter).lastEngineOnTime,
-                        GetVanillaDecayMethod = (entity) => (entity as MiniCopter).DecayTick,
-                        DecayTick = (entity, vehicleInfo) => MinicopterDecay(_pluginInstance, entity as MiniCopter, vehicleInfo),
+                        TimeSinceLastUsed = mini => UnityEngine.Time.time - mini.lastEngineOnTime,
+                        VanillaDecayMethod = mini => mini.DecayTick,
+                        Decay = (mini, vehicleInfo) => HelicopterDecay(_pluginInstance, mini, vehicleInfo),
                     },
-                    new VehicleInfo
+                    new VehicleInfo<ModularCar>
                     {
                         VehicleType = "modularcar",
                         // There are at least 37 valid Modular Car prefabs.
                         PrefabPaths = FindPrefabsOfType<ModularCar>(),
                         VehicleConfig = pluginConfig.Vehicles.ModularCar,
-                        IsCorrectType = (entity) => entity is ModularCar,
-                        GetTimeSinceLastUsed = (entity) => UnityEngine.Time.time - (entity as ModularCar).lastEngineOnTime,
-                        GetVanillaDecayMethod = (entity) => (entity as ModularCar).DecayTick,
-                        DecayTick = (entity, vehicleInfo) =>
+                        TimeSinceLastUsed = car => UnityEngine.Time.time - car.lastEngineOnTime,
+                        VanillaDecayMethod = car => car.DecayTick,
+                        Decay = (car, vehicleInfo) =>
                         {
-                            var car = entity as ModularCar;
-
                             if (car.IsDestroyed
                                 || car.IsOn()
                                 || car.immuneToDecay
@@ -684,18 +763,16 @@ namespace Oxide.Plugins
                             DoCarDecayDamage(car, vehicleInfo, health * vehicleInfo.GetTimeMultiplier() * multiplier / ModularCar.outsidedecayminutes);
                         }
                     },
-                    new VehicleInfo
+                    new VehicleInfo<RHIB>
                     {
                         VehicleType = "rhib",
                         PrefabPaths = new[] { "assets/content/vehicles/boats/rhib/rhib.prefab" },
                         VehicleConfig = pluginConfig.Vehicles.RHIB,
-                        IsCorrectType = (entity) => entity is RHIB,
-                        GetTimeSinceLastUsed = (entity) => (entity as RHIB).timeSinceLastUsedFuel,
-                        GetVanillaDecayMethod = (entity) => (entity as RHIB).BoatDecay,
-                        DecayTick = (entity, vehicleInfo) =>
+                        TimeSinceLastUsed = rhib => rhib.timeSinceLastUsedFuel,
+                        VanillaDecayMethod = rhib => rhib.BoatDecay,
+                        Decay = (rhib, vehicleInfo) =>
                         {
-                            var rhib = entity as MotorRowboat;
-                            if (rhib.dying)
+                            if (rhib.IsDying)
                                 return;
 
                             WaterVehicleDecay(
@@ -703,22 +780,20 @@ namespace Oxide.Plugins
                                 rhib,
                                 vehicleInfo,
                                 MotorRowboat.outsidedecayminutes,
-                                MotorRowboat.deepwaterdecayminutes
+                                MotorRowboat.deepwaterdecayminutes,
+                                MotorRowboat.decaystartdelayminutes
                             );
                         }
                     },
-                    new VehicleInfo
+                    new VehicleInfo<RidableHorse>
                     {
                         VehicleType = "ridablehorse",
                         PrefabPaths = new[] { "assets/rust.ai/nextai/testridablehorse.prefab" },
                         VehicleConfig = pluginConfig.Vehicles.RidableHorse,
-                        IsCorrectType = (entity) => entity is RidableHorse,
-                        GetTimeSinceLastUsed = (entity) => UnityEngine.Time.time - (entity as RidableHorse).lastInputTime,
-                        GetVanillaDecayMethod = (entity) => (entity as RidableHorse).AnimalDecay,
-                        DecayTick = (entity, vehicleInfo) =>
+                        TimeSinceLastUsed = horse => UnityEngine.Time.time - horse.lastInputTime,
+                        VanillaDecayMethod = horse => horse.AnimalDecay,
+                        Decay = (horse, vehicleInfo) =>
                         {
-                            var horse = entity as RidableHorse;
-
                             if (horse.healthFraction == 0f
                                 || horse.IsDestroyed
                                 || WasRecentlyUsed(horse, vehicleInfo)
@@ -735,18 +810,16 @@ namespace Oxide.Plugins
                             DoDecayDamage(horse, vehicleInfo, multiplier / BaseRidableAnimal.decayminutes);
                         }
                     },
-                    new VehicleInfo
+                    new VehicleInfo<MotorRowboat>
                     {
                         VehicleType = "rowboat",
                         PrefabPaths = new[] { "assets/content/vehicles/boats/rowboat/rowboat.prefab" },
                         VehicleConfig = pluginConfig.Vehicles.Rowboat,
-                        IsCorrectType = (entity) => entity is MotorRowboat,
-                        GetTimeSinceLastUsed = (entity) => (entity as MotorRowboat).timeSinceLastUsedFuel,
-                        GetVanillaDecayMethod = (entity) => (entity as MotorRowboat).BoatDecay,
-                        DecayTick = (entity, vehicleInfo) =>
+                        TimeSinceLastUsed = rowBoat => rowBoat.timeSinceLastUsedFuel,
+                        VanillaDecayMethod = rowBoat => rowBoat.BoatDecay,
+                        Decay = (rowBoat, vehicleInfo) =>
                         {
-                            var rowBoat = entity as MotorRowboat;
-                            if (rowBoat.dying)
+                            if (rowBoat.IsDying)
                                 return;
 
                             WaterVehicleDecay(
@@ -754,75 +827,92 @@ namespace Oxide.Plugins
                                 rowBoat,
                                 vehicleInfo,
                                 MotorRowboat.outsidedecayminutes,
-                                MotorRowboat.deepwaterdecayminutes
+                                MotorRowboat.deepwaterdecayminutes,
+                                MotorRowboat.decaystartdelayminutes
                             );
                         }
                     },
-                    new VehicleInfo
+                    new VehicleInfo<ScrapTransportHelicopter>
                     {
                         VehicleType = "scraptransporthelicopter",
                         PrefabPaths = new[] { "assets/content/vehicles/scrap heli carrier/scraptransporthelicopter.prefab" },
                         VehicleConfig = pluginConfig.Vehicles.ScrapTransportHelicopter,
-                        IsCorrectType = (entity) => entity is ScrapTransportHelicopter,
-                        GetTimeSinceLastUsed = (entity) => UnityEngine.Time.time - (entity as ScrapTransportHelicopter).lastEngineOnTime,
-                        GetVanillaDecayMethod = (entity) => (entity as ScrapTransportHelicopter).DecayTick,
-                        DecayTick = (entity, vehicleInfo) => MinicopterDecay(_pluginInstance, entity as ScrapTransportHelicopter, vehicleInfo),
+                        TimeSinceLastUsed = heli => UnityEngine.Time.time - heli.lastEngineOnTime,
+                        VanillaDecayMethod = heli => heli.DecayTick,
+                        Decay = (heli, vehicleInfo) => HelicopterDecay(_pluginInstance, heli, vehicleInfo),
                     },
-                    new VehicleInfo
+                    new VehicleInfo<Sled>
                     {
                         VehicleType = "sled",
                         PrefabPaths = new[] { "assets/prefabs/misc/xmas/sled/sled.deployed.prefab" },
                         VehicleConfig = pluginConfig.Vehicles.Sled,
-                        IsCorrectType = (entity) => entity is Sled,
-                        GetTimeSinceLastUsed = (entity) => float.MaxValue,
-                        GetVanillaDecayMethod = (entity) => (entity as Sled).DecayOverTime,
-                        DecayTick = (entity, vehicleInfo) => SledDecay(_pluginInstance, entity as Sled, vehicleInfo)
+                        TimeSinceLastUsed = sled => float.MaxValue,
+                        VanillaDecayMethod = sled => sled.DecayOverTime,
+                        Decay = (sled, vehicleInfo) => SledDecay(_pluginInstance, sled, vehicleInfo)
                     },
-                    new VehicleInfo
+                    new VehicleInfo<Sled>
                     {
                         VehicleType = "sled.xmas",
                         PrefabPaths = new[] { "assets/prefabs/misc/xmas/sled/skins/sled.deployed.xmas.prefab" },
                         VehicleConfig = pluginConfig.Vehicles.SledXmas,
-                        IsCorrectType = (entity) => entity is Sled,
-                        GetTimeSinceLastUsed = (entity) => float.MaxValue,
-                        GetVanillaDecayMethod = (entity) => (entity as Sled).DecayOverTime,
-                        DecayTick = (entity, vehicleInfo) => SledDecay(_pluginInstance, entity as Sled, vehicleInfo)
+                        TimeSinceLastUsed = sled => float.MaxValue,
+                        VanillaDecayMethod = sled => sled.DecayOverTime,
+                        Decay = (sled, vehicleInfo) => SledDecay(_pluginInstance, sled, vehicleInfo)
                     },
-                    new VehicleInfo
+                    new VehicleInfo<Snowmobile>
                     {
                         VehicleType = "snowmobile",
                         PrefabPaths = new[] { "assets/content/vehicles/snowmobiles/snowmobile.prefab" },
                         VehicleConfig = pluginConfig.Vehicles.Snowmobile,
-                        IsCorrectType = (entity) => entity is Snowmobile,
-                        GetTimeSinceLastUsed = (entity) => (entity as Snowmobile).timeSinceLastUsed,
-                        GetVanillaDecayMethod = (entity) => (entity as Snowmobile).SnowmobileDecay,
-                        DecayTick = (entity, vehicleInfo) => SnowmobileDecay(_pluginInstance, entity as Snowmobile, vehicleInfo),
+                        TimeSinceLastUsed = snowmobile => snowmobile.timeSinceLastUsed,
+                        VanillaDecayMethod = snowmobile => snowmobile.SnowmobileDecay,
+                        Decay = (snowmobile, vehicleInfo) => SnowmobileDecay(_pluginInstance, snowmobile, vehicleInfo),
                     },
-                    new VehicleInfo
+                    new VehicleInfo<BaseSubmarine>
                     {
                         VehicleType = "solosubmarine",
                         PrefabPaths = new[] { "assets/content/vehicles/submarine/submarinesolo.entity.prefab" },
                         VehicleConfig = pluginConfig.Vehicles.SoloSubmarine,
-                        IsCorrectType = (entity) => entity is BaseSubmarine,
-                        GetTimeSinceLastUsed = (entity) => (entity as BaseSubmarine).timeSinceLastUsed,
-                        GetVanillaDecayMethod = (entity) => (entity as BaseSubmarine).SubmarineDecay,
-                        DecayTick = (entity, vehicleInfo) => WaterVehicleDecay(
+                        TimeSinceLastUsed = submarine => submarine.timeSinceLastUsed,
+                        VanillaDecayMethod = submarine => submarine.SubmarineDecay,
+                        Decay = (submarine, vehicleInfo) => WaterVehicleDecay(
                             _pluginInstance,
-                            entity as BaseSubmarine,
+                            submarine,
                             vehicleInfo,
                             BaseSubmarine.outsidedecayminutes,
                             BaseSubmarine.deepwaterdecayminutes
                         ),
                     },
-                    new VehicleInfo
+                    new VehicleInfo<Snowmobile>
                     {
                         VehicleType = "tomaha",
                         PrefabPaths = new[] { "assets/content/vehicles/snowmobiles/tomahasnowmobile.prefab" },
                         VehicleConfig = pluginConfig.Vehicles.Tomaha,
-                        IsCorrectType = (entity) => entity is Snowmobile,
-                        GetTimeSinceLastUsed = (entity) => (entity as Snowmobile).timeSinceLastUsed,
-                        GetVanillaDecayMethod = (entity) => (entity as Snowmobile).SnowmobileDecay,
-                        DecayTick = (entity, vehicleInfo) => SnowmobileDecay(_pluginInstance, entity as Snowmobile, vehicleInfo),
+                        TimeSinceLastUsed = tomaha => tomaha.timeSinceLastUsed,
+                        VanillaDecayMethod = tomaha => tomaha.SnowmobileDecay,
+                        Decay = (tomaha, vehicleInfo) => SnowmobileDecay(_pluginInstance, tomaha, vehicleInfo),
+                    },
+                    new VehicleInfo<Tugboat>
+                    {
+                        VehicleType = "tugboat",
+                        PrefabPaths = new[] { "assets/content/vehicles/boats/tugboat/tugboat.prefab" },
+                        VehicleConfig = pluginConfig.Vehicles.Tugboat,
+                        TimeSinceLastUsed = tugboat => tugboat.timeSinceLastUsedFuel,
+                        VanillaDecayMethod = tugboat => tugboat.BoatDecay,
+                        Decay = (tugboat, vehicleInfo) =>
+                        {
+                            if (tugboat.IsDying)
+                                return;
+
+                            WaterVehicleDecay(
+                                _pluginInstance,
+                                tugboat,
+                                vehicleInfo,
+                                Tugboat.tugdecayminutes,
+                                Tugboat.tugdecayminutes,
+                                Tugboat.tugdecaystartdelayminutes
+                            );
+                        },
                     },
                 };
 
@@ -837,9 +927,9 @@ namespace Oxide.Plugins
                 }
             }
 
-            public VehicleInfo GetVehicleInfo(BaseEntity entity)
+            public IVehicleInfo GetVehicleInfo(BaseEntity entity)
             {
-                VehicleInfo vehicleInfo;
+                IVehicleInfo vehicleInfo;
                 return _prefabIdToVehicleInfo.TryGetValue(entity.prefabID, out vehicleInfo) && vehicleInfo.IsCorrectType(entity)
                     ? vehicleInfo
                     : null;
@@ -883,11 +973,18 @@ namespace Oxide.Plugins
 
         private class VehicleConfigMap
         {
+            [JsonProperty("Attack Helicopter")]
+            public VehicleConfig AttackHelicopter = new VehicleConfig
+            {
+                DecayMultiplierInside = 1f,
+                ProtectionMinutesAfterUse = 10,
+            };
+
             [JsonProperty("Duo Submarine")]
             public VehicleConfig DuoSubmarine = new VehicleConfig
             {
                 DecayMultiplierInside = 0f,
-                ProtectionMinutesAfterUse = 45,
+                ProtectionMinutesAfterUse = -1,
             };
 
             [JsonProperty("DuoSubmarine")]
@@ -907,7 +1004,7 @@ namespace Oxide.Plugins
             public VehicleConfig Kayak = new VehicleConfig
             {
                 DecayMultiplierInside = 0f,
-                ProtectionMinutesAfterUse = 45,
+                ProtectionMinutesAfterUse = -1,
             };
 
             [JsonProperty("Minicopter")]
@@ -931,7 +1028,7 @@ namespace Oxide.Plugins
             public VehicleConfig RHIB = new VehicleConfig
             {
                 DecayMultiplierInside = 0f,
-                ProtectionMinutesAfterUse = 45,
+                ProtectionMinutesAfterUse = -1,
             };
 
             [JsonProperty("Ridable Horse")]
@@ -948,7 +1045,7 @@ namespace Oxide.Plugins
             public VehicleConfig Rowboat = new VehicleConfig
             {
                 DecayMultiplierInside = 0f,
-                ProtectionMinutesAfterUse = 45,
+                ProtectionMinutesAfterUse = -1,
             };
 
             [JsonProperty("Scrap Transport Helicopter")]
@@ -989,7 +1086,7 @@ namespace Oxide.Plugins
             public VehicleConfig SoloSubmarine = new VehicleConfig
             {
                 DecayMultiplierInside = 0f,
-                ProtectionMinutesAfterUse = 45,
+                ProtectionMinutesAfterUse = -1,
             };
 
             [JsonProperty("SoloSubmarine")]
@@ -1000,6 +1097,12 @@ namespace Oxide.Plugins
             {
                 DecayMultiplierInside = 0f,
                 ProtectionMinutesAfterUse = 45,
+            };
+
+            [JsonProperty("Tugboat")]
+            public VehicleConfig Tugboat = new VehicleConfig
+            {
+                ProtectionMinutesAfterUse = -1,
             };
         }
 

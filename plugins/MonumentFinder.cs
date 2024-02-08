@@ -1,18 +1,18 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 using Oxide.Core;
 using Oxide.Core.Libraries.Covalence;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("Monument Finder", "WhiteThunder", "3.1.0")]
+    [Info("Monument Finder", "WhiteThunder", "3.1.2")]
     [Description("Find monuments with commands or API.")]
     internal class MonumentFinder : CovalencePlugin
     {
@@ -25,12 +25,14 @@ namespace Oxide.Plugins
 
         private const float DrawDuration = 30;
 
+        private readonly FieldInfo DungeonBaseLinksFieldInfo = typeof(TerrainPath).GetField("DungeonBaseLinks", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
         private Dictionary<MonumentInfo, NormalMonumentAdapter> _normalMonuments = new Dictionary<MonumentInfo, NormalMonumentAdapter>();
         private Dictionary<DungeonGridCell, TrainTunnelAdapter> _trainTunnels = new Dictionary<DungeonGridCell, TrainTunnelAdapter>();
         private Dictionary<DungeonBaseLink, UnderwaterLabLinkAdapter> _labModules = new Dictionary<DungeonBaseLink, UnderwaterLabLinkAdapter>();
         private Dictionary<MonoBehaviour, BaseMonumentAdapter> _allMonuments = new Dictionary<MonoBehaviour, BaseMonumentAdapter>();
 
-        private Collider[] _colliderBuffer = new Collider[1];
+        private Collider[] _colliderBuffer = new Collider[8];
 
         #endregion
 
@@ -52,21 +54,21 @@ namespace Oxide.Plugins
 
         private void OnServerInitialized()
         {
-            foreach (var underwaterLab in TerrainMeta.Path.DungeonBaseEntrances)
+            if (DungeonBaseLinksFieldInfo != null)
             {
-                foreach (var linkObj in underwaterLab.Links)
+                var dungeonLinks = DungeonBaseLinksFieldInfo.GetValue(TerrainMeta.Path) as List<DungeonBaseLink>;
+                if (dungeonLinks != null)
                 {
-                    var link = linkObj.GetComponent<DungeonBaseLink>();
-                    if (link == null)
-                        continue;
+                    foreach (var link in dungeonLinks)
+                    {
+                        // End links represent the posts holding up the lab modules.
+                        if (link.Type == DungeonBaseLinkType.End)
+                            continue;
 
-                    // End links represent the posts holding up the lab modules.
-                    if (link.Type == DungeonBaseLinkType.End)
-                        continue;
-
-                    var labLink = new UnderwaterLabLinkAdapter(link);
-                    _labModules[link] = labLink;
-                    _allMonuments[link] = labLink;
+                        var labLink = new UnderwaterLabLinkAdapter(link);
+                        _labModules[link] = labLink;
+                        _allMonuments[link] = labLink;
+                    }
                 }
             }
 
@@ -295,7 +297,9 @@ namespace Oxide.Plugins
                 {
                     var boundingBox = withBoundingBox.BoundingBox;
                     if (boundingBox.extents != Vector3.zero)
+                    {
                         Ddraw.Box(basePlayer, boundingBox, Color.magenta, DrawDuration);
+                    }
 
                     return;
                 }
@@ -304,7 +308,9 @@ namespace Oxide.Plugins
                 if (withMultipleBoundingBoxes != null)
                 {
                     foreach (var boundingBox in withMultipleBoundingBoxes.BoundingBoxes)
+                    {
                         Ddraw.Box(basePlayer, boundingBox, Color.magenta, DrawDuration, showInfo: false);
+                    }
                 }
             }
         }
@@ -325,19 +331,24 @@ namespace Oxide.Plugins
         private static Collider FindPreventBuildingVolume(Vector3 position)
         {
             var buffer = _pluginInstance._colliderBuffer;
+            var count = Physics.OverlapSphereNonAlloc(position, 1, buffer, Rust.Layers.Mask.Prevent_Building, QueryTriggerInteraction.Ignore);
 
-            if (Physics.OverlapSphereNonAlloc(position, 1, buffer, Rust.Layers.Mask.Prevent_Building, QueryTriggerInteraction.Ignore) == 0)
+            if (count == 0)
                 return null;
 
-            var collider = buffer[0];
-            buffer[0] = null;
+            for (var i = 0; i < count; i++)
+            {
+                var collider = buffer[i];
+                if ((collider is BoxCollider || collider is SphereCollider)
+                    // Only count prevent_building prefabs, not all prefabs that have prevent building colliders.
+                    && collider.name.Contains("prevent_building", CompareOptions.IgnoreCase))
+                    return collider;
+            }
 
-            return (collider is BoxCollider || collider is SphereCollider)
-                ? collider
-                : null;
+            return null;
         }
 
-        private T GetClosestMonument<T>(IEnumerable<T> monumentList, Vector3 position) where T : BaseMonumentAdapter
+        private static T GetClosestMonument<T>(IEnumerable<T> monumentList, Vector3 position) where T : BaseMonumentAdapter
         {
             T closestMonument = null;
             var closestSqrDistance = float.MaxValue;
@@ -355,16 +366,12 @@ namespace Oxide.Plugins
             return closestMonument;
         }
 
-        private Dictionary<string, object> GetClosestMonumentForAPI(IEnumerable<BaseMonumentAdapter> monumentList, Vector3 position)
+        private static Dictionary<string, object> GetClosestMonumentForAPI(IEnumerable<BaseMonumentAdapter> monumentList, Vector3 position)
         {
-            var baseMonument = GetClosestMonument(monumentList, position);
-            if (baseMonument == null)
-                return null;
-
-            return baseMonument.APIResult;
+            return GetClosestMonument(monumentList, position)?.APIResult;
         }
 
-        private List<T> FilterMonuments<T>(IEnumerable<T> monumentList, string filter = null, string shortName = null, string alias = null) where T : BaseMonumentAdapter
+        private static List<T> FilterMonuments<T>(IEnumerable<T> monumentList, string filter = null, string shortName = null, string alias = null) where T : BaseMonumentAdapter
         {
             var results = new List<T>();
 
@@ -377,14 +384,16 @@ namespace Oxide.Plugins
             return results;
         }
 
-        private List<Dictionary<string, object>> FilterMonumentsForAPI(IEnumerable<BaseMonumentAdapter> monumentList, string filter = null, string shortName = null, string alias = null)
+        private static List<Dictionary<string, object>> FilterMonumentsForAPI(IEnumerable<BaseMonumentAdapter> monumentList, string filter = null, string shortName = null, string alias = null)
         {
             var results = new List<Dictionary<string, object>>();
 
             foreach (var baseMonument in monumentList)
             {
                 if (baseMonument.MatchesFilter(filter, shortName, alias))
+                {
                     results.Add(baseMonument.APIResult);
+                }
             }
 
             return results;
@@ -396,12 +405,14 @@ namespace Oxide.Plugins
             builder.AppendLine(GetMessage(player, Lang.ListHeader));
 
             foreach (var monument in monuments)
+            {
                 builder.AppendLine(monument.PrefabName);
+            }
 
             player.Reply(builder.ToString());
         }
 
-        private void ShowMonumentName(BasePlayer player, BaseMonumentAdapter monument)
+        private static void ShowMonumentName(BasePlayer player, BaseMonumentAdapter monument)
         {
             Ddraw.Text(player, monument.Position, $"<size=20>{monument.ShortName}</size>", Color.magenta, 30);
         }
@@ -429,7 +440,7 @@ namespace Oxide.Plugins
                 return baseName.Replace(".prefab", "");
             }
 
-            public MonoBehaviour Object { get; protected set; }
+            public MonoBehaviour Object { get; }
             public string PrefabName { get; protected set; }
             public string ShortName { get; protected set; }
 
@@ -564,8 +575,8 @@ namespace Oxide.Plugins
                 ["water_well_e"] = new Bounds(new Vector3(0, 10, 0), new Vector3(24, 20, 24)),
             };
 
-            public MonumentInfo MonumentInfo { get; private set; }
-            public OBB BoundingBox { get; private set; }
+            public MonumentInfo MonumentInfo { get; }
+            public OBB BoundingBox { get; }
 
             public NormalMonumentAdapter(MonumentInfo monumentInfo) : base(monumentInfo)
             {
@@ -668,7 +679,7 @@ namespace Oxide.Plugins
 
         private class TrainTunnelAdapter : BaseMonumentAdapter, SingleBoundingBox
         {
-            public static readonly string[] IgnoredPrefabs = new string[]
+            public static readonly string[] IgnoredPrefabs =
             {
                 // These prefabs are simply used for decorating.
                 "assets/bundled/prefabs/autospawn/tunnel-transition/transition-sn-0.prefab",
@@ -705,7 +716,7 @@ namespace Oxide.Plugins
                 public override string Alias => "LootTunnel";
             }
 
-            // Straight tunnels with a dividier in the tracks.
+            // Straight tunnels with a divider in the tracks.
             private class SplitTunnel : BaseTunnelInfo
             {
                 public override Bounds Bounds => new Bounds(new Vector3(0, 4.25f, 0), new Vector3(16.5f, 9, 216));
@@ -724,6 +735,13 @@ namespace Oxide.Plugins
             {
                 public override Bounds Bounds => new Bounds(new Vector3(0, 4.25f, 0), new Vector3(216, 9, 216));
                 public override string Alias => "LargeIntersection";
+            }
+
+            // 3-way intersections that connect to above ground.
+            private class VerticalIntersection : BaseTunnelInfo
+            {
+                public override Bounds Bounds => new Bounds(new Vector3(0, 4.25f, 49.875f), new Vector3(216, 9, 116.25f));
+                public override string Alias => "VerticalIntersection";
             }
 
             // Corner tunnels (45-degree angle).
@@ -764,6 +782,36 @@ namespace Oxide.Plugins
                 ["intersection-s"] = new Intersection { Rotation = Quaternion.Euler(0, 180, 0) },
                 ["intersection-w"] = new Intersection { Rotation = Quaternion.Euler(0, 270, 0) },
 
+                ["intersection-b1-n"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 0, 0) },
+                ["intersection-b1-e"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 90, 0) },
+                ["intersection-b1-s"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 180, 0) },
+                ["intersection-b1-w"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 270, 0) },
+
+                ["intersection-b2-n"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 0, 0) },
+                ["intersection-b2-e"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 90, 0) },
+                ["intersection-b2-s"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 180, 0) },
+                ["intersection-b2-w"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 270, 0) },
+
+                ["intersection-b3-n"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 0, 0) },
+                ["intersection-b3-e"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 90, 0) },
+                ["intersection-b3-s"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 180, 0) },
+                ["intersection-b3-w"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 270, 0) },
+
+                ["intersection-b4-n"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 0, 0) },
+                ["intersection-b4-e"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 90, 0) },
+                ["intersection-b4-s"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 180, 0) },
+                ["intersection-b4-w"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 270, 0) },
+
+                ["intersection-b5-n"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 0, 0) },
+                ["intersection-b5-e"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 90, 0) },
+                ["intersection-b5-s"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 180, 0) },
+                ["intersection-b5-w"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 270, 0) },
+
+                ["intersection-b6-n"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 0, 0) },
+                ["intersection-b6-e"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 90, 0) },
+                ["intersection-b6-s"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 180, 0) },
+                ["intersection-b6-w"] = new VerticalIntersection { Rotation = Quaternion.Euler(0, 270, 0) },
+
                 ["intersection"] = new LargeIntersection { Rotation = Quaternion.Euler(0, 0, 0) },
 
                 ["curve-ne-0"] = new CornerTunnel { Rotation = Quaternion.Euler(0, 90, 0) },
@@ -785,15 +833,12 @@ namespace Oxide.Plugins
                 throw new NotImplementedException($"Tunnel type not implemented: {shortName}");
             }
 
-            public DungeonGridCell DungeonCell { get; private set; }
-            public OBB BoundingBox { get; private set; }
+            public OBB BoundingBox { get; }
 
             private BaseTunnelInfo _tunnelInfo;
 
             public TrainTunnelAdapter(DungeonGridCell dungeonCell) : base(dungeonCell)
             {
-                DungeonCell = dungeonCell;
-
                 _tunnelInfo = GetTunnelInfo(ShortName);
 
                 Rotation = _tunnelInfo.Rotation;
@@ -819,13 +864,10 @@ namespace Oxide.Plugins
 
         private class UnderwaterLabLinkAdapter : BaseMonumentAdapter, MultipleBoundingBoxes
         {
-            public DungeonBaseLink DungeonLink { get; private set; }
-            public OBB[] BoundingBoxes { get; private set; }
+            public OBB[] BoundingBoxes { get; }
 
             public UnderwaterLabLinkAdapter(DungeonBaseLink dungeonLink) : base(dungeonLink)
             {
-                DungeonLink = dungeonLink;
-
                 var volumeList = dungeonLink.GetComponentsInChildren<DungeonVolume>();
                 BoundingBoxes = new OBB[volumeList.Length];
 
@@ -849,8 +891,8 @@ namespace Oxide.Plugins
 
             public override Vector3 ClosestPointOnBounds(Vector3 position)
             {
-                Vector3 overallClosestPoint = Vector3.positiveInfinity;
-                float closestSqrDistance = float.MaxValue;
+                var overallClosestPoint = Vector3.positiveInfinity;
+                var closestSqrDistance = float.MaxValue;
 
                 foreach (var box in BoundingBoxes)
                 {
@@ -936,68 +978,68 @@ namespace Oxide.Plugins
                 var rightLowerMiddle = Vector3.Lerp(forwardLowerRight, backLowerRight, 0.5f);
                 var rightUpperMiddle = Vector3.Lerp(forwardUpperRight, backUpperRight, 0.5f);
 
-                Ddraw.Sphere(player, forwardUpperLeft, sphereRadius, color, duration);
-                Ddraw.Sphere(player, forwardUpperRight, sphereRadius, color, duration);
-                Ddraw.Sphere(player, forwardLowerLeft, sphereRadius, color, duration);
-                Ddraw.Sphere(player, forwardLowerRight, sphereRadius, color, duration);
+                Sphere(player, forwardUpperLeft, sphereRadius, color, duration);
+                Sphere(player, forwardUpperRight, sphereRadius, color, duration);
+                Sphere(player, forwardLowerLeft, sphereRadius, color, duration);
+                Sphere(player, forwardLowerRight, sphereRadius, color, duration);
 
-                Ddraw.Sphere(player, backLowerRight, sphereRadius, color, duration);
-                Ddraw.Sphere(player, backLowerLeft, sphereRadius, color, duration);
-                Ddraw.Sphere(player, backUpperRight, sphereRadius, color, duration);
-                Ddraw.Sphere(player, backUpperLeft, sphereRadius, color, duration);
+                Sphere(player, backLowerRight, sphereRadius, color, duration);
+                Sphere(player, backLowerLeft, sphereRadius, color, duration);
+                Sphere(player, backUpperRight, sphereRadius, color, duration);
+                Sphere(player, backUpperLeft, sphereRadius, color, duration);
 
-                Ddraw.Segments(player, forwardUpperLeft, forwardUpperRight, color, duration);
-                Ddraw.Segments(player, forwardLowerLeft, forwardLowerRight, color, duration);
-                Ddraw.Segments(player, forwardUpperLeft, forwardLowerLeft, color, duration);
-                Ddraw.Segments(player, forwardUpperRight, forwardLowerRight, color, duration);
+                Segments(player, forwardUpperLeft, forwardUpperRight, color, duration);
+                Segments(player, forwardLowerLeft, forwardLowerRight, color, duration);
+                Segments(player, forwardUpperLeft, forwardLowerLeft, color, duration);
+                Segments(player, forwardUpperRight, forwardLowerRight, color, duration);
 
-                Ddraw.Segments(player, backUpperLeft, backUpperRight, color, duration);
-                Ddraw.Segments(player, backLowerLeft, backLowerRight, color, duration);
-                Ddraw.Segments(player, backUpperLeft, backLowerLeft, color, duration);
-                Ddraw.Segments(player, backUpperRight, backLowerRight, color, duration);
+                Segments(player, backUpperLeft, backUpperRight, color, duration);
+                Segments(player, backLowerLeft, backLowerRight, color, duration);
+                Segments(player, backUpperLeft, backLowerLeft, color, duration);
+                Segments(player, backUpperRight, backLowerRight, color, duration);
 
-                Ddraw.Segments(player, forwardUpperLeft, backUpperLeft, color, duration);
-                Ddraw.Segments(player, forwardLowerLeft, backLowerLeft, color, duration);
-                Ddraw.Segments(player, forwardUpperRight, backUpperRight, color, duration);
-                Ddraw.Segments(player, forwardLowerRight, backLowerRight, color, duration);
+                Segments(player, forwardUpperLeft, backUpperLeft, color, duration);
+                Segments(player, forwardLowerLeft, backLowerLeft, color, duration);
+                Segments(player, forwardUpperRight, backUpperRight, color, duration);
+                Segments(player, forwardLowerRight, backLowerRight, color, duration);
 
                 if (showInfo)
                 {
-                    Ddraw.Sphere(player, forwardLowerMiddle, sphereRadius, Color.yellow, duration);
-                    Ddraw.Sphere(player, forwardUpperMiddle, sphereRadius, Color.yellow, duration);
-                    Ddraw.Sphere(player, backLowerMiddle, sphereRadius, Color.yellow, duration);
-                    Ddraw.Sphere(player, backUpperMiddle, sphereRadius, Color.yellow, duration);
+                    Sphere(player, forwardLowerMiddle, sphereRadius, Color.yellow, duration);
+                    Sphere(player, forwardUpperMiddle, sphereRadius, Color.yellow, duration);
+                    Sphere(player, backLowerMiddle, sphereRadius, Color.yellow, duration);
+                    Sphere(player, backUpperMiddle, sphereRadius, Color.yellow, duration);
 
-                    Ddraw.Sphere(player, leftLowerMiddle, sphereRadius, Color.green, duration);
-                    Ddraw.Sphere(player, leftUpperMiddle, sphereRadius, Color.green, duration);
-                    Ddraw.Sphere(player, rightLowerMiddle, sphereRadius, Color.green, duration);
-                    Ddraw.Sphere(player, rightUpperMiddle, sphereRadius, Color.green, duration);
+                    Sphere(player, leftLowerMiddle, sphereRadius, Color.green, duration);
+                    Sphere(player, leftUpperMiddle, sphereRadius, Color.green, duration);
+                    Sphere(player, rightLowerMiddle, sphereRadius, Color.green, duration);
+                    Sphere(player, rightUpperMiddle, sphereRadius, Color.green, duration);
 
-                    Ddraw.Text(player, forwardUpperMiddle, "<size=20>+Z</size>", Color.yellow, duration);
-                    Ddraw.Text(player, forwardLowerMiddle, "<size=20>+Z</size>", Color.yellow, duration);
-                    Ddraw.Text(player, backUpperMiddle, "<size=20>-Z</size>", Color.yellow, duration);
-                    Ddraw.Text(player, backLowerMiddle, "<size=20>-Z</size>", Color.yellow, duration);
+                    Text(player, forwardUpperMiddle, "<size=20>+Z</size>", Color.yellow, duration);
+                    Text(player, forwardLowerMiddle, "<size=20>+Z</size>", Color.yellow, duration);
+                    Text(player, backUpperMiddle, "<size=20>-Z</size>", Color.yellow, duration);
+                    Text(player, backLowerMiddle, "<size=20>-Z</size>", Color.yellow, duration);
 
-                    Ddraw.Text(player, leftLowerMiddle, "<size=20>-X</size>", Color.green, duration);
-                    Ddraw.Text(player, leftUpperMiddle, "<size=20>-X</size>", Color.green, duration);
-                    Ddraw.Text(player, rightLowerMiddle, "<size=20>+X</size>", Color.green, duration);
-                    Ddraw.Text(player, rightUpperMiddle, "<size=20>+X</size>", Color.green, duration);
+                    Text(player, leftLowerMiddle, "<size=20>-X</size>", Color.green, duration);
+                    Text(player, leftUpperMiddle, "<size=20>-X</size>", Color.green, duration);
+                    Text(player, rightLowerMiddle, "<size=20>+X</size>", Color.green, duration);
+                    Text(player, rightUpperMiddle, "<size=20>+X</size>", Color.green, duration);
 
-                    Ddraw.Text(player, forwardUpperLeft, "<size=28>*</size>", color, duration);
-                    Ddraw.Text(player, forwardUpperRight, "<size=28>*</size>", color, duration);
-                    Ddraw.Text(player, forwardLowerLeft, "<size=28>*</size>", color, duration);
-                    Ddraw.Text(player, forwardLowerRight, "<size=28>*</size>", color, duration);
+                    Text(player, forwardUpperLeft, "<size=28>*</size>", color, duration);
+                    Text(player, forwardUpperRight, "<size=28>*</size>", color, duration);
+                    Text(player, forwardLowerLeft, "<size=28>*</size>", color, duration);
+                    Text(player, forwardLowerRight, "<size=28>*</size>", color, duration);
 
-                    Ddraw.Text(player, backLowerRight, "<size=28>*</size>", color, duration);
-                    Ddraw.Text(player, backLowerLeft, "<size=28>*</size>", color, duration);
-                    Ddraw.Text(player, backUpperRight, "<size=28>*</size>", color, duration);
-                    Ddraw.Text(player, backUpperLeft, "<size=28>*</size>", color, duration);
+                    Text(player, backLowerRight, "<size=28>*</size>", color, duration);
+                    Text(player, backLowerLeft, "<size=28>*</size>", color, duration);
+                    Text(player, backUpperRight, "<size=28>*</size>", color, duration);
+                    Text(player, backUpperLeft, "<size=28>*</size>", color, duration);
                 }
             }
 
             public static void Box(BasePlayer player, OBB boundingBox, Color color, float duration, bool showInfo = true)
             {
-                Ddraw.Box(player, boundingBox.position, boundingBox.rotation, boundingBox.extents, color, duration, showInfo);
+                Box(player, boundingBox.position, boundingBox.rotation, boundingBox.extents, color, duration, showInfo);
             }
         }
 
@@ -1014,8 +1056,7 @@ namespace Oxide.Plugins
             public Vector3 CenterOffset;
 
             [JsonProperty("Center")]
-            private Vector3 DeprecatedCenter
-            { set { CenterOffset = value ; } }
+            private Vector3 DeprecatedCenter { set { CenterOffset = value ; } }
 
             public Bounds ToBounds() => new Bounds(CenterOffset, Size);
 
@@ -1032,10 +1073,10 @@ namespace Oxide.Plugins
         private class BaseDetectionSettings
         {
             [JsonProperty("Auto determine from monument marker", Order = -3)]
-            public bool UseMonumentMarker = false;
+            public bool UseMonumentMarker;
 
             [JsonProperty("Auto determine from prevent building volume", Order = -2)]
-            public bool UsePreventBuildingVolume = false;
+            public bool UsePreventBuildingVolume;
 
             public BaseDetectionSettings Copy()
             {
@@ -1050,7 +1091,7 @@ namespace Oxide.Plugins
         private class BoundSettings : BaseDetectionSettings
         {
             [JsonProperty("Use custom bounds")]
-            public bool UseCustomBounds = false;
+            public bool UseCustomBounds;
 
             [JsonProperty("Custom bounds")]
             public CustomBounds CustomBounds = new CustomBounds();
@@ -1182,9 +1223,7 @@ namespace Oxide.Plugins
                     return false;
 
                 var monumentInfo = monument.Object as MonumentInfo;
-                var isCustomMonument = monumentInfo != null
-                    ? IsCustomMonument(monumentInfo)
-                    : false;
+                var isCustomMonument = monumentInfo != null && IsCustomMonument(monumentInfo);
 
                 MonumentSettings monumentSettings;
 
@@ -1263,7 +1302,7 @@ namespace Oxide.Plugins
 
         private bool MaybeUpdateConfigDict(Dictionary<string, object> currentWithDefaults, Dictionary<string, object> currentRaw)
         {
-            bool changed = false;
+            var changed = false;
 
             foreach (var key in currentWithDefaults.Keys)
             {
@@ -1340,16 +1379,10 @@ namespace Oxide.Plugins
         private string GetMessage(IPlayer player, string messageName, params object[] args) =>
             GetMessage(player.Id, messageName, args);
 
-        private string GetMessage(BasePlayer player, string messageName, params object[] args) =>
-            GetMessage(player.UserIDString, messageName, args);
-
         private void ReplyToPlayer(IPlayer player, string messageName, params object[] args) =>
             player.Reply(string.Format(GetMessage(player, messageName), args));
 
-        private void ChatMessage(BasePlayer player, string messageName, params object[] args) =>
-            player.ChatMessage(string.Format(GetMessage(player, messageName), args));
-
-        private class Lang
+        private static class Lang
         {
             public const string ErrorNoPermission = "NoPermission";
             public const string NoMonumentsFound = "NoMonumentsFound";

@@ -181,7 +181,7 @@ namespace Oxide.Plugins
             if (message.Author.Bot == true) return;
 
 
-            if (message.Content != null && message.Content.Length > 0 && message.Content[0] == config.Prefix[0])
+            if (message.Content[0] == config.Prefix[0])
             {
 
                 string cmd;

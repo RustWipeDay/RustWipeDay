@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("Automated Events", "k1lly0u/mspeedie/Arainrr", "1.0.11")]
+    [Info("Automated Events", "k1lly0u/mspeedie/Arainrr", "1.0.12")]
     internal class AutomatedEvents : RustPlugin
     {
         #region Fields
@@ -234,7 +234,7 @@ namespace Oxide.Plugins
                         break;
 
                     case EventType.Helicopter:
-                        if (!CanRunEvent<BaseHelicopter>(eventType, baseEvent))
+                        if (!CanRunEvent<PatrolHelicopter>(eventType, baseEvent))
                         {
                             return false;
                         }
@@ -476,13 +476,13 @@ namespace Oxide.Plugins
 
                 case EventType.Helicopter:
                     {
-                        if (bypass || CanRunEvent<BaseHelicopter>(eventType, baseEvent, false))
+                        if (bypass || CanRunEvent<PatrolHelicopter>(eventType, baseEvent, false))
                         {
                             var eventWeight = baseEvent.GetRandomEventWeight();
                             if (eventWeight == null || eventWeight.IsNormalEvent)
                             {
                                 PrintDebug("Spawning Helicopter");
-                                var helicopter = GameManager.server.CreateEntity(PREFAB_HELI) as BaseHelicopter;
+                                var helicopter = GameManager.server.CreateEntity(PREFAB_HELI) as PatrolHelicopter;
                                 if (helicopter == null)
                                 {
                                     goto NotifyDeveloper;
@@ -693,7 +693,7 @@ namespace Oxide.Plugins
                     return;
 
                 case EventType.Helicopter:
-                    foreach (var helicopter in GetEventEntities<BaseHelicopter>(baseEvent).ToArray())
+                    foreach (var helicopter in GetEventEntities<PatrolHelicopter>(baseEvent).ToArray())
                     {
                         PrintDebug("Killing a Helicopter");
                         helicopter.Kill();
@@ -953,7 +953,7 @@ namespace Oxide.Plugins
             if (baseEntity is BradleyAPC) return EventType.Bradley;
             if (baseEntity is CargoPlane) return EventType.CargoPlane;
             if (baseEntity is CargoShip) return EventType.CargoShip;
-            if (baseEntity is BaseHelicopter) return EventType.Helicopter;
+            if (baseEntity is PatrolHelicopter) return EventType.Helicopter;
             if (baseEntity is SantaSleigh) return EventType.SantaSleigh;
             if (baseEntity is XMasRefill) return EventType.Christmas;
             if (baseEntity is HalloweenHunt) return EventType.Halloween;
