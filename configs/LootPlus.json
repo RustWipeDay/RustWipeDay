@@ -1,0 +1,92 @@
+{
+  "Refill Loot On Plugin Load": true,
+  "Container Loot Save Command": "lootsave",
+  "Container Refill Command": "lootrefill",
+  "Load Config Command": "lootconfig",
+  "Containers": [
+    {
+      "Entity Shortnames": [
+        {
+          "Shortname": "entity.shortname",
+          "Enable Regex": false,
+          "Exclude": false,
+          "API Shortname": false
+        }
+      ],
+      "Process Corpses": true,
+      "Process Loot Containers": true,
+      "Monument Prefabs": [
+        ""
+      ],
+      "Shuffle Items": true,
+      "Allow Duplicate Items": false,
+      "Allow Duplicate Items With Different Skins": true,
+      "Remove Container": false,
+      "Item Container Indexes": [
+        0
+      ],
+      "Replace Items": true,
+      "Add Items": false,
+      "Modify Items": false,
+      "Modify Ignores Blueprint State": false,
+      "Fill With Default Items": false,
+      "Online Condition": {
+        "Minimal Online": -1,
+        "Maximal Online": -1
+      },
+      "Maximal Failures To Add An Item": 5,
+      "Capacity": [
+        {
+          "Capacity": 3,
+          "Chance": 1
+        }
+      ],
+      "Items": [
+        {
+          "Item Shortnames": [
+            {
+              "Shortname": "item.shortname",
+              "Rarity": "global",
+              "Category": "global",
+              "Enable Regex": false,
+              "Exclude": false
+            }
+          ],
+          "Item Name (Empty To Ignore)": "",
+          "Is Blueprint": false,
+          "Allow Stacking": true,
+          "Ignore Max Stack": true,
+          "Ignore Max Condition": true,
+          "Remove Item": false,
+          "Replace Item With Default Loot": false,
+          "Conditions": [
+            {
+              "Minimal Condition": 75.0,
+              "Maximal Condition": 100.0,
+              "Max Condition Of Item": -1.0,
+              "Condition Rate": -1.0,
+              "Max Condition Rate": -1.0,
+              "Chance": 1
+            }
+          ],
+          "Skins": [
+            {
+              "Skin": 0,
+              "Chance": 1
+            }
+          ],
+          "Amount": [
+            {
+              "Minimal Amount": 3,
+              "Maximal Amount": 3,
+              "Rate": -1.0,
+              "Chance": 1
+            }
+          ],
+          "Chance": 1
+        }
+      ]
+    }
+  ],
+  "Debug": false
+}

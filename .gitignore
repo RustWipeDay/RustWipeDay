@@ -1,8 +1,5 @@
 ﻿.vs/
 bin/
-data/
-extensions/
-harmony/
 lang/
 logs/
 managed/
@@ -12,5 +9,3 @@ reports/
 temp/
 tools/
 carbonauto.cfg
-config.json
-config_client.json
