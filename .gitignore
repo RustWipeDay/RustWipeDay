@@ -3,8 +3,6 @@ bin/
 lang/
 logs/
 managed/
-Properties/
-modules/
 obj/
 reports/
 temp/

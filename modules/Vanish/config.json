@@ -1,0 +1,40 @@
+{
+  "Enabled": false,
+  "Config": {
+    "VanishPermission": "vanish.allow",
+    "VanishUnlockWhileVanishedPermission": "vanish.unlock",
+    "VanishCommand": "vanish",
+    "ToggleNoclipOnVanish": true,
+    "ToggleNoclipOnUnvanish": false,
+    "InvisibleText": "You are currently invisible.",
+    "InvisibleTextSize": 10,
+    "InvisibleTextColor": "#8bba49",
+    "InvisibleTextAnchor [Anchor]": 7,
+    "InvisibleTextAnchorX": [
+      0.0,
+      1.0
+    ],
+    "InvisibleTextAnchorY": [
+      0.0,
+      0.025
+    ],
+    "InvisibleIconUrl": "",
+    "InvisibleIconColor": "1 1 1 0.3",
+    "InvisibleIconAnchorX": [
+      0.175,
+      0.22
+    ],
+    "InvisibleIconAnchorY": [
+      0.017,
+      0.08
+    ],
+    "BroadcastVanishSounds": false,
+    "WhooshSoundOnVanish": true,
+    "GutshotScreamOnUnvanish": true,
+    "EnableLogs": true,
+    "TeleportBackOnUnvanish": false,
+    "CanDamageWhenVanished": true,
+    "[Anchor] Legend": "(0=UpperLeft, 1=UpperCenter, 2=UpperRight, 3=MiddleLeft, 4=MiddleCenter, 5=MiddleRight, 6=LowerLeft, 7=LowerCenter, 8=LowerRight)"
+  },
+  "Version": "2319453521"
+}
