@@ -1,0 +1,11 @@
+{
+  "Enabled": true,
+  "Config": {
+    "TimeoutPerUrl": 2.0,
+    "InitializedBatchLogs": false,
+    "CompletedBatchLogs": false,
+    "RetrievedImageLogs": false,
+    "DeletedImageLogs": false
+  },
+  "Version": "2456586706"
+}

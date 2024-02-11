@@ -1,0 +1,14 @@
+{
+  "Enabled": true,
+  "Config": {
+    "OpenCommands": [
+      "cp",
+      "cpanel"
+    ],
+    "MinimumAuthLevel": 2,
+    "DisableEntitiesTab": true,
+    "DisablePluginsTab": false,
+    "SpectatingInfoOverlay": true
+  },
+  "Version": "3700938491"
+}

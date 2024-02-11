@@ -1,0 +1,8 @@
+{
+  "Display workbench built notification": false,
+  "Display cancel craft notification": false,
+  "Inside building check frequency (Seconds)": 0.0,
+  "Enable Fast Building Check (Only checks above and below a player)": false,
+  "Distance from base to be considered inside building (Meters)": 0.0,
+  "Required distance from last update (Meters)": 0.0
+}

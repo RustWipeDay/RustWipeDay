@@ -1,0 +1,15 @@
+{
+  "Enabled": false,
+  "Config": {
+    "No give notices": true,
+    "No TechTree unlock": false,
+    "Show server event toasts": true,
+    "Moderation": {
+      "/cadmin command": "cadmin",
+      "/cadmin command cooldown (ms)": 5000,
+      "/cadmin permission (developer)": "carbon.cadmin",
+      "/cmod permission (mute, kick, ban)": "carbon.cmod"
+    }
+  },
+  "Version": "3470498701"
+}
