@@ -1,5 +1,5 @@
 {
-  "Enabled": false,
+  "Enabled": true,
   "Config": {
     "OvenSpeedOverride": 0.5,
     "OvenSpeedBlacklistedOverride": 0.5,
@@ -12,10 +12,10 @@
       "*": 2.0
     },
     "Excavator": {
-      "*": 1.0
+      "*": 2.0
     },
     "Pickup": {
-      "*": 1.0,
+      "*": 2.0,
       "seed.black.berry": 1.0,
       "seed.blue.berry": 1.0,
       "seed.corn": 1.0,
@@ -28,10 +28,11 @@
       "seed.yellow.berry": 1.0
     },
     "Gather": {
-      "*": 1.0,
+      "*": 2.0,
       "skull.wolf": 1.0,
-      "skull.human": 1.0
-    }
+      "skull.human": 1.0,
+      "sulfur.ore": 1.0
+    }    
   },
   "Version": "1975352340"
 }
