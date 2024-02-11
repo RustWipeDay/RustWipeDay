@@ -11,21 +11,20 @@
   "Maximal Time Between Message And Answer": 3.0,
   "Welcome Message": [
     "Welcome, {name}!",
-    "Hello, dear {name}!",
-    "Hello, {name}! Your IP: { ip }"
+    "Hello, {name}!",
+    "Wsp, {name}!",
+    "Hey, {name}!"
   ],
   "Welcome Message Enabled": false,
   "Joining Message": [
-    "Welcome, {name} ({id}, { ip })!",
-    "Hello, dear {name} ({id}, { ip })!",
+    "Welcome, {name}!",
+    "Hello, {name}!",
     "{name} came from {country} ({countrycode})"
   ],
   "Leaving Message": [
-    "Bye, {name} ({id}, { ip })!\nReason: {reason}",
-    "{name} ({id}, { ip }) left the game. Reason: {reason}",
-    "{name} from {country} ({countrycode}) just left the game!"
+    
   ],
-  "Joining Message Enabled": false,
+  "Joining Message Enabled": true,
   "Leaving Message Enabled": false,
   "Show Joining Message To Player That Joined": false,
   "Show Leaving Message To Player That Left": false,
@@ -36,7 +35,27 @@
       "Auto Messages": [
         {
           "Is Enabled": true,
-          "Message": "Do not mind, I am just a stupid bot."
+          "Message": "Join our Discord for special events and announcements! .gg/wxGHDrmCmW"
+        }
+      ]
+    },
+    {
+      "Permission": "smartchatbot.messages",
+      "Message Frequency": "5m",
+      "Auto Messages": [
+        {
+          "Is Enabled": true,
+          "Message": "Suspect a cheater? Always F7 report, and more for urgent matters, join our Discord! .gg/wxGHDrmCmW"
+        }
+      ]
+    },
+    {
+      "Permission": "smartchatbot.messages",
+      "Message Frequency": "5m",
+      "Auto Messages": [
+        {
+          "Is Enabled": true,
+          "Message": "Check out RustWipeDay's twitch! twitch.tv/odsscott"
         }
       ]
     }
@@ -51,22 +70,58 @@
           "Send Response For Everyone (true) or Only For Sender (false)": true,
           "Triggers": [
             {
-              "Percentage Of Contained Words": 0.75,
-              "Regex Enabled": false,
+              "Percentage Of Contained Words": 0,
+              "Regex Enabled": true,
               "Words": [
-                "How",
-                "this",
-                "bot",
-                "works"
+                "cheater",
+                "cheating",
+                "scriper",
+                "scripts",
+                "clients",
+                "client",
+                "hacks",
+                "hacking",
+                "hacker"
               ]
             }
           ],
           "Answers": [
-            "This bot really works.",
-            "IT WORKS OMG!"
+            "Always F7 report cheaters! For quicker response, join our Discord! .gg/wxGHDrmCmW",
+            "Suspect a cheater? Always F7 report, and more for urgent matters, join our Discord! .gg/wxGHDrmCmW",
+            "F7 report cheaters! For quicker response, join our Discord! .gg/wxGHDrmCmW",
+            "Always F7 report, and more for urgent matters, join our Discord! .gg/wxGHDrmCmW",
+            "F7 report, and more for urgent matters, join our Discord! .gg/wxGHDrmCmW"
+          ]
+        }
+      ]
+    },
+    {
+      "Permission": "smartchatbot.response",
+      "Auto Responses": [
+        {
+          "Is Enabled": true,
+          "Remove Message From Sender": false,
+          "Send Response For Everyone (true) or Only For Sender (false)": true,
+          "Triggers": [
+            {
+              "Percentage Of Contained Words": 0,
+              "Regex Enabled": true,
+              "Words": [
+                "discord",
+                "dc",
+                "invite",
+                "link",
+                "discord.gg"
+              ]
+            }
+          ],
+          "Answers": [
+            "Join our Discord for special events and announcements! .gg/wxGHDrmCmW"
           ]
         }
       ]
     }
   ]
+
+
 }

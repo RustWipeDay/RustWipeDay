@@ -9,3 +9,4 @@ temp/
 tools/
 carbonauto.cfg
 modules/ImageDatabase/
+modules/DRM/
