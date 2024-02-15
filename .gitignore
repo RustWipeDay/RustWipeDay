@@ -2,8 +2,12 @@
 bin/
 lang/
 logs/
+managed/
 obj/
 reports/
 temp/
+tools/
 modules/ImageDatabase/
 modules/DRM/
+data/Kits/player_data.json
+data/oxide.users.data
