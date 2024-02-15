@@ -2,11 +2,8 @@
 bin/
 lang/
 logs/
-managed/
 obj/
 reports/
 temp/
-tools/
-carbonauto.cfg
 modules/ImageDatabase/
 modules/DRM/
