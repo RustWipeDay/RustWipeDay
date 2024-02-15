@@ -1,5 +1,5 @@
 {
-  "Enabled": false,
+  "Enabled": true,
   "Config": {
     "VanishPermission": "vanish.allow",
     "VanishUnlockWhileVanishedPermission": "vanish.unlock",

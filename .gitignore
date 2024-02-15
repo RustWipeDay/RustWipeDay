@@ -7,6 +7,7 @@ obj/
 reports/
 temp/
 tools/
-carbonauto.cfg
 modules/ImageDatabase/
 modules/DRM/
+data/Kits/player_data.json
+data/oxide.users.data
