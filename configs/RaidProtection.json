@@ -1,0 +1,38 @@
+{
+  "General settings": {
+    "Currency item ID (if not using economics)": -932201673,
+    "Use economics balance (requires economics plugin)": false,
+    "Use reward points (requires server rewards plugin)": false
+  },
+  "Protection settings": {
+    "Protection levels": {
+      "0": {
+        "Online protection percentage (0-100)": 100.0,
+        "Offline protection percentage (0-100)": 100.0
+      }
+    },
+    "Delay after taking damage (seconds)": 10,
+    "Delay for offline protection (seconds)": 600,
+    "Protect buildings and deployables (true/false)": true,
+    "Protect players (true/false)": true,
+    "Protect vehicles and horses (true/false)": true,
+    "Protect traps and electronics (true/false)": true
+  },
+  "Cost settings": {
+    "Material cost multipliers": {
+      "twig": 1.0,
+      "wood": 1.0,
+      "stone": 1.0,
+      "metal": 1.0,
+      "armored": 1.0
+    },
+    "Default hourly building cost": 1.0,
+    "Default hourly base cost": 9.0,
+    "Default structure damage cost": 0.0
+  },
+  "Indicator settings": {
+    "Enabled": true,
+    "Persistent": false,
+    "Image url": "https://i.imgur.com/ue05FGg.png"
+  }
+}
