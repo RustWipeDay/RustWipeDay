@@ -1,0 +1,27 @@
+{
+  "Engine parts": {
+    "Tier 1 chance": 100,
+    "Tier 2 chance": 0,
+    "Tier 3 chance": 0,
+    "Min condition percent": 100.0,
+    "Max condition percent": 100.0
+  },
+  "Min fuel amount": 0,
+  "Max fuel amount": 0,
+  "Min health percent": 15.0,
+  "Max health percent": 50.0,
+  "Module presets": {
+    "2 sockets": {
+      "Use vanilla presets": true,
+      "Custom presets": []
+    },
+    "3 sockets": {
+      "Use vanilla presets": true,
+      "Custom presets": []
+    },
+    "4 sockets": {
+      "Use vanilla presets": true,
+      "Custom presets": []
+    }
+  }
+}
