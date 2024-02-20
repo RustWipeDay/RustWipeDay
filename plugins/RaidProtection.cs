@@ -463,14 +463,14 @@ namespace Oxide.Plugins
 
 		private void ApplyDamageCost(ProtectedCupboard tc, HitInfo info, Rust.DamageType majorityDamage, float ratio = 1f)
 		{
-			if (tc.CostPerDamage > 0 && majorityDamage != Rust.DamageType.Heat)
-			{
-				float costFromDamage = info.damageTypes.Total() * tc.CostPerDamage * (ratio);
-				tc.UpdateCostDebt(costFromDamage);
-				tc.UpdateStoredBalance(costFromDamage);
-				tc.UpdateStatus();
-				PLUGIN.Debug($"TC with ID={tc.Priv.net.ID} consumed ${costFromDamage} from damage");
-			}
+			//if (tc.CostPerDamage > 0 && majorityDamage != Rust.DamageType.Heat)
+			//{
+			//	float costFromDamage = info.damageTypes.Total() * tc.CostPerDamage * (ratio);
+			//	tc.UpdateCostDebt(costFromDamage);
+			//	tc.UpdateStoredBalance(costFromDamage);
+			//	tc.UpdateStatus();
+			//	PLUGIN.Debug($"TC with ID={tc.Priv.net.ID} consumed ${costFromDamage} from damage");
+			//}
 		}
 
 		private void InitProtectionLevels()
@@ -1259,32 +1259,32 @@ namespace Oxide.Plugins
 
 			public void UpdateCostDebt(float amount, int minAmount = 0)
 			{
-				if (Priv != null && !PLUGIN.config.Settings.UseEconomics && !PLUGIN.config.Settings.UseRP)
-				{
-					ContentsLocked = true;
-					CostDebt += Math.Max(minAmount, amount);
-					while (CostDebt >= 1)
-					{
-						Priv.inventory.FindItemByItemID(PLUGIN.config.Settings.CurrencyItemId).UseItem(1);
-						CostDebt -= 1;
-					}
-					ContentsLocked = false;
-					PLUGIN.RefreshUi(this);
-				}
+				//if (Priv != null && !PLUGIN.config.Settings.UseEconomics && !PLUGIN.config.Settings.UseRP)
+				//{
+				//	ContentsLocked = true;
+				//	CostDebt += Math.Max(minAmount, amount);
+				//	while (CostDebt >= 1)
+				//	{
+				//		Priv.inventory.FindItemByItemID(PLUGIN.config.Settings.CurrencyItemId).UseItem(1);
+				//		CostDebt -= 1;
+				//	}
+				//	ContentsLocked = false;
+				//	PLUGIN.RefreshUi(this);
+				//}
 			}
 
 
 			public void UpdateStoredBalance(float amount)
 			{
-				if (Priv != null && !PLUGIN.config.Settings.UseEconomics && !PLUGIN.config.Settings.UseRP)
-				{
-					float remainder = (float)(StoredBalance - Math.Truncate(StoredBalance));
-					StoredBalance = ItemAmount + remainder;
-				}
-				else
-				{
-					StoredBalance = Math.Max(StoredBalance - amount, 0);
-				}
+				//if (Priv != null && !PLUGIN.config.Settings.UseEconomics && !PLUGIN.config.Settings.UseRP)
+				//{
+				//	float remainder = (float)(StoredBalance - Math.Truncate(StoredBalance));
+				//	StoredBalance = ItemAmount + remainder;
+				//}
+				//else
+				//{
+				//	StoredBalance = Math.Max(StoredBalance - amount, 0);
+				//}
 			}
 
 			public void UpdateStatus()
@@ -1419,10 +1419,10 @@ namespace Oxide.Plugins
 				};
 
 				[JsonProperty(PropertyName = "Default hourly building cost")]
-				public float DefaultBuildingCost { get; set; } = 1.0f;
+				public float DefaultBuildingCost { get; set; } = 0f;
 
 				[JsonProperty(PropertyName = "Default hourly base cost")]
-				public float DefaultBasePrice { get; set; } = 9f;
+				public float DefaultBasePrice { get; set; } = 0f;
 
 				[JsonProperty(PropertyName = "Default structure damage cost")]
 				public float DefaultCostPerDamage { get; set; } = 0f;

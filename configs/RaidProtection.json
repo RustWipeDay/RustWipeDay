@@ -7,8 +7,8 @@
   "Protection settings": {
     "Protection levels": {
       "0": {
-        "Online protection percentage (0-100)": 100.0,
-        "Offline protection percentage (0-100)": 100.0
+        "Online protection percentage (0-100)": 50.0,
+        "Offline protection percentage (0-100)": 50.0
       }
     },
     "Delay after taking damage (seconds)": 10,
@@ -26,8 +26,8 @@
       "metal": 1.0,
       "armored": 1.0
     },
-    "Default hourly building cost": 1.0,
-    "Default hourly base cost": 9.0,
+    "Default hourly building cost": 0.0,
+    "Default hourly base cost": 0.0,
     "Default structure damage cost": 0.0
   },
   "Indicator settings": {
