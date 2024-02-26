@@ -1,9 +1,9 @@
 {
   "Clan Options": {
-    "Member limit": 8,
+    "Member limit": 6,
     "Moderator limit": 2,
     "Alliance Options": {
-      "Enable clan alliances": true,
+      "Enable clan alliances": false,
       "Alliance limit": 2
     },
     "Invite Options": {
@@ -21,8 +21,8 @@
   },
   "Clan Tag Options": {
     "Enable clan tags (requires BetterChat)": true,
-    "Tag opening character": "[",
-    "Tag closing character": "]",
+    "Tag opening character": "<",
+    "Tag closing character": ">",
     "Tag color (hex)": "#aaff55",
     "Allow clan leaders to set custom tag colors (BetterChat only)": false,
     "Tag size": 15,

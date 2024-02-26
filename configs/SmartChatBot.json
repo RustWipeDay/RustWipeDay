@@ -1,10 +1,10 @@
 {
-  "Chat Prefix": "<color=#787FFF>Bot </color>",
+  "Chat Prefix": "<color=#c45508>[RustWipeDay] </color>",
   "Show Chat Prefix": true,
-  "Bot Icon (SteamID)": 0,
+  "Bot Icon (SteamID)": 76561199643330805,
   "Cooldown Between Auto Responses For User": "10s",
   "Global Cooldown Between Auto Responses": "2s",
-  "Use Default Chat (0), Chat Plus (1), Better Chat (2)": 0,
+  "Use Default Chat (0), Chat Plus (1), Better Chat (2)": 2,
   "Debug": false,
   "Allow Multiple Auto Responses": false,
   "Minimal Time Between Message And Answer": 1.0,
@@ -24,9 +24,9 @@
   "Leaving Message": [
     
   ],
-  "Joining Message Enabled": true,
+  "Joining Message Enabled": false,
   "Leaving Message Enabled": false,
-  "Show Joining Message To Player That Joined": false,
+  "Show Joining Message To Player That Joined": true,
   "Show Leaving Message To Player That Left": false,
   "Auto Messages": [
     {
@@ -36,23 +36,11 @@
         {
           "Is Enabled": true,
           "Message": "Join our Discord for special events and announcements! .gg/wxGHDrmCmW"
-        }
-      ]
-    },
-    {
-      "Permission": "smartchatbot.messages",
-      "Message Frequency": "5m",
-      "Auto Messages": [
+        },
         {
           "Is Enabled": true,
           "Message": "Suspect a cheater? Always F7 report, and more for urgent matters, join our Discord! .gg/wxGHDrmCmW"
-        }
-      ]
-    },
-    {
-      "Permission": "smartchatbot.messages",
-      "Message Frequency": "5m",
-      "Auto Messages": [
+        },
         {
           "Is Enabled": true,
           "Message": "Check out RustWipeDay's twitch! twitch.tv/odsscott"
@@ -70,7 +58,7 @@
           "Send Response For Everyone (true) or Only For Sender (false)": true,
           "Triggers": [
             {
-              "Percentage Of Contained Words": 0,
+              "Percentage Of Contained Words": 0.01,
               "Regex Enabled": true,
               "Words": [
                 "cheater",
@@ -104,7 +92,7 @@
           "Send Response For Everyone (true) or Only For Sender (false)": true,
           "Triggers": [
             {
-              "Percentage Of Contained Words": 0,
+              "Percentage Of Contained Words": 0.01,
               "Regex Enabled": true,
               "Words": [
                 "discord",

@@ -3,7 +3,7 @@
     "GroupName": "default",
     "Priority": 0,
     "Title": {
-      "Text": "[Player]",
+      "Text": "",
       "Color": "#55aaff",
       "Size": 15,
       "Hidden": false,
