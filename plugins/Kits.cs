@@ -233,7 +233,7 @@ namespace Oxide.Plugins
         #region Purchase Costs     
         private CostType _costType;
 
-        private enum CostType { Scrap, ServerRewards, Economics }
+        private enum CostType { Scrap, ServerRewards, Economics, PvP }
 
         private const int SCRAP_ITEM_ID = -932201673;
 
@@ -260,6 +260,8 @@ namespace Oxide.Plugins
                     }
                 case CostType.Economics:
                     return (bool)Economics?.Call("Withdraw", player.UserIDString, (double)amount);
+                case CostType.PvP:
+                    return false;
             }
             return false;
         }
