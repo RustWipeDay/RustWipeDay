@@ -1,8 +1,8 @@
 {
   "Enabled": true,
   "Config": {
-    "OvenSpeedOverride": 0.5,
-    "OvenSpeedBlacklistedOverride": 0.5,
+    "OvenSpeedOverride": 0.2,
+    "OvenSpeedBlacklistedOverride": 0.2,
     "OvenSpeedOverrideBlacklist (prefab shortname, type)": [
       "lantern.deployed",
       "tunalight.deployed",
@@ -18,10 +18,8 @@
       "*": 2.0
     },
     "Gather": {
-      "*": 2.0,
-      "skull.human": 1.0,
-      "sulfur.ore": 1.0
-    }    
+      "*": 2.0
+    }
   },
   "Version": "1975352340"
 }

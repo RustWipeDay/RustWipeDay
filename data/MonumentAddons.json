@@ -1,7 +1,10 @@
 {
   "DataFileVersion": 2.0,
   "EnabledProfiles": [
-    "Default"
+    "Default",
+    "MonumentsRecycler",
+    "OutpostAirwolf",
+    "SafeZoneRecyclers"
   ],
   "SelectedProfiles": {}
 }

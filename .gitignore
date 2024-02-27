@@ -11,3 +11,7 @@ modules/ImageDatabase/
 modules/DRM/
 data/Kits/player_data.json
 data/oxide.users.data
+data/vendordata_cf.db
+data/vendordata_umod.db
+data/Kits/player_data.json
+data/clan_data.json

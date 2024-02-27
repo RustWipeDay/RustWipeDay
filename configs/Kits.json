@@ -1,16 +1,13 @@
 {
   "Kit chat command": "kit",
   "Currency used for purchase costs (Scrap, Economics, ServerRewards)": "Scrap",
-  "Log kits given": false,
-  "Wipe player data when the server is wiped": false,
+  "Log kits given": true,
+  "Wipe player data when the server is wiped": true,
   "Use the Kits UI menu": true,
   "Allow players to toggle auto-kits on spawn": false,
   "Show kits with permissions assigned to players without the permission": false,
   "Players with the admin permission ignore usage restrictions": false,
-  "Autokits ordered by priority": [
-    "ExampleKitName",
-    "OtherKitName"
-  ],
+  "Autokits ordered by priority": [],
   "Post wipe cooldowns (kit name | seconds)": {
     "ExampleKitName": 3600,
     "OtherKitName": 600
@@ -23,27 +20,27 @@
   ],
   "UI Options": {
     "Panel Color": {
-      "Hex": "#232323",
+      "Hex": "#131313",
       "Alpha": 1.0
     },
     "Disabled Color": {
-      "Hex": "#3e3e42",
+      "Hex": "#2e2e30",
       "Alpha": 1.0
     },
     "Color 1": {
-      "Hex": "#007acc",
+      "Hex": "#005c99",
       "Alpha": 1.0
     },
     "Color 2": {
-      "Hex": "#6a8b38",
+      "Hex": "#345b6f",
       "Alpha": 1.0
     },
     "Color 3": {
-      "Hex": "#d85540",
+      "Hex": "#3a3d40",
       "Alpha": 1.0
     },
     "Color 4": {
-      "Hex": "#d08822",
+      "Hex": "#494949",
       "Alpha": 1.0
     },
     "Default kit image URL": "https://chaoscode.io/oxide/Images/kiticon.png",
