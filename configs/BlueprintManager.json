@@ -1,0 +1,44 @@
+{
+  "Simple Mode (disables advance blueprint management options)": false,
+  "Update players on permission change (automatically updates a players BPs when their permissions change)": true,
+  "Blacklist (items from being automatically learnt)": [],
+  "DefaultBPs (Blueprints to be automatically learnt)": [],
+  "Assign custom BP unlocks to various perms (permission, BP List": {
+    "customperm1": [
+      "rock"
+    ],
+    "customperm2": [
+      "torch"
+    ]
+  },
+  "Advanced Blueprint Management Options": {
+    "pistol.rev": {
+      "defaultBP": true,
+      "canResearch": true,
+      "scrapRequired": 0,
+      "unlockMinutesAfterWipe": -1,
+      "autoUnlockMinutesAfterWipe": false
+    },
+    "ammo.pistol": {
+      "defaultBP": true,
+      "canResearch": true,
+      "scrapRequired": 0,
+      "unlockMinutesAfterWipe": -1,
+      "autoUnlockMinutesAfterWipe": false
+    },
+    "pickaxe": {
+      "defaultBP": true,
+      "canResearch": true,
+      "scrapRequired": 0,
+      "unlockMinutesAfterWipe": -1,
+      "autoUnlockMinutesAfterWipe": false
+    },
+    "hatchet": {
+      "defaultBP": true,
+      "canResearch": true,
+      "scrapRequired": 0,
+      "unlockMinutesAfterWipe": -1,
+      "autoUnlockMinutesAfterWipe": false
+    }
+  }
+}

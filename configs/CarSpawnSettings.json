@@ -11,6 +11,17 @@
   "Min health percent": 15.0,
   "Max health percent": 75.0,
   "Module presets": {
-
+    "2 sockets": {
+      "Use vanilla presets": true,
+      "Custom presets": []
+    },
+    "3 sockets": {
+      "Use vanilla presets": true,
+      "Custom presets": []
+    },
+    "4 sockets": {
+      "Use vanilla presets": true,
+      "Custom presets": []
+    }
   }
 }

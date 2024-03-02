@@ -1,14 +1,14 @@
 {
-  "Default crafting rate percentage": 100.0,
+  "Default crafting rate percentage": 50.0,
   "Save commands to config (save config changes via command to the configuration)": true,
   "Simple Mode (disables: instant bulk craft, skin options and full inventory checks for better performance)": false,
-  "Allow crafting when inventory is full": false,
-  "Complete crafting on server shut down": false,
+  "Allow crafting when inventory is full": true,
+  "Complete crafting on server shut down": true,
   "Craft items with random skins if not already skinned": false,
   "Show Crafting Notes": false,
   "Crafting rate bonus mulitplier (apply oxide perms for additional mulitpliers": {
-    "vip1": 150.0,
-    "vip2": 200.0
+    "vip1": 90.0,
+    "vip2": 80.0
   },
   "Advanced Crafting Options": {
     "hat.wolf": {

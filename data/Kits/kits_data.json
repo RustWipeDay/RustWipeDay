@@ -1993,8 +1993,95 @@
         }
       ]
     },
-    "AK": {
-      "Name": "AK",
+    "25 Scrap": {
+      "Name": "25 Scrap",
+      "Description": "",
+      "RequiredPermission": "",
+      "Currency": 3,
+      "HonorRankRequirement": 1,
+      "MaximumUses": 0,
+      "RequiredAuth": 0,
+      "Cooldown": 0,
+      "Cost": 1,
+      "IsHidden": false,
+      "CopyPasteFile": "",
+      "KitImage": "https://rustwipeday.com/img/kits/scrap.png",
+      "MainItems": [],
+      "WearItems": [],
+      "BeltItems": [
+        {
+          "Shortname": "scrap",
+          "DisplayName": null,
+          "Skin": 0,
+          "Amount": 25,
+          "Position": 0,
+          "Frequency": -1,
+          "BlueprintShortname": null,
+          "Text": null,
+          "Contents": []
+        }
+      ]
+    },
+    "1K Wood": {
+      "Name": "1K Wood",
+      "Description": "",
+      "RequiredPermission": "",
+      "Currency": 3,
+      "HonorRankRequirement": 1,
+      "MaximumUses": 0,
+      "RequiredAuth": 0,
+      "Cooldown": 0,
+      "Cost": 1,
+      "IsHidden": false,
+      "CopyPasteFile": "",
+      "KitImage": "https://rustwipeday.com/img/kits/wood.png",
+      "MainItems": [],
+      "WearItems": [],
+      "BeltItems": [
+        {
+          "Shortname": "wood",
+          "DisplayName": null,
+          "Skin": 0,
+          "Amount": 1000,
+          "Position": 0,
+          "Frequency": -1,
+          "BlueprintShortname": null,
+          "Text": null,
+          "Contents": []
+        }
+      ]
+    },
+    "1K Stone": {
+      "Name": "1K Stone",
+      "Description": "",
+      "RequiredPermission": "",
+      "Currency": 3,
+      "HonorRankRequirement": 1,
+      "MaximumUses": 0,
+      "RequiredAuth": 0,
+      "Cooldown": 0,
+      "Cost": 1,
+      "IsHidden": false,
+      "CopyPasteFile": "",
+      "KitImage": "https://rustwipeday.com/img/kits/stones.png",
+      "MainItems": [],
+      "WearItems": [],
+      "BeltItems": [
+        {
+          "Shortname": "stone",
+          "DisplayName": null,
+          "Skin": 0,
+          "Amount": 1000,
+          "Position": 0,
+          "Frequency": -1,
+          "BlueprintShortname": null,
+          "Text": null,
+          "Contents": []
+        }
+      ]
+    },
+    "Code Locks": {
+      "Name": "Code Locks",
       "Description": "",
       "RequiredPermission": "",
       "Currency": 3,
@@ -2002,22 +2089,80 @@
       "MaximumUses": 0,
       "RequiredAuth": 0,
       "Cooldown": 0,
-      "Cost": 10,
+      "Cost": 1,
       "IsHidden": false,
       "CopyPasteFile": "",
-      "KitImage": "",
+      "KitImage": "https://rustwipeday.com/img/kits/lock.code.png",
       "MainItems": [],
       "WearItems": [],
       "BeltItems": [
         {
-          "Shortname": "rifle.ak",
+          "Shortname": "lock.code",
+          "DisplayName": null,
+          "Skin": 0,
+          "Amount": 3,
+          "Position": 0,
+          "Frequency": -1,
+          "BlueprintShortname": null,
+          "Text": null,
+          "Contents": []
+        }
+      ]
+    },
+    "Bandages": {
+      "Name": "Bandages",
+      "Description": "",
+      "RequiredPermission": "",
+      "Currency": 3,
+      "HonorRankRequirement": 2,
+      "MaximumUses": 0,
+      "RequiredAuth": 0,
+      "Cooldown": 0,
+      "Cost": 1,
+      "IsHidden": false,
+      "CopyPasteFile": "",
+      "KitImage": "https://rustwipeday.com/img/kits/bandage.png",
+      "MainItems": [],
+      "WearItems": [],
+      "BeltItems": [
+        {
+          "Shortname": "bandage",
+          "DisplayName": null,
+          "Skin": 0,
+          "Amount": 4,
+          "Position": 0,
+          "Frequency": -1,
+          "BlueprintShortname": null,
+          "Text": null,
+          "Contents": []
+        }
+      ]
+    },
+    "Crossbow": {
+      "Name": "Crossbow",
+      "Description": "",
+      "RequiredPermission": "",
+      "Currency": 3,
+      "HonorRankRequirement": 2,
+      "MaximumUses": 0,
+      "RequiredAuth": 0,
+      "Cooldown": 0,
+      "Cost": 3,
+      "IsHidden": false,
+      "CopyPasteFile": "",
+      "KitImage": "https://rustwipeday.com/img/kits/crossbow.png",
+      "MainItems": [],
+      "WearItems": [],
+      "BeltItems": [
+        {
+          "Shortname": "crossbow",
           "DisplayName": null,
           "Skin": 0,
           "Amount": 1,
-          "Condition": 131.0,
-          "MaxCondition": 150.0,
-          "Ammo": 25,
-          "Ammotype": "ammo.rifle",
+          "Condition": 100,
+          "MaxCondition": 100,
+          "Ammo": 16,
+          "Ammotype": "arrow.wood",
           "Position": 0,
           "Frequency": -1,
           "BlueprintShortname": null,

@@ -1,0 +1,31 @@
+{
+  "Text Display Frequency (Seconds)": 0.3,
+  "Enable Messages Cyclicity": false,
+  "Use Random Cyclicity (Instead of sequential)": false,
+  "Cycle Messages Every ~N Seconds": 3.0,
+  "Messages": [
+    {
+      "Top Status": "<color=#ff0>Welcome {PLAYERNAME}!</color>",
+      "Bottom Status": "<color=#9cf>Enjoy your stay.</color>"
+    },
+    {
+      "Top Status": "<color=#9cf>Hi there!</color>",
+      "Bottom Status": "<color=#ff0>Enjoy your stay.</color>"
+    }
+  ],
+  "Enable Queue Messages": true,
+  "Queue Messages": [
+    {
+      "Top Status": "<color=#ff0>You're in queue...</color>",
+      "Bottom Status": "<color=#9cf>{AHEAD} players ahead of you.</color>"
+    },
+    {
+      "Top Status": "<color=#ff0>You're in queue...</color>",
+      "Bottom Status": "<color=#ff0>{BEHIND} players behind you.</color>"
+    }
+  ],
+  "Last Message (When entering game)": {
+    "Top Status": "<color=#ff0>Welcome to our server!</color>",
+    "Bottom Status": "<color=#060>Entering game...</color>"
+  }
+}

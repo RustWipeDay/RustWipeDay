@@ -1,0 +1,24 @@
+{
+  "EmbedColor": 9044189,
+  "EmbedText": {
+    "1": {
+      "inline": false,
+      "name": "First Embed Name",
+      "value": "First Value"
+    },
+    "2": {
+      "inline": false,
+      "name": "Second Embed Name",
+      "value": "Second Value"
+    }
+  },
+  "EmbedTextTitle": "RustWipeDay Squad Scene",
+  "Enable": true,
+  "UsingEmbedText": true,
+  "WebhookURL": "https://discord.com/api/webhooks/1212084679101124698/X3JYNA76hWntbTN8AoQj_HmYLgGThxDH29CD3p4ssMW4EgKTAoVXU-GkV50ZezxOQPgu",
+  "WipeMessage": [
+    "{0} has wiped.",
+    "F1 `connect {1}:{2}`",
+    "|| @everyone ||"
+  ]
+}

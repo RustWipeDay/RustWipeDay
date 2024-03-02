@@ -37,7 +37,7 @@
     "List purged clans in console when purging": true
   },
   "Settings": {
-    "Log clan and member changes": false,
+    "Log clan and member changes": true,
     "Data save interval (seconds)": 900
   },
   "Version": {
