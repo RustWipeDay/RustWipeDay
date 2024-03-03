@@ -4,7 +4,7 @@
     "Friendly Fire": false
   },
   "Change friendly fire state permission": "friendlyfire.changestate",
-  "Send friendly fire messages": true,
+  "Send friendly fire messages": false,
   "Include check if friend": true,
   "Include check if team member": true,
   "Include check if clan member": true
