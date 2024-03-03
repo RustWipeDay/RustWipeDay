@@ -3777,8 +3777,8 @@
         }
       ]
     },
-    "HLMG": {
-      "Name": "HLMG",
+    "HMLMG": {
+      "Name": "HMLMG",
       "Description": "",
       "RequiredPermission": "",
       "Currency": 3,
@@ -3789,7 +3789,7 @@
       "Cost": 27,
       "IsHidden": false,
       "CopyPasteFile": "",
-      "KitImage": "",
+      "KitImage": "https://rustwipeday.com/img/kits/hmlmg.png",
       "MainItems": [],
       "WearItems": [],
       "BeltItems": [
@@ -3822,7 +3822,7 @@
       "Cost": 50,
       "IsHidden": false,
       "CopyPasteFile": "",
-      "KitImage": "",
+      "KitImage": "https://rustwipeday.com/img/kits/pookie.bear.png",
       "MainItems": [
         {
           "Shortname": "pookie.bear",
@@ -3987,7 +3987,7 @@
       "Cost": 17,
       "IsHidden": false,
       "CopyPasteFile": "",
-      "KitImage": "",
+      "KitImage": "https://rustwipeday.com/img/kits/multiplegrenadelauncher.png",
       "MainItems": [],
       "WearItems": [],
       "BeltItems": [
@@ -4020,7 +4020,7 @@
       "Cost": 10,
       "IsHidden": false,
       "CopyPasteFile": "",
-      "KitImage": "",
+      "KitImage": "https://rustwipeday.com/img/kits/gingerbreadsuit.png",
       "MainItems": [
         {
           "Shortname": "gingerbreadsuit",
