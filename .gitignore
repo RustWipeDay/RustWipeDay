@@ -15,3 +15,11 @@ data/vendordata_cf.db
 data/vendordata_umod.db
 data/Kits/player_data.json
 data/clan_data.json
+data/AutomaticAuthorization.json
+data/DiscordMessages.json
+data/FriendlyFire.json
+data/Honor.db
+data/ImageLibrary/
+data/LootPlus.json
+data/PlayerPoints.db
+data/playerdatabase.db

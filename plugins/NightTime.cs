@@ -32,7 +32,7 @@ namespace Oxide.Plugins
             }
         }
 
-        private bool IsNightTime()
+        bool IsNightTime()
         {
             return TOD_Sky.Instance.Cycle.Hour < 7 || TOD_Sky.Instance.Cycle.Hour > 18.5;
         }
