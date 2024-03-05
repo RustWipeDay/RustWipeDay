@@ -23,3 +23,5 @@ data/ImageLibrary/
 data/LootPlus.json
 data/PlayerPoints.db
 data/playerdatabase.db
+configs/Tebex.json
+configs/Godmode.json
