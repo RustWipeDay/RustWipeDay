@@ -18,7 +18,7 @@ namespace Oxide.Plugins
     {
         #region Fields
         [PluginReference]
-        private Plugin CopyPaste, ImageLibrary, ServerRewards, Economics;
+        private Plugin CopyPaste, ImageLibrary, ServerRewards, Economics, DogTags, HonorSystem;
 
         private DateTime _deprecatedHookTime = new DateTime(2021, 12, 31);
 
@@ -36,8 +36,6 @@ namespace Oxide.Plugins
 
             permission.RegisterPermission(ADMIN_PERMISSION, this);
             kitData.RegisterPermissions(permission, this);
-
-            _costType = ParseType<CostType>(Configuration.Currency);
 
             cmd.AddChatCommand(Configuration.Command, this, cmdKit);
             cmd.AddConsoleCommand(Configuration.Command, this, "ccmdKit");
@@ -198,8 +196,8 @@ namespace Oxide.Plugins
 
             if (!ignoreAuthCost && kit.Cost > 0)
             {
-                if (!ChargePlayer(player, kit.Cost))
-                    return string.Format(Message("Error.CanClaim.InsufficientFunds", player.userID), kit.Cost, Message($"Cost.{_costType}", player.userID));
+                if (!ChargePlayer(player, kit.Currency, kit.Cost, kit.HonorRankRequirement))
+                    return string.Format(Message("Error.CanClaim.InsufficientFunds", player.userID), kit.Cost, Message($"Cost.{kit.Currency.ToString()}", player.userID));
             }
 
             return null;
@@ -237,12 +235,12 @@ namespace Oxide.Plugins
 
         private const int SCRAP_ITEM_ID = -932201673;
 
-        private bool ChargePlayer(BasePlayer player, int amount)
+        private bool ChargePlayer(BasePlayer player, CostType currency, int amount, int honorRankRequirement)
         {
             if (amount == 0)
                 return true;
 
-            switch (_costType)
+            switch (currency)
             {
                 case CostType.Scrap:
                     if (amount <= player.inventory.GetAmount(SCRAP_ITEM_ID))
@@ -261,7 +259,7 @@ namespace Oxide.Plugins
                 case CostType.Economics:
                     return (bool)Economics?.Call("Withdraw", player.UserIDString, (double)amount);
                 case CostType.PvP:
-                    return false;
+                    return (bool)DogTags?.Call("TakePoints", player.userID, amount);
             }
             return false;
         }
@@ -295,7 +293,7 @@ namespace Oxide.Plugins
             return mins > 0 ? $"{mins:00}m:{secs:00}s" : $"{secs}s";
         }
 
-        private void GetUserValidKits(BasePlayer player, List<KitData.Kit> list, ulong npcId = 0UL)
+        private void GetUserValidKits(BasePlayer player, List<KitData.Kit> list, ulong npcId = 0UL, bool isPvPReward = false)
         {
             bool isAdmin = IsAdmin(player);
             bool viewPermissionKits = Configuration.ShowPermissionKits;
@@ -324,6 +322,12 @@ namespace Oxide.Plugins
                 kitData.ForEach((KitData.Kit kit) =>
                 {
                     if (kit.IsHidden && !isAdmin)
+                        return;
+
+                    if (isPvPReward && kit.Currency != CostType.PvP)
+                        return;
+
+                    if (!isPvPReward && kit.Currency == CostType.PvP && GetHonorRank(player) < kit.HonorRankRequirement)
                         return;
 
                     if (!viewPermissionKits && !string.IsNullOrEmpty(kit.RequiredPermission) && !permission.UserHasPermission(player.UserIDString, kit.RequiredPermission) && !isAdmin)
@@ -371,6 +375,16 @@ namespace Oxide.Plugins
                 OpenKitGrid(player, 0, npcPlayer.userID);            
         }
         #endregion
+
+        private string GetHonorRankTitle(int rank) {
+            (string title, string color, int required, double percentPopulation) = HonorSystem?.Call<(string title, string color, int required, double percentPopulation)>
+                ("GetRankInfo", rank) ?? ("", "", 0, 0.000);
+            return title;
+        }
+
+        private int GetHonorRank(BasePlayer player) {
+            return HonorSystem?.Call<int>("GetPlayerHonorRank", player.userID) ?? 0;
+        }
 
         #region Deprecated API 
         [HookMethod("isKit")]
@@ -581,7 +595,7 @@ namespace Oxide.Plugins
         private const string MAGNIFY_ICON = "kits.magnifyicon";
 
         #region Kit Grid View
-        private void OpenKitGrid(BasePlayer player, int page = 0, ulong npcId = 0UL)
+        private void OpenKitGrid(BasePlayer player, int page = 0, ulong npcId = 0UL, bool isPvPReward = false)
         {
             CuiElementContainer container = UI.Container(UI_MENU, "0 0 0 0.9", new UI4(0.2f, 0.15f, 0.8f, 0.85f), true, "Hud");
 
@@ -594,17 +608,17 @@ namespace Oxide.Plugins
             if (IsAdmin(player) && npcId == 0UL)            
                 UI.Button(container, UI_MENU, Configuration.Menu.Color2.Get, Message("UI.CreateNew", player.userID), 14, new UI4(0.85f, 0.9375f, 0.9525f, 0.9825f), "kits.create");
             
-            CreateGridView(player, container, page, npcId);
+            CreateGridView(player, container, page, npcId, isPvPReward);
 
             CuiHelper.DestroyUi(player, UI_MENU);
             CuiHelper.AddUi(player, container);
         }
 
-        private void CreateGridView(BasePlayer player, CuiElementContainer container, int page = 0, ulong npcId = 0UL)
+        private void CreateGridView(BasePlayer player, CuiElementContainer container, int page = 0, ulong npcId = 0UL, bool isPvPReward = false)
         {
             List<KitData.Kit> list = Facepunch.Pool.GetList<KitData.Kit>();
 
-            GetUserValidKits(player, list, npcId);
+            GetUserValidKits(player, list, npcId, isPvPReward);
 
             if (list.Count == 0)
             {
@@ -618,7 +632,7 @@ namespace Oxide.Plugins
             int count = 0;
             for (int i = page * 8; i < max; i++)                
             {
-                CreateKitEntry(player, playerUsageData, container, list[i], count, page, npcId);                
+                CreateKitEntry(player, playerUsageData, container, list[i], count, page, npcId, isPvPReward);                
                 count += 1;
             }
 
@@ -630,8 +644,8 @@ namespace Oxide.Plugins
             Facepunch.Pool.FreeList(ref list);
         }
 
-        private void CreateKitEntry(BasePlayer player, PlayerData.PlayerUsageData playerUsageData, CuiElementContainer container, KitData.Kit kit, int index, int page, ulong npcId)
-        {            
+        private void CreateKitEntry(BasePlayer player, PlayerData.PlayerUsageData playerUsageData, CuiElementContainer container, KitData.Kit kit, int index, int page, ulong npcId, bool isPvPReward)
+        {          
             UI4 position = KitAlign.Get(index);
 
             UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(position.xMin, position.yMax, position.xMax, position.yMax + 0.04f));
@@ -642,7 +656,7 @@ namespace Oxide.Plugins
             string imageId = string.IsNullOrEmpty(kit.KitImage) ? GetImage(DEFAULT_ICON) : GetImage(kit.Name);
             UI.Image(container, UI_MENU, imageId, new UI4(position.xMin + 0.005f, position.yMax - 0.3f, position.xMax - 0.005f, position.yMax - 0.0075f));
             
-            UI.Button(container, UI_MENU, "0 0 0 0", string.Empty, 0, new UI4(position.xMin + 0.005f, position.yMax - 0.3f, position.xMax - 0.005f, position.yMax - 0.0075f), $"kits.gridview inspect {CommandSafe(kit.Name)} {page} {npcId}");
+            UI.Button(container, UI_MENU, "0 0 0 0", string.Empty, 0, new UI4(position.xMin + 0.005f, position.yMax - 0.3f, position.xMax - 0.005f, position.yMax - 0.0075f), $"kits.gridview inspect {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}");
 
             string buttonText;
             string buttonCommand = string.Empty;
@@ -655,7 +669,7 @@ namespace Oxide.Plugins
             {
                 buttonText = Message("UI.Redeem", player.userID);
                 buttonColor = Configuration.Menu.Color2.Get;
-                buttonCommand = $"kits.gridview redeem {CommandSafe(kit.Name)} {page} {npcId}";
+                buttonCommand = $"kits.gridview redeem {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}";
             }
             else
             {
@@ -679,18 +693,22 @@ namespace Oxide.Plugins
                 }
                 else if (kit.Cost > 0)
                 {
-                    UI.Label(container, UI_MENU, string.Format(Message("UI.Cost", player.userID), kit.Cost, Message($"Cost.{_costType}", player.userID)), 12,
+                    if (kit.HonorRankRequirement > 0) {
+                        UI.Label(container, UI_MENU, $"Rank requirement: {GetHonorRankTitle(kit.HonorRankRequirement)}", 12,
+                        new UI4(position.xMin + 0.005f, position.yMin + 0.0475f, position.xMax - 0.005f, position.yMax - 0.2f), TextAnchor.MiddleLeft);
+                    }
+                    UI.Label(container, UI_MENU, string.Format(Message("UI.Cost", player.userID), kit.Cost, Message($"Cost.{kit.Currency}", player.userID)), 12,
                         new UI4(position.xMin + 0.005f, position.yMin + 0.0475f, position.xMax - 0.005f, position.yMax - 0.3f), TextAnchor.MiddleLeft);
 
                     buttonText = Message("UI.Purchase", player.userID);
                     buttonColor = Configuration.Menu.Color2.Get;
-                    buttonCommand = $"kits.gridview redeem {CommandSafe(kit.Name)} {page} {npcId}";
+                    buttonCommand = $"kits.gridview redeem {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}";
                 }
                 else
                 {
                     buttonText = Message("UI.Redeem", player.userID);
                     buttonColor = Configuration.Menu.Color2.Get;
-                    buttonCommand = $"kits.gridview redeem {CommandSafe(kit.Name)} {page} {npcId}";
+                    buttonCommand = $"kits.gridview redeem {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}";
                 }
             }
 
@@ -698,12 +716,12 @@ namespace Oxide.Plugins
                 new UI4(position.xMin + 0.038f, position.yMin + 0.0075f, position.xMax - 0.005f, position.yMin + 0.0475f), buttonCommand);
 
             UI.Button(container, UI_MENU, ICON_BACKGROUND_COLOR, GetImage(MAGNIFY_ICON), 
-                new UI4(position.xMin + 0.005f, position.yMin + 0.0075f, position.xMin + 0.033f, position.yMin + 0.0475f), $"kits.gridview inspect {CommandSafe(kit.Name)} {page} {npcId}");
+                new UI4(position.xMin + 0.005f, position.yMin + 0.0075f, position.xMin + 0.033f, position.yMin + 0.0475f), $"kits.gridview inspect {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}");
         }
         #endregion
 
         #region Kit View       
-        private void OpenKitView(BasePlayer player, string name, int page, ulong npcId)
+        private void OpenKitView(BasePlayer player, string name, int page, ulong npcId, bool isPvPReward)
         {
             if (!kitData.Find(name, out KitData.Kit kit))
             {
@@ -717,7 +735,7 @@ namespace Oxide.Plugins
 
             UI.Label(container, UI_MENU, $"{Message("UI.Title", player.userID)} - {name}", 20, new UI4(0.015f, 0.93f, 0.99f, 0.99f), TextAnchor.MiddleLeft);
 
-            UI.Button(container, UI_MENU, Configuration.Menu.Color3.Get, "<b>×</b>", 20, new UI4(0.9575f, 0.9375f, 0.99f, 0.9825f), $"kits.gridview page 0 {npcId}");
+            UI.Button(container, UI_MENU, Configuration.Menu.Color3.Get, "<b>×</b>", 20, new UI4(0.9575f, 0.9375f, 0.99f, 0.9825f), $"kits.gridview page 0 {npcId} {isPvPReward}");
 
             bool isAdmin = IsAdmin(player);
             if (isAdmin)
@@ -781,15 +799,18 @@ namespace Oxide.Plugins
                         buttonColor = Configuration.Menu.Disabled.Get;
                     }
                 }
+                if (kit.HonorRankRequirement != 0) {
+                    AddLabelField(container, i += 1, Message("UI.HonorRankRequirement", player.userID), $"{GetHonorRankTitle(kit.HonorRankRequirement)}");
+                }
                 if (kit.Cost != 0)
                 {
-                    AddLabelField(container, i += 1, Message("UI.PurchaseCost", player.userID), $"{kit.Cost} {(Message($"Cost.{_costType}", player.userID))}");
+                    AddLabelField(container, i += 1, Message("UI.PurchaseCost", player.userID), $"{kit.Cost} {(Message($"Cost.{kit.Currency}", player.userID))}");
 
                     if (string.IsNullOrEmpty(buttonText))
                     {
                         buttonText = Message("UI.Purchase", player.userID);
                         buttonColor = Configuration.Menu.Color2.Get;
-                        buttonCommand = $"kits.gridview redeem {CommandSafe(kit.Name)} {page} {npcId}";
+                        buttonCommand = $"kits.gridview redeem {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}";
                     }
                 }
             }
@@ -1082,10 +1103,10 @@ namespace Oxide.Plugins
             switch (arg.GetString(0).ToLower())
             {
                 case "page":
-                    OpenKitGrid(player, arg.GetInt(1), arg.GetULong(2));
+                    OpenKitGrid(player, arg.GetInt(1), arg.GetULong(2), arg.GetBool(3));
                     return;
-                case "inspect":                    
-                    OpenKitView(player, CommandSafe(arg.GetString(1), true), arg.GetInt(2), arg.GetULong(3));                    
+                case "inspect":               
+                    OpenKitView(player, CommandSafe(arg.GetString(1), true), arg.GetInt(2), arg.GetULong(3), arg.GetBool(4));                    
                     return;
                 case "redeem":
                     {
@@ -1096,7 +1117,7 @@ namespace Oxide.Plugins
                             CuiHelper.DestroyUi(player, UI_POPUP);
                             player.ChatMessage(string.Format(Message("Notification.KitReceived", player.userID), kit));
                         }
-                        else OpenKitGrid(player, arg.GetInt(2), arg.GetULong(3));
+                        else OpenKitGrid(player, arg.GetInt(2), arg.GetULong(3), arg.GetBool(4));
                     }
                     return;
                 default:
@@ -1181,7 +1202,7 @@ namespace Oxide.Plugins
             if (!string.IsNullOrEmpty(kit.KitImage))
                 RegisterImage(kit.Name, kit.KitImage);
 
-            OpenKitView(player, kit.Name, 0, 0UL);
+            OpenKitView(player, kit.Name, 0, 0UL, false);
             CreateMenuPopup(player, string.Format(Message("SaveKit.Success", player.userID), kit.Name));
         }
 
@@ -2831,6 +2852,9 @@ namespace Oxide.Plugins
                 public string Description { get; set; } = string.Empty;
                 public string RequiredPermission { get; set; } = string.Empty;
 
+                public CostType Currency { get; set; } = CostType.Scrap;
+                
+                public int HonorRankRequirement { get; set; }
                 public int MaximumUses { get; set; }
                 public int RequiredAuth { get; set; }
                 public int Cooldown { get; set; }
@@ -2863,6 +2887,8 @@ namespace Oxide.Plugins
                                 ["Name"] = Name,
                                 ["Description"] = Description,
                                 ["RequiredPermission"] = RequiredPermission,
+                                ["Currency"] = Currency.ToString(),
+                                ["HonorRankRequirement"] = HonorRankRequirement,
                                 ["MaximumUses"] = MaximumUses,
                                 ["RequiredAuth"] = RequiredAuth,
                                 ["Cost"] = Cost,
@@ -2896,10 +2922,14 @@ namespace Oxide.Plugins
                     kit.Description = other.Description;
                     kit.RequiredPermission = other.RequiredPermission;
 
+                    kit.Currency = other.Currency;
+                    kit.HonorRankRequirement = other.HonorRankRequirement;
+
                     kit.MaximumUses = other.MaximumUses;
                     kit.RequiredAuth = other.RequiredAuth;
                     kit.Cooldown = other.Cooldown;
                     kit.Cost = other.Cost;
+
 
                     kit.IsHidden = other.IsHidden;
 
@@ -3455,10 +3485,10 @@ namespace Oxide.Plugins
             ["Error.CanClaim.InsufficientFunds"] = "You need {0} {1} to claim this kit",
             ["Error.AutoKitDisabled"] = "Skipped giving auto-kit as you have it disabled",
 
-
             ["Cost.Scrap"] = "Scrap",
             ["Cost.ServerRewards"] = "RP",
             ["Cost.Economics"] = "Coins",
+            ["Cost.PvP"] = "Bounty points",
 
             ["Notification.KitReceived"] = "You have received the kit: <color=#ce422b>{0}</color>",
 

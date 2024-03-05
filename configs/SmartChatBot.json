@@ -43,7 +43,11 @@
         },
         {
           "Is Enabled": true,
-          "Message": "Check out RustWipeDay's twitch! twitch.tv/odsscott"
+          "Message": "Check out RustWipeDay's twitch! twitch.tv/OdsScott"
+        },
+        {
+          "Is Enabled": true,
+          "Message": "Visit the bounty hunter in Outpost, type /points, /honor, or /leaderboard to check your ranks."
         }
       ]
     }
