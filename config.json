@@ -1,29 +1,40 @@
 {
-  "ScriptDebuggingOrigin": "",
-  "ScriptWatchers": true,
-  "ZipScriptWatchers": true,
-  "ScriptWatcherOption": 0,
-  "FileNameCheck": true,
   "IsModded": true,
-  "PlayerDefaultGroup": "default",
-  "AdminDefaultGroup": "admin",
-  "LogFileMode": 2,
-  "LogVerbosity": 0,
-  "BypassAdminCooldowns": false,
-  "PluginTrackingTime": 60.0,
-  "LogSplitSize": 2.5,
   "CommandPrefixes": [
     "/"
   ],
-  "UnityStacktrace": true,
-  "ConditionalCompilationSymbols": [
-    "CARBON",
-    "RUST"
-  ],
-  "LogSeverity": 2,
-  "PermissionSerialization": 1,
+  "Rcon": true,
   "Language": "en",
   "WebRequestIp": null,
-  "oCommandChecks": true,
-  "ShowConsoleInfo": true
+  "Watchers": {
+    "ScriptWatchers": true,
+    "ZipScriptWatchers": true,
+    "ScriptWatcherOption": 0,
+    "FileNameCheck": true
+  },
+  "Permissions": {
+    "PlayerDefaultGroup": "default",
+    "AdminDefaultGroup": "admin",
+    "BypassAdminCooldowns": false,
+    "PermissionSerialization": 1
+  },
+  "Debugging": {
+    "ScriptDebuggingOrigin": "",
+    "PluginTrackingTime": 60.0,
+    "UnityStacktrace": true,
+    "ConditionalCompilationSymbols": [
+      "CARBON",
+      "RUST"
+    ]
+  },
+  "Logging": {
+    "LogSplitSize": 2.5,
+    "LogSeverity": 2,
+    "LogFileMode": 2,
+    "LogVerbosity": 0
+  },
+  "Misc": {
+    "oCommandChecks": true,
+    "ShowConsoleInfo": true
+  }
 }
