@@ -1,6 +1,6 @@
 {
   "Item blacklist (name or item ID)": [],
-  "Log usage to console": false,
+  "Log usage to console": true,
   "Show chat notices": false,
   "Show popup notices": false
 }
