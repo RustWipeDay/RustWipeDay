@@ -21,5 +21,51 @@
       "Chat": "{Title} {Username}: {Message}",
       "Console": "{Title} {Username}: {Message}"
     }
+  },
+  {
+    "GroupName": "admin",
+    "Priority": 0,
+    "Title": {
+      "Text": "[SAdmin]",
+      "Color": "#eb4034",
+      "Size": 15,
+      "Hidden": false,
+      "HiddenIfNotPrimary": false
+    },
+    "Username": {
+      "Color": "#d13224",
+      "Size": 15
+    },
+    "Message": {
+      "Color": "white",
+      "Size": 15
+    },
+    "Format": {
+      "Chat": "{Title} {Username}: {Message}",
+      "Console": "{Title} {Username}: {Message}"
+    }
+  },
+  {
+    "GroupName": "moderator",
+    "Priority": 0,
+    "Title": {
+      "Text": "[SMod]",
+      "Color": "#0258ed",
+      "Size": 15,
+      "Hidden": false,
+      "HiddenIfNotPrimary": false
+    },
+    "Username": {
+      "Color": "#246ded",
+      "Size": 15
+    },
+    "Message": {
+      "Color": "white",
+      "Size": 15
+    },
+    "Format": {
+      "Chat": "{Title} {Username}: {Message}",
+      "Console": "{Title} {Username}: {Message}"
+    }
   }
 ]
