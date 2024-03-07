@@ -1,0 +1,16 @@
+{
+  "Enabled": false,
+  "Environment": {
+    "NoMap": false
+  },
+  "Client": {
+    "UseOldRecoil": false,
+    "ClientGravity": -1.0
+  },
+  "Addons": [
+    {
+      "Url": "http//",
+      "Enabled": false
+    }
+  ]
+}

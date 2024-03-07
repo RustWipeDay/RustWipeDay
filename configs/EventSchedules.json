@@ -1,0 +1,45 @@
+{
+  "Bradley Spawner Settings": {
+    "Enabled": true,
+    "Respawn Delay Minutes": 60.0,
+    "Respawn Delay Variance": 1.0
+  },
+  "Event Schedule Settings": {
+    "Easter Event": {
+      "Minimum Hours Between": 12.0,
+      "Maximum Hours Between": 24.0
+    },
+    "Halloween Event": {
+      "Minimum Hours Between": 12.0,
+      "Maximum Hours Between": 24.0
+    },
+    "Christmas Event": {
+      "Minimum Hours Between": 12.0,
+      "Maximum Hours Between": 24.0
+    },
+    "Helicopter Event": {
+      "Minimum Hours Between": 48.0,
+      "Maximum Hours Between": 72.0
+    },
+    "Cargoship Event": {
+      "Minimum Hours Between": 60.0,
+      "Maximum Hours Between": 104.0
+    },
+    "Chinook Event": {
+      "Minimum Hours Between": 36.0,
+      "Maximum Hours Between": 72.0
+    },
+    "Airdrop Event": {
+      "Minimum Hours Between": 12.0,
+      "Maximum Hours Between": 24.0
+    },
+    "Roadside Bradley Event": {
+      "Minimum Hours Between": 10.0,
+      "Maximum Hours Between": 24.0
+    },
+    "F15E Event": {
+      "Minimum Hours Between": 20.0,
+      "Maximum Hours Between": 40.0
+    }
+  }
+}
