@@ -1,0 +1,150 @@
+{
+  "Name": "BountyHunters",
+  "SchemaVersion": 2.0,
+  "MonumentData": {
+    "compound": {
+      "CustomAddons": [
+        {
+          "Id": "0cd4d53c-2b55-4392-bcba-1b03447e1151",
+          "Position": {
+            "x": -9.074726,
+            "y": 10.3700867,
+            "z": -6.719102
+          },
+          "RotationAngles": {
+            "x": 0.0,
+            "y": 91.160614,
+            "z": 0.0
+          },
+          "AddonName": "bountyhunter"
+        }
+      ]
+    },
+    "fishing_village_b": {
+      "CustomAddons": [
+        {
+          "Id": "0579a0cb-ba02-4c2e-b090-564efada8730",
+          "Position": {
+            "x": -8.484563,
+            "y": 1.99900019,
+            "z": 10.3312225
+          },
+          "RotationAngles": {
+            "x": 0.0,
+            "y": 212.782547,
+            "z": 0.0
+          },
+          "AddonName": "bountyhunter"
+        }
+      ]
+    },
+    "harbor_2": {
+      "CustomAddons": [
+        {
+          "Id": "ae15988e-d8c8-4195-b36a-5d84d9a1c010",
+          "Position": {
+            "x": 26.7367,
+            "y": 5.68002462,
+            "z": -15.2344713
+          },
+          "RotationAngles": {
+            "x": 0.0,
+            "y": 225.080261,
+            "z": 0.0
+          },
+          "AddonName": "bountyhunter"
+        }
+      ]
+    },
+    "swamp_c": {
+      "CustomAddons": [
+        {
+          "Id": "12888074-4f58-49e7-a5cc-b3e6c411c39a",
+          "Position": {
+            "x": 0.9084874,
+            "y": 1.14213562,
+            "z": -34.546875
+          },
+          "RotationAngles": {
+            "x": 0.0,
+            "y": 296.727478,
+            "z": 0.0
+          },
+          "AddonName": "bountyhunter"
+        }
+      ]
+    },
+    "sphere_tank": {
+      "CustomAddons": [
+        {
+          "Id": "9c346f4b-4d35-434a-8811-b4965776af86",
+          "Position": {
+            "x": 18.8544331,
+            "y": 65.0590057,
+            "z": -11.5790186
+          },
+          "RotationAngles": {
+            "x": 0.0,
+            "y": 337.419678,
+            "z": 0.0
+          },
+          "AddonName": "bountyhunter"
+        }
+      ]
+    },
+    "gas_station_1": {
+      "CustomAddons": [
+        {
+          "Id": "544d209a-33fd-4887-8136-c468264694c7",
+          "Position": {
+            "x": -8.644884,
+            "y": 3.25,
+            "z": 22.1569
+          },
+          "RotationAngles": {
+            "x": 0.0,
+            "y": 88.8700562,
+            "z": 0.0
+          },
+          "AddonName": "bountyhunter"
+        }
+      ]
+    },
+    "supermarket_1": {
+      "CustomAddons": [
+        {
+          "Id": "f6f28930-0ca6-4a0f-9f74-956abc8d63c5",
+          "Position": {
+            "x": 8.192063,
+            "y": 0.0250000954,
+            "z": 3.49955726
+          },
+          "RotationAngles": {
+            "x": 0.0,
+            "y": 181.759949,
+            "z": 0.0
+          },
+          "AddonName": "bountyhunter"
+        }
+      ]
+    },
+    "fishing_village_a": {
+      "CustomAddons": [
+        {
+          "Id": "a4d8abbd-9406-4b0e-9e65-6b05f7063472",
+          "Position": {
+            "x": -4.544093,
+            "y": 1.98756027,
+            "z": 5.87331152
+          },
+          "RotationAngles": {
+            "x": 0.0,
+            "y": 219.713409,
+            "z": 0.0
+          },
+          "AddonName": "bountyhunter"
+        }
+      ]
+    }
+  }
+}
