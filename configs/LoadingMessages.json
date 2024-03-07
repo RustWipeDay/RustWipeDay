@@ -5,7 +5,7 @@
   "Cycle Messages Every ~N Seconds": 3.0,
   "Messages": [
     {
-      "Top Status": "<color=#ff0>Welcome {PLAYERNAME}!</color>",
+      "Top Status": "<color=#ff0>Welcome!<color>",
       "Bottom Status": "<color=#9cf>Enjoy your stay.</color>"
     },
     {
