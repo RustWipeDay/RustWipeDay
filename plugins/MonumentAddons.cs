@@ -26,6 +26,7 @@ using CustomUpdateCallback = System.Action<UnityEngine.Component, Newtonsoft.Jso
 using CustomAddDisplayInfoCallback = System.Action<UnityEngine.Component, Newtonsoft.Json.Linq.JObject, System.Text.StringBuilder>;
 using CustomSetDataCallback = System.Action<UnityEngine.Component, object>;
 using System.Text.RegularExpressions;
+using Facepunch;
 
 namespace Oxide.Plugins
 {
@@ -527,6 +528,46 @@ namespace Oxide.Plugins
 
         #endregion
 
+        #region API
+
+        [HookMethod(nameof(API_IsMonumentEntity))]
+        public object API_IsMonumentEntity(BaseEntity entity)
+        {
+            return ObjectCache.Get(_entityTracker.IsMonumentEntity(entity));
+        }
+
+        [HookMethod(nameof(API_GetMonumentEntityGuid))]
+        public object API_GetMonumentEntityGuid(BaseEntity entity)
+        {
+            if (!_entityTracker.IsMonumentEntity(entity))
+                return null;
+
+            var adapter = MonumentEntityComponent.GetForEntity(entity).Adapter as BaseAdapter;
+            if (adapter == null)
+                return null;
+
+            return ObjectCache.Get(adapter.Data.Id);
+        }
+
+        #endregion
+
+        #region Exposed Hooks
+
+        private static class ExposedHooks
+        {
+            public static void OnMonumentAddonsInitialized()
+            {
+                Interface.CallHook("OnMonumentAddonsInitialized");
+            }
+
+            public static void OnMonumentEntitySpawned(BaseEntity entity, MonoBehaviour monument, Guid guid)
+            {
+                Interface.CallHook("OnMonumentEntitySpawned", entity, monument, ObjectCache.Get(guid));
+            }
+        }
+
+        #endregion
+
         #region Commands
 
         private enum PuzzleOption
@@ -884,6 +925,50 @@ namespace Oxide.Plugins
             _adapterDisplayManager.ShowAllRepeatedly(basePlayer, immediate: !updatedSkullName);
         }
 
+        [Command("matrophy")]
+        private void CommandTrophy(IPlayer player, string cmd, string[] args)
+        {
+            T GetSubEntity<T>(Item item) where T : BaseEntity
+            {
+                var entityId = item.instanceData?.subEntity ?? new NetworkableId(0);
+                if (entityId.Value == 0)
+                    return null;
+
+                return BaseNetworkable.serverEntities.Find(entityId) as T;
+            }
+
+            if (player.IsServer || !VerifyHasPermission(player))
+                return;
+
+            EntityController controller;
+            EntityAdapter adapter;
+            if (!VerifyLookingAtAdapter(player, out adapter, out controller, LangEntry.ErrorNoSuitableAddonFound))
+                return;
+
+            var huntingTrophy = adapter.Entity as HuntingTrophy;
+            if (huntingTrophy == null)
+            {
+                ReplyToPlayer(player, LangEntry.ErrorNoSuitableAddonFound);
+                return;
+            }
+
+            var basePlayer = player.Object as BasePlayer;
+            var heldItem = basePlayer.GetActiveItem();
+            var headEntity = heldItem != null ? GetSubEntity<HeadEntity>(heldItem) : null;
+            if (headEntity == null)
+            {
+                ReplyToPlayer(player, LangEntry.SetHeadNoHeadItem);
+                return;
+            }
+
+            controller.EntityData.HeadData = HeadData.FromHeadEntity(headEntity);
+            _profileStore.Save(controller.Profile);
+            controller.StartHandleChangesRoutine();
+
+            ReplyToPlayer(player, LangEntry.SetHeadSuccess, controller.Adapters.Count, controller.Profile.Name);
+            _adapterDisplayManager.ShowAllRepeatedly(basePlayer);
+        }
+
         [Command("maskin")]
         private void CommandSkin(IPlayer player, string cmd, string[] args)
         {
@@ -1148,10 +1233,9 @@ namespace Oxide.Plugins
         [Command("maprofile")]
         private void CommandProfile(IPlayer player, string cmd, string[] args)
         {
-            if (!_serverInitialized)
-                return;
-
-            if (!player.IsServer && !VerifyHasPermission(player))
+            if (!_serverInitialized
+                || !VerifyHasPermission(player)
+                || !VerifyMonumentFinderLoaded(player))
                 return;
 
             if (args.Length == 0)
@@ -1556,10 +1640,9 @@ namespace Oxide.Plugins
         [Command("mainstall")]
         private void CommandInstallProfile(IPlayer player, string cmd, string[] args)
         {
-            if (!_serverInitialized)
-                return;
-
-            if (!player.IsServer && !VerifyHasPermission(player))
+            if (!_serverInitialized
+                || !VerifyHasPermission(player)
+                || !VerifyMonumentFinderLoaded(player))
                 return;
 
             if (args.Length < 1)
@@ -2795,6 +2878,7 @@ namespace Oxide.Plugins
             sb.AppendLine(GetMessage(player.Id, LangEntry.HelpSetId));
             sb.AppendLine(GetMessage(player.Id, LangEntry.HelpSetDir));
             sb.AppendLine(GetMessage(player.Id, LangEntry.HelpSkull));
+            sb.AppendLine(GetMessage(player.Id, LangEntry.HelpTrophy));
             sb.AppendLine(GetMessage(player.Id, LangEntry.HelpCardReaderLevel));
             sb.AppendLine(GetMessage(player.Id, LangEntry.HelpPuzzle));
             sb.AppendLine(GetMessage(player.Id, LangEntry.HelpSpawnGroup));
@@ -2843,6 +2927,37 @@ namespace Oxide.Plugins
         #endregion
 
         #region Utilities
+
+        private static class ObjectCache
+        {
+            private static readonly object True = true;
+            private static readonly object False = false;
+
+            private static class StaticObjectCache<T>
+            {
+                private static readonly Dictionary<T, object> _cacheByValue = new();
+
+                public static object Get(T value)
+                {
+                    if (!_cacheByValue.TryGetValue(value, out var cachedObject))
+                    {
+                        cachedObject = value;
+                        _cacheByValue[value] = cachedObject;
+                    }
+                    return cachedObject;
+                }
+            }
+
+            public static object Get<T>(T value)
+            {
+                return StaticObjectCache<T>.Get(value);
+            }
+
+            public static object Get(bool value)
+            {
+                return value ? True : False;
+            }
+        }
 
         #region Helper Methods - Command Checks
 
@@ -3745,6 +3860,8 @@ namespace Oxide.Plugins
             // Delay slightly to allow Monument Finder to finish loading.
             yield return null;
             yield return _profileManager.LoadAllProfilesRoutine();
+
+            ExposedHooks.OnMonumentAddonsInitialized();
 
             if (_config.EnableDynamicMonuments)
             {
@@ -5861,6 +5978,25 @@ namespace Oxide.Plugins
                         [7] = new Vector3(-0.035f, 1.3f, -0.15f),
                     },
                 },
+                ["assets/prefabs/io/electric/switches/andswitch.prefab"] = new IOEntityOverrideInfo
+                {
+                    Inputs = new Dictionary<int, Vector3>
+                    {
+                        [0] = new Vector3(-0.035f, 0.82f, -0.125f),
+                        [1] = new Vector3(-0.035f, 0.82f, -0.175f),
+                    },
+                    Outputs = new Dictionary<int, Vector3>
+                    {
+                        [0] = new Vector3(-0.035f, 1.3f, -0.15f),
+                        [1] = new Vector3(-0.035f, 1.3f, -0.15f),
+                        [2] = new Vector3(-0.035f, 1.3f, -0.15f),
+                        [3] = new Vector3(-0.035f, 1.3f, -0.15f),
+                        [4] = new Vector3(-0.035f, 1.3f, -0.15f),
+                        [5] = new Vector3(-0.035f, 1.3f, -0.15f),
+                        [6] = new Vector3(-0.035f, 1.3f, -0.15f),
+                        [7] = new Vector3(-0.035f, 1.3f, -0.15f),
+                    },
+                },
                 ["assets/prefabs/io/electric/switches/cardreader.prefab"] = new IOEntityOverrideInfo
                 {
                     Inputs = new Dictionary<int, Vector3>
@@ -6018,6 +6154,8 @@ namespace Oxide.Plugins
                             }
                         }
 
+                        ExposedHooks.OnMonumentEntitySpawned(Entity, Monument.Object, Data.Id);
+
                         if (!_config.EnableEntitySaving)
                         {
                             // If saving is no longer enabled, remove the entity from the data file.
@@ -6036,6 +6174,7 @@ namespace Oxide.Plugins
                 PreEntitySpawn();
                 Entity.Spawn();
                 PostEntitySpawn();
+                ExposedHooks.OnMonumentEntitySpawned(Entity, Monument.Object, Data.Id);
 
                 if (_config.EnableEntitySaving && Entity != existingEntity)
                 {
@@ -6144,6 +6283,7 @@ namespace Oxide.Plugins
                 UpdateScale();
                 UpdateBuildingGrade();
                 UpdateSkullName();
+                UpdateHuntingTrophy();
                 UpdatePuzzle();
                 UpdateCardReaderLevel();
                 UpdateIOConnections();
@@ -6170,13 +6310,32 @@ namespace Oxide.Plugins
                     item.Remove();
                 }
 
-                var skull = ItemManager.CreateByPartialName("skull.human");
-                skull.name = HumanBodyResourceDispenser.CreateSkullName(skullName);
-                if (!skull.MoveToContainer(skullTrophy.inventory))
-                    skull.Remove();
+                var skullItem = ItemManager.CreateByPartialName("skull.human");
+                skullItem.name = HumanBodyResourceDispenser.CreateSkullName(skullName);
+                if (!skullItem.MoveToContainer(skullTrophy.inventory))
+                {
+                    skullItem.Remove();
+                }
 
                 // Setting flag here so vanilla functionality is preserved for trophies without name set
                 skullTrophy.SetFlag(BaseEntity.Flags.Busy, true);
+            }
+
+            public void UpdateHuntingTrophy()
+            {
+                var headData = EntityData.HeadData;
+                if (headData == null)
+                    return;
+
+                var huntingTrophy = Entity as HuntingTrophy;
+                if (huntingTrophy == null)
+                    return;
+
+                headData.ApplyToHuntingTrophy(huntingTrophy);
+                huntingTrophy.SendNetworkUpdate();
+
+                // Setting flag here so vanilla functionality is preserved for trophies without head set
+                huntingTrophy.SetFlag(BaseEntity.Flags.Busy, true);
             }
 
             public void UpdateIOConnections()
@@ -6536,6 +6695,12 @@ namespace Oxide.Plugins
                 if (skullTrophy != null)
                 {
                     UpdateSkullName();
+                }
+
+                var huntingTrophy = Entity as HuntingTrophy;
+                if (huntingTrophy != null)
+                {
+                    UpdateHuntingTrophy();
                 }
             }
 
@@ -10312,6 +10477,88 @@ namespace Oxide.Plugins
             }
         }
 
+        private class HeadData
+        {
+            private FieldInfo CurrentTrophyDataField = typeof(HuntingTrophy).GetField("CurrentTrophyData", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            public static HeadData FromHeadEntity(HeadEntity headEntity)
+            {
+                var trophyData = headEntity.CurrentTrophyData;
+
+                var headData = new HeadData
+                {
+                    EntitySource = trophyData.entitySource,
+                    HorseBreed = trophyData.horseBreed,
+                    PlayerId = trophyData.playerId,
+                    PlayerName = !string.IsNullOrEmpty(trophyData.playerName) ? trophyData.playerName : null,
+                };
+
+                if (trophyData.clothing?.Count > 0)
+                {
+                    headData.Clothing = trophyData.clothing.Select(itemId => new BasicItemData(itemId)).ToArray();
+                }
+
+                return headData;
+            }
+
+            public class BasicItemData
+            {
+                public readonly int ItemId;
+
+                public BasicItemData(int itemId)
+                {
+                    ItemId = itemId;
+                }
+            }
+
+            [JsonProperty("EntitySource")]
+            public uint EntitySource;
+
+            [JsonProperty("HorseBreed", DefaultValueHandling = DefaultValueHandling.Ignore)]
+            public int HorseBreed;
+
+            [JsonProperty("PlayerId", DefaultValueHandling = DefaultValueHandling.Ignore)]
+            public ulong PlayerId;
+
+            [JsonProperty("PlayerName", DefaultValueHandling = DefaultValueHandling.Ignore)]
+            public string PlayerName;
+
+            [JsonProperty("Clothing", DefaultValueHandling = DefaultValueHandling.Ignore)]
+            public BasicItemData[] Clothing;
+
+            public void ApplyToHuntingTrophy(HuntingTrophy huntingTrophy)
+            {
+                if (CurrentTrophyDataField == null)
+                    return;
+
+                var headData = CurrentTrophyDataField.GetValue(huntingTrophy) as ProtoBuf.HeadData;
+                if (headData == null)
+                {
+                    headData = Facepunch.Pool.Get<ProtoBuf.HeadData>();
+                    CurrentTrophyDataField.SetValue(huntingTrophy, headData);
+                }
+
+                headData.entitySource = EntitySource;
+                headData.horseBreed = HorseBreed;
+                headData.playerId = PlayerId;
+                headData.playerName = PlayerName;
+                headData.count = 1;
+
+                if (Clothing?.Length > 0)
+                {
+                    headData.clothing = Pool.GetList<int>();
+                    foreach (var itemData in Clothing)
+                    {
+                        headData.clothing.Add(itemData.ItemId);
+                    }
+                }
+                else if (headData.clothing != null)
+                {
+                    Pool.FreeList(ref headData.clothing);
+                }
+            }
+        }
+
         private class EntityData : BaseTransformData
         {
             [JsonProperty("PrefabName", Order = -5)]
@@ -10347,6 +10594,9 @@ namespace Oxide.Plugins
 
             [JsonProperty("SkullName", DefaultValueHandling = DefaultValueHandling.Ignore)]
             public string SkullName;
+
+            [JsonProperty("HeadData", DefaultValueHandling = DefaultValueHandling.Ignore)]
+            public HeadData HeadData;
 
             public void RemoveIOConnection(int slot)
             {
@@ -12230,6 +12480,9 @@ namespace Oxide.Plugins
             public static readonly LangEntry SkullNameSyntax = new LangEntry("SkullName.Syntax", "Syntax: <color=#fd4>{0} <name></color>");
             public static readonly LangEntry SkullNameSetSuccess = new LangEntry("SkullName.Set.Success", "Updated skull name to <color=#fd4>{0}</color> at <color=#fd4>{1}</color> matching monument(s) and saved to profile <color=#fd4>{2}</color>.");
 
+            public static readonly LangEntry SetHeadNoHeadItem = new LangEntry("Head.Set.NoHeadItem", "You must be holding a head bag item to do that.");
+            public static readonly LangEntry SetHeadSuccess = new LangEntry("Head.Set.Success", "Updated head trophy according to your equipped item at <color=#fd4>{0}</color> matching monument(s) and saved to profile <color=#fd4>{1}</color>.");
+
             public static readonly LangEntry CardReaderSetLevelSyntax = new LangEntry("CardReader.SetLevel.Error.Syntax", "Syntax: <color=#fd4>{0} <1-3></color>");
             public static readonly LangEntry CardReaderSetLevelSuccess = new LangEntry("CardReader.SetLevel.Success", "Updated card reader access level to <color=#fd4>{0}</color>.");
 
@@ -12316,6 +12569,7 @@ namespace Oxide.Plugins
             public static readonly LangEntry HelpSetId = new LangEntry("Help.SetId", "<color=#fd4>masetid <id></color> - Set the id of a CCTV");
             public static readonly LangEntry HelpSetDir = new LangEntry("Help.SetDir", "<color=#fd4>masetdir</color> - Set the direction of a CCTV");
             public static readonly LangEntry HelpSkull = new LangEntry("Help.Skull", "<color=#fd4>maskull <name></color> - Set skull trophy display name");
+            public static readonly LangEntry HelpTrophy = new LangEntry("Help.Trophy", "<color=#fd4>matrophy <name></color> - Update a hunting trophy");
             public static readonly LangEntry HelpCardReaderLevel = new LangEntry("Help.CardReaderLevel", "<color=#fd4>macardlevel <1-3></color> - Set a card reader's access level");
             public static readonly LangEntry HelpPuzzle = new LangEntry("Help.Puzzle", "<color=#fd4>mapuzzle</color> - Print puzzle help");
             public static readonly LangEntry HelpSpawnGroup = new LangEntry("Help.SpawnGroup", "<color=#fd4>maspawngroup</color> - Print spawn group help");

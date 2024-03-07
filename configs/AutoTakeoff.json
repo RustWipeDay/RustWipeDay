@@ -1,0 +1,10 @@
+{
+  "Take off method type": true,
+  "Helicopter move distance": 10.0,
+  "Minicopter can auto takeoff": true,
+  "Minicopter move speed": 0.025,
+  "Minicopter push force": 50.0,
+  "Scrap Helicopter can auto takeoff": true,
+  "Scrap helicopter move speed": 0.0075,
+  "Scrap helicopter push force": 100.0
+}

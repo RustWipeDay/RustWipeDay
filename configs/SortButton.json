@@ -1,0 +1,95 @@
+{
+  "Default enabled": true,
+  "Default sort by category": true,
+  "Check ownership": true,
+  "Use Clans": true,
+  "Use Friends": true,
+  "Use Teams": true,
+  "Chat steamID icon": 0,
+  "Chat command": [
+    "sortbutton"
+  ],
+  "Containers by short prefab name": {
+    "assets/content/vehicles/boats/rhib/subents/rhib_storage.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/content/vehicles/boats/rowboat/subents/rowboat_storage.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/content/vehicles/modularcar/subents/modular_car_1mod_storage.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/content/vehicles/modularcar/subents/modular_car_camper_storage.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/content/vehicles/snowmobiles/subents/snowmobileitemstorage.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/content/vehicles/submarine/subents/submarineitemstorage.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/prefabs/deployable/composter/composter.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/prefabs/deployable/dropbox/dropbox.deployed.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/prefabs/deployable/fridge/fridge.deployed.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/prefabs/deployable/hitch & trough/hitchtrough.deployed.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/prefabs/deployable/hot air balloon/subents/hab_storage.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/prefabs/deployable/large wood storage/box.wooden.large.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/prefabs/deployable/small stash/small_stash_deployed.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/prefabs/deployable/tool cupboard/cupboard.tool.deployed.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/prefabs/deployable/vendingmachine/vendingmachine.deployed.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/prefabs/deployable/woodenbox/woodbox_deployed.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/prefabs/misc/halloween/coffin/coffinstorage.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/prefabs/misc/decor_dlc/storagebarrel/storage_barrel_b.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/prefabs/misc/decor_dlc/storagebarrel/storage_barrel_c.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    },
+    "assets/rust.ai/nextai/testridablehorse.prefab": {
+      "Enabled": true,
+      "OffsetX": 476.5
+    }
+  },
+  "Containers by skin ID": {}
+}

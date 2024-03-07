@@ -21,7 +21,7 @@
     "RUST"
   ],
   "LogSeverity": 2,
-  "PermissionSerialization": 1,
+  "PermissionSerialization": 0,
   "Language": "en",
   "WebRequestIp": null,
   "oCommandChecks": true,
