@@ -1,0 +1,26 @@
+{
+  "Empty default items before give kits": true,
+  "Auto Kits": [
+    {
+      "permission": "customautokits.spawn",
+      "kits": [
+        {
+          "priority": 0,
+          "cooldown": 0.0,
+          "kitName": "Spawn kit",
+          "cooldownKit": "Spawn kit"
+        }
+      ]
+    }
+  ],
+  "Chat Settings": {
+    "Chat Command": "autokit",
+    "Chat Prefix": "<color=#00FFFF>[CustomAutoKits]</color>: ",
+    "Chat SteamID Icon": 0
+  },
+  "Version": {
+    "Major": 1,
+    "Minor": 2,
+    "Patch": 5
+  }
+}

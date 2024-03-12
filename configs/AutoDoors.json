@@ -1,5 +1,5 @@
 {
-  "Use permissions": false,
+  "Use permissions": true,
   "Clear data on map wipe": false,
   "Global settings": {
     "Allows automatic closing of unowned doors": false,
