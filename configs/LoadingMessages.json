@@ -5,12 +5,8 @@
   "Cycle Messages Every ~N Seconds": 3.0,
   "Messages": [
     {
-      "Top Status": "<color=#ff0>Welcome {PLAYERNAME}!</color>",
-      "Bottom Status": "<color=#9cf>Enjoy your stay.</color>"
-    },
-    {
-      "Top Status": "<color=#9cf>Hi there!</color>",
-      "Bottom Status": "<color=#ff0>Enjoy your stay.</color>"
+      "Top Status": "<size=10>The honorable {PLAYERNAME}</size>",
+      "Bottom Status": "<color=#c45508>Rustwipeday.com</color>"
     }
   ],
   "Enable Queue Messages": true,
@@ -25,7 +21,7 @@
     }
   ],
   "Last Message (When entering game)": {
-    "Top Status": "<color=#ff0>Welcome to our server!</color>",
-    "Bottom Status": "<color=#060>Entering game...</color>"
+    "Top Status": "<size=10>The honorable {PLAYERNAME}</size>",
+    "Bottom Status": "<color=#c45508>Rustwipeday.com</color>"
   }
 }

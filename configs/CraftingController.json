@@ -4042,6 +4042,14 @@
       "craftTime": 30.0,
       "workbenchLevel": 1,
       "defaultskinid": 0
+    },
+    "chicken.costume": {
+      "canCraft": true,
+      "canResearch": true,
+      "useCrafteRateMultiplier": true,
+      "craftTime": 15.0,
+      "workbenchLevel": 0,
+      "defaultskinid": 0
     }
   }
 }

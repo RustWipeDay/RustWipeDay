@@ -1,5 +1,5 @@
 {
-  "Chat Prefix": "<color=#c45508>[RustWipeDay] </color>",
+  "Chat Prefix": "<color=#c45508>[RustWipeDay]</color>: ",
   "Show Chat Prefix": true,
   "Bot Icon (SteamID)": 76561199643330805,
   "Cooldown Between Auto Responses For User": "10s",

@@ -14,8 +14,8 @@
     "Delay after taking damage (seconds)": 10,
     "Delay for offline protection (seconds)": 600,
     "Protect buildings and deployables (true/false)": true,
-    "Protect players (true/false)": true,
-    "Protect vehicles and horses (true/false)": true,
+    "Protect players (true/false)": false,
+    "Protect vehicles and horses (true/false)": false,
     "Protect traps and electronics (true/false)": true
   },
   "Cost settings": {

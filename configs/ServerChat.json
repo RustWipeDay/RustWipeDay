@@ -1,0 +1,16 @@
+{
+  "Chat icon (SteamID64)": 0,
+  "Messages to not modify": [],
+  "Title Settings": {
+    "Title": "[RustWipeDay]",
+    "Colour": "#c45508",
+    "Size": 15
+  },
+  "Message Settings": {
+    "Colour": "white",
+    "Size": 15
+  },
+  "Format": {
+    "Server chat format": "{title}: {message}"
+  }
+}
