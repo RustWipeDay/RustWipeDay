@@ -14,7 +14,7 @@
                 {
                     "lootDefinition": "dogtagneutral",
                     "numberToSpawn": 1,
-                    "probability": 0.07                    
+                    "probability": 0.07
                 }
             ]
         },
@@ -32,7 +32,7 @@
                 {
                     "lootDefinition": "dogtagneutral",
                     "numberToSpawn": 1,
-                    "probability": 0.07                   
+                    "probability": 0.07
                 }
             ]
         },
@@ -103,6 +103,21 @@
                     "lootDefinition": "MLRSAmmo",
                     "numberToSpawn": 1,
                     "probability": 0.5
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
                 }
             ]
         },
@@ -150,6 +165,16 @@
                     "lootDefinition": "LargeBackpack",
                     "numberToSpawn": 1,
                     "probability": 0.1
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
                 }
             ]
         },
@@ -184,6 +209,16 @@
                     "lootDefinition": "LootSpawn.Components.Tier2",
                     "numberToSpawn": 1,
                     "probability": 0.25
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 2,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
                 }
             ]
         },
@@ -246,6 +281,21 @@
                     "lootDefinition": "HQMetal_Medium",
                     "numberToSpawn": 2,
                     "probability": 0.25
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 3,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
                 }
             ]
         },
@@ -274,6 +324,16 @@
                     "lootDefinition": "LootSpawn.Components.Tier2",
                     "numberToSpawn": 2,
                     "probability": 0.333999991
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
                 }
             ]
         },
@@ -379,7 +439,7 @@
                 {
                     "lootDefinition": "dogtagneutral",
                     "numberToSpawn": 1,
-                    "probability": 0.07                    
+                    "probability": 0.07
                 }
             ]
         },
@@ -397,7 +457,7 @@
                 {
                     "lootDefinition": "dogtagneutral",
                     "numberToSpawn": 1,
-                    "probability": 0.07                    
+                    "probability": 0.07
                 }
             ]
         },
@@ -469,6 +529,31 @@
                     "lootDefinition": "MLRSAmmo",
                     "numberToSpawn": 1,
                     "probability": 0.5
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 3,
+                    "probability": 0.33                   
                 }
             ]
         },
@@ -535,6 +620,21 @@
                     "lootDefinition": "supply.signal",
                     "numberToSpawn": 1,
                     "probability": 0.02
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 2,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
                 }
             ]
         },
@@ -569,6 +669,26 @@
                     "lootDefinition": "LootSpawn.Components.Tier2",
                     "numberToSpawn": 1,
                     "probability": 0.25
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 2,
+                    "probability": 0.33                   
                 }
             ]
         },
@@ -626,7 +746,7 @@
                 {
                     "lootDefinition": "dogtagneutral",
                     "numberToSpawn": 1,
-                    "probability": 0.07                    
+                    "probability": 0.07
                 }
             ]
         },
@@ -644,7 +764,7 @@
                 {
                     "lootDefinition": "dogtagneutral",
                     "numberToSpawn": 1,
-                    "probability": 0.07                    
+                    "probability": 0.07
                 }
             ]
         },
@@ -662,7 +782,7 @@
                 {
                     "lootDefinition": "dogtagneutral",
                     "numberToSpawn": 1,
-                    "probability": 0.07                    
+                    "probability": 0.07
                 }
             ]
         },
@@ -680,7 +800,7 @@
                 {
                     "lootDefinition": "dogtagneutral",
                     "numberToSpawn": 1,
-                    "probability": 0.07                    
+                    "probability": 0.07
                 }
             ]
         },
@@ -698,7 +818,7 @@
                 {
                     "lootDefinition": "dogtagneutral",
                     "numberToSpawn": 1,
-                    "probability": 0.07                    
+                    "probability": 0.07
                 }
             ]
         },
@@ -716,7 +836,7 @@
                 {
                     "lootDefinition": "dogtagneutral",
                     "numberToSpawn": 1,
-                    "probability": 0.07                    
+                    "probability": 0.07
                 }
             ]
         },
@@ -734,7 +854,7 @@
                 {
                     "lootDefinition": "dogtagneutral",
                     "numberToSpawn": 1,
-                    "probability": 0.07                    
+                    "probability": 0.07
                 }
             ]
         },
@@ -752,7 +872,7 @@
                 {
                     "lootDefinition": "dogtagneutral",
                     "numberToSpawn": 1,
-                    "probability": 0.07                    
+                    "probability": 0.07
                 }
             ]
         },
@@ -770,7 +890,7 @@
                 {
                     "lootDefinition": "dogtagneutral",
                     "numberToSpawn": 1,
-                    "probability": 0.07                    
+                    "probability": 0.07
                 }
             ]
         },
@@ -825,6 +945,21 @@
                     "lootDefinition": "aiming.module.mlrs",
                     "numberToSpawn": 1,
                     "probability": 0.5
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 3,
+                    "probability": 1               
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 2,
+                    "probability": 0.6                 
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 3,
+                    "probability": 0.1           
                 }
             ]
         },
@@ -879,6 +1014,26 @@
                     "lootDefinition": "aiming.module.mlrs",
                     "numberToSpawn": 1,
                     "probability": 0.5
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 4,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
                 }
             ]
         },
@@ -932,6 +1087,21 @@
                     "lootDefinition": "ToolRoll",
                     "numberToSpawn": 1,
                     "probability": 0.75
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 1,
+                    "probability": 0.33                   
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 2,
+                    "probability": 0.33                   
                 }
             ]
         },
@@ -980,6 +1150,11 @@
                     "lootDefinition": "MLRSAmmo",
                     "numberToSpawn": 1,
                     "probability": 1
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 4,
+                    "probability": 1
                 }
             ]
         },
@@ -987,9 +1162,18 @@
             "minSecondsBetweenRefresh": 3600,
             "maxSecondsBetweenRefresh": 7200,
             "scrapAmount": 0,
-            "lootDefinition": "HeliLoot",
-            "maxDefinitionsToSpawn": 1,
-            "lootSpawnSlots": []
+            "lootSpawnSlots": [
+                {
+                    "lootDefinition": "HeliLoot",
+                    "numberToSpawn": 1,
+                    "probability": 1
+                },
+                {
+                    "lootDefinition": "dogtagneutral",
+                    "numberToSpawn": 4,
+                    "probability": 1
+                }
+            ]
         }
     },
     "lootDefinitions": {
@@ -2464,11 +2648,11 @@
         },
         "parachute": {
             "items": [
-              {
-                "name": "parachute",
-                "amount": 1.0,
-                "maxAmount": -1.0
-              }
+                {
+                    "name": "parachute",
+                    "amount": 1.0,
+                    "maxAmount": -1.0
+                }
             ],
             "subSpawn": []
         },
@@ -3324,21 +3508,21 @@
         },
         "M4 With Ammo": {
             "items": [
-              {
-                "name": "shotgun.m4",
-                "amount": 1.0,
-                "maxAmount": 0.0
-              },
-              {
-                "name": "ammo.shotgun",
-                "amount": 8.0,
-                "maxAmount": 12.0
-              },
-              {
-                "name": "ammo.shotgun.slug",
-                "amount": 8.0,
-                "maxAmount": 12.0
-              }
+                {
+                    "name": "shotgun.m4",
+                    "amount": 1.0,
+                    "maxAmount": 0.0
+                },
+                {
+                    "name": "ammo.shotgun",
+                    "amount": 8.0,
+                    "maxAmount": 12.0
+                },
+                {
+                    "name": "ammo.shotgun.slug",
+                    "amount": 8.0,
+                    "maxAmount": 12.0
+                }
             ],
             "subSpawn": []
         },
@@ -3689,11 +3873,11 @@
         },
         "LargeBackpack": {
             "items": [
-              {
-                "name": "largebackpack",
-                "amount": 1.0,
-                "maxAmount": 1.0
-              }
+                {
+                    "name": "largebackpack",
+                    "amount": 1.0,
+                    "maxAmount": 1.0
+                }
             ],
             "subSpawn": []
         },
@@ -8199,7 +8383,7 @@
                     "category": "WorkbenchTier_3",
                     "extraSpawns": 0,
                     "weight": 25
-                }
+                },
             ]
         }
     }

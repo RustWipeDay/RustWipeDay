@@ -3267,6 +3267,21 @@
           "BlueprintShortname": null,
           "Text": null,
           "Contents": null
+        },
+        {
+          "Shortname": "torch",
+          "DisplayName": null,
+          "Skin": 0,
+          "Amount": 1,
+          "Condition": 100.0,
+          "MaxCondition": 100.0,
+          "Ammo": 0,
+          "Ammotype": null,
+          "Position": 0,
+          "Frequency": -1,
+          "BlueprintShortname": null,
+          "Text": null,
+          "Contents": null
         }
       ]
     }
