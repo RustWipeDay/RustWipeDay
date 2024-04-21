@@ -1,0 +1,40 @@
+{
+  "Template": {
+    "Message Content": "",
+    "Message Embeds": [
+      {
+        "Show Embed": true,
+        "Embed Title": "",
+        "Embed Title URL": "",
+        "Embed Description": "[{plugin.title}] Welcome to the **{guild.name}** Discord server. If you would like to link your player and Discord accounts please click on the **Link Accounts** button below to start the process.__\nNote: You must be in game to complete the link.__",
+        "Embed Hex Color": "#57F287",
+        "Embed Image URL": "",
+        "Embed Thumbnail URL": "",
+        "Embed Video Url": "",
+        "Show Embed TimeStamp": false,
+        "Embed Fields": [],
+        "Embed Footer": {
+          "Show Footer": false,
+          "Footer Text": "",
+          "Footer Icon URL": ""
+        }
+      }
+    ],
+    "Message Components": [
+      {
+        "Button Label": "Link Accounts",
+        "Button Emoji": {
+          "Emoji Name Or ID": "✅",
+          "For Custom Emojis Is The Emoji Animated": false
+        },
+        "Button Style": "Success",
+        "Button Command": "DiscordCore_PmLinkAccounts",
+        "Keep Button On Same Row": true,
+        "Button Enabled": true,
+        "Show Component": true,
+        "Type": "Button"
+      }
+    ]
+  },
+  "Template Version": "1.0.0"
+}

@@ -1,0 +1,39 @@
+{
+  "Template": {
+    "Command Localization": {
+      "Command Name": "dc",
+      "Command Description": "Discord Core Commands",
+      "Command Options": {
+        "code": {
+          "Command Name": "code",
+          "Command Description": "Start the link between discord and the game server using a link code"
+        },
+        "user": {
+          "Command Name": "user",
+          "Command Description": "Start the link between discord and the game server by game server player name",
+          "Argument Localization": {
+            "player": {
+              "Argument Name": "player",
+              "Argument Description": "Player name on the game server"
+            }
+          }
+        },
+        "leave": {
+          "Command Name": "leave",
+          "Command Description": "Unlink your discord and game server accounts"
+        },
+        "link": {
+          "Command Name": "link",
+          "Command Description": "Complete the link using the given link code",
+          "Argument Localization": {
+            "code": {
+              "Argument Name": "code",
+              "Argument Description": "Code to complete the link"
+            }
+          }
+        }
+      }
+    }
+  },
+  "Template Version": "1.0.0"
+}

@@ -1,0 +1,63 @@
+{
+  "Template": {
+    "Message Content": "",
+    "Message Embeds": [
+      {
+        "Show Embed": true,
+        "Embed Title": "{server.name}",
+        "Embed Title URL": "",
+        "Embed Description": "",
+        "Embed Hex Color": "#AC7061",
+        "Embed Image URL": "attachment://image.png",
+        "Embed Thumbnail URL": "",
+        "Embed Video Url": "",
+        "Show Embed TimeStamp": true,
+        "Embed Fields": [
+          {
+            "Field Title": "Player:",
+            "Field Value": "{player.name} ([{player.id}]({player.steam.profile}))",
+            "Keep Field On Same Row": true,
+            "Hide Field If Value Empty": false
+          },
+          {
+            "Field Title": "Owner:",
+            "Field Value": "{discordsignlogger.owner.name} ([{discordsignlogger.owner.id}]({discordsignlogger.owner.steam.profile}))",
+            "Keep Field On Same Row": true,
+            "Hide Field If Value Empty": false
+          },
+          {
+            "Field Title": "Position:",
+            "Field Value": "{discordsignlogger.entity.position}",
+            "Keep Field On Same Row": true,
+            "Hide Field If Value Empty": false
+          },
+          {
+            "Field Title": "Item:",
+            "Field Value": "{discordsignlogger.entity.name}",
+            "Keep Field On Same Row": true,
+            "Hide Field If Value Empty": false
+          },
+          {
+            "Field Title": "Texture Index",
+            "Field Value": "{discordsignlogger.entity.textureindex}",
+            "Keep Field On Same Row": true,
+            "Hide Field If Value Empty": true
+          },
+          {
+            "Field Title": "Sign Artist URL",
+            "Field Value": "{discordsignlogger.signartist.url}",
+            "Keep Field On Same Row": true,
+            "Hide Field If Value Empty": true
+          }
+        ],
+        "Embed Footer": {
+          "Show Footer": true,
+          "Footer Text": "{plugin.name} V{plugin.version} by {plugin.author}",
+          "Footer Icon URL": "https://assets.umod.org/images/icons/plugin/61f1b7f6da7b6.png"
+        }
+      }
+    ],
+    "Message Components": []
+  },
+  "Template Version": "1.0.1"
+}

@@ -1,0 +1,15 @@
+{
+  "Log chat messages (true/false)": true,
+  "Log command usage (true/false)": true,
+  "Log player connections (true/false)": true,
+  "Log player disconnections (true/false)": true,
+  "Log player respawns (true/false)": true,
+  "Log when crafting started (true/false)": true,
+  "Log when crafting cancelled (true/false)": true,
+  "Log when crafting finished (true/false)": true,
+  "Log items dropped by players (true/false)": true,
+  "Log output to console (true/false)": false,
+  "Rotate logs daily (true/false)": true,
+  "Command list (full or short commands)": [],
+  "Command list type (blacklist or whitelist)": "blacklist"
+}

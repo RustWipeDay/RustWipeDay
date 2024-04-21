@@ -1,0 +1,53 @@
+{
+  "Template": {
+    "Message Content": "",
+    "Message Embeds": [
+      {
+        "Show Embed": true,
+        "Embed Title": "",
+        "Embed Title URL": "",
+        "Embed Description": "[{plugin.title}] The player **{player.name}** is trying to link their game account to this discord user.\nIf you would like to accept please click on the **Accept** button.\nIf you did not initiate this link please click on the **Decline** button",
+        "Embed Hex Color": "#57F287",
+        "Embed Image URL": "",
+        "Embed Thumbnail URL": "",
+        "Embed Video Url": "",
+        "Show Embed TimeStamp": false,
+        "Embed Fields": [],
+        "Embed Footer": {
+          "Show Footer": false,
+          "Footer Text": "",
+          "Footer Icon URL": ""
+        }
+      }
+    ],
+    "Message Components": [
+      {
+        "Button Label": "Accept",
+        "Button Emoji": {
+          "Emoji Name Or ID": "✅",
+          "For Custom Emojis Is The Emoji Animated": false
+        },
+        "Button Style": "Success",
+        "Button Command": "DiscordCore_AcceptLink",
+        "Keep Button On Same Row": true,
+        "Button Enabled": true,
+        "Show Component": true,
+        "Type": "Button"
+      },
+      {
+        "Button Label": "Decline",
+        "Button Emoji": {
+          "Emoji Name Or ID": "❌",
+          "For Custom Emojis Is The Emoji Animated": false
+        },
+        "Button Style": "Danger",
+        "Button Command": "DiscordCore_DeclineLink",
+        "Keep Button On Same Row": true,
+        "Button Enabled": true,
+        "Show Component": true,
+        "Type": "Button"
+      }
+    ]
+  },
+  "Template Version": "1.0.0"
+}

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using Oxide.Core;
 using Oxide.Core.Libraries.Covalence;
 using Oxide.Core.Plugins;
+using ProtoBuf;
 
 namespace Oxide.Plugins
 {
@@ -12,7 +14,7 @@ namespace Oxide.Plugins
     class FriendlyFire : CovalencePlugin
     {
         [PluginReference]
-        private Plugin Friends, Clans;
+        private Plugin Friends, Clans, Duelist;
 
         #region Localization
         protected override void LoadDefaultMessages()
@@ -115,15 +117,35 @@ namespace Oxide.Plugins
         {
             if (info?.HitEntity == null || player == null)
                 return null;
-            IPlayer attacker = player.IPlayer;
             if (!(info.HitEntity is BasePlayer))
                 return null;
+
             BasePlayer victimBP = info.HitEntity as BasePlayer;
+            return HandleFriendlyFire(player, victimBP, info);
+        }
+
+        bool InDuel(BasePlayer player)
+        {
+            if (player == null) return false;
+            return Duelist?.Call<bool>("inEvent", player) ?? false; 
+        }
+
+        object HandleFriendlyFire(BasePlayer player, BasePlayer victimBP, HitInfo info)
+        {
+            IPlayer attacker = player.IPlayer;
             IPlayer victim = victimBP.IPlayer;
+
             if (attacker == null || victim == null || attacker.Id == victim.Id)
                 return null;
+
             CreatePlayerSettings(attacker);
             CreatePlayerSettings(victim);
+
+            if (InDuel(player) && InDuel(victimBP))
+            {
+                return null;
+            }
+
             if (!allPlayerSettings[attacker.Id].ff || !allPlayerSettings[victim.Id].ff)
             {
                 if ((config.isTeamMemberCheck && IsTeamMember(player, victimBP)) || (config.isFriendCheck && (Friends?.Call<bool>("AreFriends", attacker.Id, victim.Id) ?? false)) || (config.isClanMemberCheck && IsClanMember(player, victimBP)))
@@ -146,6 +168,39 @@ namespace Oxide.Plugins
             }
             return null;
         }
+
+        List<string> ExplosionPrefabs = new List<string>()
+        {
+            "rocket_",
+            "grenade.",
+            "landmine",
+            "explosive.",
+        };
+
+        object OnEntityTakeDamage(BaseCombatEntity entity, HitInfo info)
+        {
+            if (info == null || info.WeaponPrefab == null)
+            {
+                return null;
+            }
+
+            var shortName = info.WeaponPrefab.ShortPrefabName;
+            var isExplosion = ExplosionPrefabs.Where(prefab => shortName.StartsWith(prefab)).Count() > 0;
+            if (!isExplosion)
+            {
+                return null;
+            }
+
+   
+            BasePlayer player = info.InitiatorPlayer;
+            BasePlayer victimBP = entity.ToPlayer();
+
+            if (victimBP == null || player == null)
+                return null;
+
+            return HandleFriendlyFire(player, victimBP, info);
+        }
+
         private void OnUserConnected(IPlayer player) { CreatePlayerSettings(player); }
         #endregion
 

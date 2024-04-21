@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static API.Commands.Command;
 
 namespace Oxide.Plugins
 {
-    [Info("Wipe Kits", "Ryan", "1.2.52")]
+    [Info("Wipe Kits", "TTV OdsScott", "2.0.0")]
     [Description("Puts a configurable cooldown on each kit depending on their kitname.")]
     public class WipeKits : RustPlugin
     {
@@ -140,67 +141,36 @@ namespace Oxide.Plugins
 
         private void OnServerInitialized()
         {
-            permission.RegisterPermission( Perm, this );
-
-            if (!_cFile.UseGui)
+            if (!permission.PermissionExists(Perm))
             {
-                Unsubscribe(nameof(OnServerCommand));
+                permission.RegisterPermission(Perm, this);
             }
+
+            Subscribe(nameof(CanRedeemKit));
 
             _cachedWipeTime = SaveRestore.SaveCreatedTime.ToLocalTime();
         }
 
-        private object OnServerCommand(ConsoleSystem.Arg arg)
+        private object CanRedeemKit(BasePlayer player, string kitName)
         {
-            var player = arg?.Player();
-            if (player == null || arg.cmd == null)
+            Puts(player + "," + kitName);
+            if (permission.UserHasPermission(player.UserIDString, Perm))
             {
                 return null;
             }
 
-            if (arg.cmd.FullName.ToLower().StartsWith("kit.gui") && _cFile.Kits.ContainsKey(arg.GetString(0).ToLower()))
+            if (!_cFile.Kits.TryGetValue(kitName, out float kitCooldown))
             {
-                float kitCooldown = _cFile.Kits[arg.GetString(0).ToLower()];
-                if (GetNextKitTime(kitCooldown) != TimeSpan.Zero)
-                {
-                    if (permission.UserHasPermission(player.UserIDString, Perm))
-                    {
-                        return null;
-                    }
-
-                    player.SendConsoleCommand("kit.close");
-                    PrintToChat(player, Lang("CantUse", player.UserIDString, GetFormattedTime(GetNextKitTime(kitCooldown).TotalSeconds)));
-                    return true;
-                }
-            }
-            return null;
-        }
-
-        private object OnPlayerCommand(BasePlayer player, string command, string[] args)
-        {
-            if (command.ToLower() == "kit")
-            {
-                float kitCooldown;
-                if (args.Length == 0 || !_cFile.Kits.TryGetValue(args[0].ToLower().Replace("\"", ""), out kitCooldown))
-                {
-                    return null;
-                }
-
-                if (GetNextKitTime(kitCooldown) == TimeSpan.Zero)
-                {
-                    return null;
-                }
-
-                if ( permission.UserHasPermission( player.UserIDString, Perm ) )
-                {
-                    return null;
-                }
-
-                PrintToChat(player, Lang("CantUse", player.UserIDString, GetFormattedTime(GetNextKitTime(kitCooldown).TotalSeconds)));
-                return true;
+                return null;
             }
 
-            return null;
+            if (GetNextKitTime(kitCooldown) == TimeSpan.Zero)
+            {
+                return null;
+            }
+
+            PrintToChat(player, Lang("CantUse", player.UserIDString, GetFormattedTime(GetNextKitTime(kitCooldown).TotalSeconds)));
+            return false;
         }
 
         #endregion

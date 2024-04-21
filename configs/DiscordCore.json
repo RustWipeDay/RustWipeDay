@@ -1,0 +1,44 @@
+{
+  "Discord Bot Token": "",
+  "Discord Server ID (Optional if bot only in 1 guild)": "",
+  "Discord Server Name Override": null,
+  "Discord Server Invite Url": null,
+  "Link Settings": {
+    "Announcement Channel Id": "",
+    "Link Code Generator Characters": "123456789",
+    "Link Code Generator Length": 6,
+    "Automatically Relink A Player If They Leave And Rejoin The Discord Server": true,
+    "Inactive Settings": {
+      "Automatically Unlink Inactive Players": false,
+      "Player Considered Inactive After X (Days)": 90.0,
+      "Automatically Relink Inactive Players On Game Server Join": true
+    }
+  },
+  "Welcome Message Settings": {
+    "Enable Welcome DM Message": true,
+    "Send Welcome Message On Discord Server Join": false,
+    "Send Welcome Message On Role ID Added": [
+      "1234567890"
+    ],
+    "Add Link Accounts Button In Welcome Message": true
+  },
+  "Guild Link Message Settings": {
+    "Enable Guild Link Message": false,
+    "Message Channel ID": ""
+  },
+  "Link Permission Settings": {
+    "On Link Server Permissions To Add": [],
+    "On Unlink Server Permissions To Remove": [],
+    "On Link Server Groups To Add": [],
+    "On Unlink Server Groups To Remove": [],
+    "On Link Discord Roles To Add": [],
+    "On Unlink Discord Roles To Remove": []
+  },
+  "Link Ban Settings": {
+    "Enable Link Ban": true,
+    "Ban Announcement Channel ID": "",
+    "Ban Link After X Join Declines": 3,
+    "Ban Duration (Hours)": 24
+  },
+  "Discord Extension Log Level (Verbose, Debug, Info, Warning, Error, Exception, Off)": "Verbose"
+}

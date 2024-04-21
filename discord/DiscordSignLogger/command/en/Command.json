@@ -1,0 +1,61 @@
+{
+  "Template": {
+    "Command Localization": {
+      "Command Name": "dsl",
+      "Command Description": "Discord Sign Logger Commands",
+      "Command Options": {
+        "block": {
+          "Command Name": "block",
+          "Command Description": "Block a player from painting on signs",
+          "Argument Localization": {
+            "player": {
+              "Argument Name": "player",
+              "Argument Description": "Player to block"
+            },
+            "duration": {
+              "Argument Name": "duration",
+              "Argument Description": "Block duration (Seconds)",
+              "Argument Choices": {
+                "1 Hour": {
+                  "Choice Name": "1 Hour"
+                },
+                "12 Hours": {
+                  "Choice Name": "12 Hours"
+                },
+                "1 Day": {
+                  "Choice Name": "1 Day"
+                },
+                "3 Days": {
+                  "Choice Name": "3 Days"
+                },
+                "1 Week": {
+                  "Choice Name": "1 Week"
+                },
+                "2 Weeks": {
+                  "Choice Name": "2 Weeks"
+                },
+                "1 Month": {
+                  "Choice Name": "1 Month"
+                },
+                "Forever": {
+                  "Choice Name": "Forever"
+                }
+              }
+            }
+          }
+        },
+        "unblock": {
+          "Command Name": "unblock",
+          "Command Description": "Unblock a sign blocked player",
+          "Argument Localization": {
+            "player": {
+              "Argument Name": "player",
+              "Argument Description": "Player to unblock"
+            }
+          }
+        }
+      }
+    }
+  },
+  "Template Version": "1.0.0"
+}

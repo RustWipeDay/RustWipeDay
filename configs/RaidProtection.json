@@ -32,7 +32,7 @@
   },
   "Indicator settings": {
     "Enabled": true,
-    "Persistent": false,
-    "Image url": "https://i.imgur.com/ue05FGg.png"
+    "Persistent": true,
+    "Image url": "https://rustwipeday.com/img/raidprotectionindicator.png"
   }
 }

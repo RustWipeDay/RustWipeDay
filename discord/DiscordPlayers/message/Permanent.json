@@ -1,0 +1,74 @@
+{
+  "Template": {
+    "Message Content": "",
+    "Message Embeds": [],
+    "Message Components": [
+      {
+        "Button Label": "Back",
+        "Button Emoji": {
+          "Emoji Name Or ID": "⬅",
+          "For Custom Emojis Is The Emoji Animated": false
+        },
+        "Button Style": "Primary",
+        "Button Command": "DiscordPlayers.B {discordplayers.command.id}",
+        "Keep Button On Same Row": true,
+        "Button Enabled": true,
+        "Show Component": true,
+        "Type": "Button"
+      },
+      {
+        "Button Label": "Page: {discordplayers.state.page}/{discordplayers.page.max}",
+        "Button Emoji": {
+          "Emoji Name Or ID": null,
+          "For Custom Emojis Is The Emoji Animated": false
+        },
+        "Button Style": "Primary",
+        "Button Command": "PAGE",
+        "Keep Button On Same Row": true,
+        "Button Enabled": false,
+        "Show Component": true,
+        "Type": "Button"
+      },
+      {
+        "Button Label": "Next",
+        "Button Emoji": {
+          "Emoji Name Or ID": "➡",
+          "For Custom Emojis Is The Emoji Animated": false
+        },
+        "Button Style": "Primary",
+        "Button Command": "DiscordPlayers.F {discordplayers.command.id}",
+        "Keep Button On Same Row": true,
+        "Button Enabled": true,
+        "Show Component": true,
+        "Type": "Button"
+      },
+      {
+        "Button Label": "Refresh",
+        "Button Emoji": {
+          "Emoji Name Or ID": "🔄",
+          "For Custom Emojis Is The Emoji Animated": false
+        },
+        "Button Style": "Primary",
+        "Button Command": "DiscordPlayers.R {discordplayers.command.id}",
+        "Keep Button On Same Row": true,
+        "Button Enabled": true,
+        "Show Component": true,
+        "Type": "Button"
+      },
+      {
+        "Button Label": "Sorted By: {discordplayers.state.sort}",
+        "Button Emoji": {
+          "Emoji Name Or ID": null,
+          "For Custom Emojis Is The Emoji Animated": false
+        },
+        "Button Style": "Primary",
+        "Button Command": "DiscordPlayers.S {discordplayers.command.id}",
+        "Keep Button On Same Row": true,
+        "Button Enabled": true,
+        "Show Component": true,
+        "Type": "Button"
+      }
+    ]
+  },
+  "Template Version": "1.0.0"
+}

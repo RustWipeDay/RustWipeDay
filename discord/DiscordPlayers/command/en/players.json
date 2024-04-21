@@ -1,0 +1,9 @@
+{
+  "Template": {
+    "Command Localization": {
+      "Command Name": "players",
+      "Command Description": "Shows players currently on the server"
+    }
+  },
+  "Template Version": "1.0.0"
+}
