@@ -1,0 +1,113 @@
+{
+  "Discord Bot Token": null,
+  "Disable Discord Button After Use": false,
+  "Action Log Channel ID": "",
+  "Replace Erased Image (Requires SignArtist)": {
+    "Replaced Mode (None, Url, Text)": "Url",
+    "URL": "https://i.postimg.cc/mD5xZ5R5/Erased-4.png",
+    "Message": "ERASED BY ADMIN",
+    "Font Size": 16,
+    "Text Color": "#cd4632",
+    "Body Color": "#000000"
+  },
+  "Firework Settings": {
+    "Image Size (Pixels)": 250,
+    "Circle Size (Pixels)": 19
+  },
+  "Sign Messages": [
+    {
+      "Message ID": "DEFAULT",
+      "Discord Channel ID": "",
+      "Use Action Button": true,
+      "Buttons": [
+        "ERASE",
+        "SIGN_BLOCK_24_HOURS",
+        "KILL_ENTITY",
+        "KICK_PLAYER",
+        "BAN_PLAYER"
+      ]
+    }
+  ],
+  "Buttons": [
+    {
+      "Button ID": "ERASE",
+      "Button Display Name": "Erase",
+      "Button Style": "Primary",
+      "Commands": [
+        "dsl.erase {discordsignlogger.entity.id} {discordsignlogger.entity.textureindex}"
+      ],
+      "Player Message": "An admin erased your sign for being inappropriate",
+      "Server Message": "",
+      "Show Confirmation Modal": false,
+      "Requires Permissions To Use Button": false,
+      "Allowed Discord Roles (Role ID)": [],
+      "Allowed Oxide Groups (Group Name)": []
+    },
+    {
+      "Button ID": "SIGN_BLOCK_24_HOURS",
+      "Button Display Name": "Sign Block (24 Hours)",
+      "Button Style": "Primary",
+      "Commands": [
+        "dsl.signblock {player.id} 86400"
+      ],
+      "Player Message": "You have been banned from updating signs for 24 hours.",
+      "Server Message": "",
+      "Show Confirmation Modal": false,
+      "Requires Permissions To Use Button": true,
+      "Allowed Discord Roles (Role ID)": [],
+      "Allowed Oxide Groups (Group Name)": []
+    },
+    {
+      "Button ID": "KILL_ENTITY",
+      "Button Display Name": "Kill Entity",
+      "Button Style": "Secondary",
+      "Commands": [
+        "entid kill {discordsignlogger.entity.id}"
+      ],
+      "Player Message": "An admin killed your sign for being inappropriate",
+      "Server Message": "",
+      "Show Confirmation Modal": false,
+      "Requires Permissions To Use Button": true,
+      "Allowed Discord Roles (Role ID)": [],
+      "Allowed Oxide Groups (Group Name)": []
+    },
+    {
+      "Button ID": "KICK_PLAYER",
+      "Button Display Name": "Kick Player",
+      "Button Style": "Danger",
+      "Commands": [
+        "kick {player.id} \"{discordsignlogger.message.player}\"",
+        "dsl.erase {discordsignlogger.entity.id} {discordsignlogger.entity.textureindex}"
+      ],
+      "Player Message": "",
+      "Server Message": "",
+      "Show Confirmation Modal": true,
+      "Requires Permissions To Use Button": true,
+      "Allowed Discord Roles (Role ID)": [],
+      "Allowed Oxide Groups (Group Name)": []
+    },
+    {
+      "Button ID": "BAN_PLAYER",
+      "Button Display Name": "Ban Player",
+      "Button Style": "Danger",
+      "Commands": [
+        "ban {player.id} \"{discordsignlogger.message.player}\"",
+        "dsl.erase {discordsignlogger.entity.id} {discordsignlogger.entity.textureindex}"
+      ],
+      "Player Message": "",
+      "Server Message": "",
+      "Show Confirmation Modal": true,
+      "Requires Permissions To Use Button": true,
+      "Allowed Discord Roles (Role ID)": [],
+      "Allowed Oxide Groups (Group Name)": []
+    }
+  ],
+  "PluginSettings": {
+    "Sign Artist Settings": {
+      "Log /sil": true,
+      "Log /sili": true,
+      "Log /silt": true
+    }
+  },
+  "Discord Extension Log Level (Verbose, Debug, Info, Warning, Error, Exception, Off)": "Info"
+}

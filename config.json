@@ -9,8 +9,7 @@
   "Watchers": {
     "ScriptWatchers": true,
     "ZipScriptWatchers": true,
-    "ScriptWatcherOption": 0,
-    "FileNameCheck": true
+    "ScriptWatcherOption": 0
   },
   "Permissions": {
     "PlayerDefaultGroup": "default",
@@ -20,18 +19,22 @@
   },
   "Debugging": {
     "ScriptDebuggingOrigin": "",
+    "HookLagSpikeThreshold": 1000,
     "PluginTrackingTime": 60.0,
-    "UnityStacktrace": true,
-    "ConditionalCompilationSymbols": [
-      "CARBON",
-      "RUST"
-    ]
+    "UnityStacktrace": true
   },
   "Logging": {
     "LogSplitSize": 2.5,
     "LogSeverity": 2,
     "LogFileMode": 2,
     "LogVerbosity": 0
+  },
+  "Compiler": {
+    "UnloadOnFailure": false,
+    "ConditionalCompilationSymbols": [
+      "CARBON",
+      "RUST"
+    ]
   },
   "Misc": {
     "oCommandChecks": true,

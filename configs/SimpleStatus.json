@@ -1,0 +1,5 @@
+{
+  "ChatMessageSteamId": 0,
+  "ToggleStatusCommand": "ts",
+  "WarnPlayersThatStatusIsHidden": true
+}

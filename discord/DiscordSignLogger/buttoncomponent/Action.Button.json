@@ -1,0 +1,16 @@
+{
+  "Template": {
+    "Button Label": "Actions",
+    "Button Emoji": {
+      "Emoji Name Or ID": null,
+      "For Custom Emojis Is The Emoji Animated": false
+    },
+    "Button Style": "Primary",
+    "Button Command": "DSL_ACTION {discordsignlogger.message.id} _ {discordsignlogger.message.state}",
+    "Keep Button On Same Row": true,
+    "Button Enabled": true,
+    "Show Component": true,
+    "Type": "Button"
+  },
+  "Template Version": "1.0.0"
+}

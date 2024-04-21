@@ -8,7 +8,8 @@
     "MinimumAuthLevel": 2,
     "DisableEntitiesTab": true,
     "DisablePluginsTab": false,
-    "SpectatingInfoOverlay": true
+    "SpectatingInfoOverlay": true,
+    "QuickActions": []
   },
-  "Version": "3700938491"
+  "Version": "3540856371"
 }

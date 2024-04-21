@@ -1,5 +1,6 @@
 {
   "Chat Prefix": "<color=#c45508>[RustWipeDay]</color>: ",
+  "Font Size": 10,
   "Show Chat Prefix": true,
   "Bot Icon (SteamID)": 76561199643330805,
   "Cooldown Between Auto Responses For User": "10s",
@@ -31,7 +32,7 @@
   "Auto Messages": [
     {
       "Permission": "smartchatbot.messages",
-      "Message Frequency": "5m",
+      "Message Frequency": "3m",
       "Auto Messages": [
         {
           "Is Enabled": true,
@@ -47,7 +48,31 @@
         },
         {
           "Is Enabled": true,
-          "Message": "Visit the bounty hunter in Outpost, type /points, /honor, or /leaderboard to check your ranks."
+          "Message": "Visit the Bounty Hunter to turn in dog tags and buy rewards in Outpost, type /points, /honor, or /leaderboard to check your ranks."
+        },
+        {
+          "Is Enabled": true,
+          "Message": "You can get free VIP rewards by being a community director and leading some promotions for the server. Please apply by creating a #support-ticket."
+        },
+        {
+          "Is Enabled": true,
+          "Message": "We are hiring community directors, map artists, and graphics designers. Please apply by creating a #support-ticket."
+        },
+        {
+          "Is Enabled": true,
+          "Message": "You can use skin box and building skins for free. Type /sb or /bskin. When you craft an item with no skin, it will use the last picked skin for that item!"
+        },
+        {
+          "Is Enabled": true,
+          "Message": "You can earn a free squad bounty kit each wipe by registering your team. This acts as a starter bounty kit, and can be very useful."
+        },
+        {
+          "Is Enabled": true,
+          "Message": "VIP, VIP+, and MVP is available for purchase on our website, https://rustwipeday.com"
+        },
+        {
+          "Is Enabled": true,
+          "Message": "You need honor ranks to unlock rewards at the bounty hunter. First turn in your dog tags and then look at the items for purchase."
         }
       ]
     }
@@ -78,11 +103,11 @@
             }
           ],
           "Answers": [
-            "Always F7 report cheaters! For quicker response, join our Discord! .gg/wxGHDrmCmW",
-            "Suspect a cheater? Always F7 report, and more for urgent matters, join our Discord! .gg/wxGHDrmCmW",
-            "F7 report cheaters! For quicker response, join our Discord! .gg/wxGHDrmCmW",
-            "Always F7 report, and more for urgent matters, join our Discord! .gg/wxGHDrmCmW",
-            "F7 report, and more for urgent matters, join our Discord! .gg/wxGHDrmCmW"
+            "Always F7 report cheaters! For quicker response, join our Discord and create a ticket! .gg/wxGHDrmCmW",
+            "Suspect a cheater? Always F7 report, and more for urgent matters, join our Discord and create a ticket! .gg/wxGHDrmCmW",
+            "F7 report cheaters! For quicker response, join our Discord and create a ticket! .gg/wxGHDrmCmW",
+            "Always F7 report, and more for urgent matters, join our Discord and create a ticket! .gg/wxGHDrmCmW",
+            "F7 report, and more for urgent matters, join our Discord and create a ticket! .gg/wxGHDrmCmW"
           ]
         }
       ]
@@ -108,7 +133,117 @@
             }
           ],
           "Answers": [
-            "Join our Discord for special events and announcements! .gg/wxGHDrmCmW"
+            "Join our Discord for special events, announcements or to create a support ticket! .gg/wxGHDrmCmW"
+          ]
+        }
+      ]
+    },
+    {
+      "Permission": "smartchatbot.response",
+      "Auto Responses": [
+        {
+          "Is Enabled": true,
+          "Remove Message From Sender": false,
+          "Send Response For Everyone (true) or Only For Sender (false)": true,
+          "Triggers": [
+            {
+              "Percentage Of Contained Words": 0.01,
+              "Regex Enabled": true,
+              "Words": [
+                "admin",
+                "mod",
+                "moderator",
+                "staff",
+                "help",
+                "ticket"
+              ]
+            }
+          ],
+          "Answers": [
+            "Admins should be contacted by creating a ticket in discord in the #support-ticket channel"
+          ]
+        }
+      ]
+    },
+    {
+      "Permission": "smartchatbot.response",
+      "Auto Responses": [
+        {
+          "Is Enabled": true,
+          "Remove Message From Sender": false,
+          "Send Response For Everyone (true) or Only For Sender (false)": true,
+          "Triggers": [
+            {
+              "Percentage Of Contained Words": 0.01,
+              "Regex Enabled": true,
+              "Words": [
+                "apply",
+                "hiring",
+                "hire",
+                "director"
+              ]
+            }
+          ],
+          "Answers": [
+            "We are hiring community directors, map artists, and graphics designers. Please apply by creating a #support-ticket.",
+            "You can get free VIP rewards by being a community director and leading some promotions for the server. Please apply by creating a #support-ticket."
+          ]
+        }
+      ]
+    },
+    {
+      "Permission": "smartchatbot.response",
+      "Auto Responses": [
+        {
+          "Is Enabled": true,
+          "Remove Message From Sender": false,
+          "Send Response For Everyone (true) or Only For Sender (false)": true,
+          "Triggers": [
+            {
+              "Percentage Of Contained Words": 0.01,
+              "Regex Enabled": true,
+              "Words": [
+                "kits",
+                "kit",
+                "vip",
+                "mvp"
+              ]
+            }
+          ],
+          "Answers": [
+            "You can earn a free squad bounty kit each wipe by registering your team. This acts as a starter bounty kit, and can be very useful. Open a ticket in discord.",
+            "VIP, VIP+, and MVP is available for purchase on our website, https://rustwipeday.com",
+            "You can get free VIP rewards by being a community director and leading some promotions for the server. Please apply by creating a #support-ticket."
+          ]
+        }
+      ]
+    },
+    {
+      "Permission": "smartchatbot.response",
+      "Auto Responses": [
+        {
+          "Is Enabled": true,
+          "Remove Message From Sender": false,
+          "Send Response For Everyone (true) or Only For Sender (false)": true,
+          "Triggers": [
+            {
+              "Percentage Of Contained Words": 0.01,
+              "Regex Enabled": true,
+              "Words": [
+                "bounty hunter",
+                "bounty",
+                "dog tag",
+                "dog tags",
+                "honor",
+                "base bounty"
+              ]
+            }
+          ],
+          "Answers": [
+            "White dog tags can be eaten for honor, or turned in for bounty at the Bounty Hunter found in outpost, gas station, and other neutral or safe spots.",
+            "Blue dog tags must be turned in at the Bounty Hunter in Outpost",
+            "You need honor ranks to unlock rewards at the bounty hunter. First turn in your dog tags and then look at the items for purchase.",
+            "To place a base bounty, open your TC and click the bounty tag icon. Base bounty decreases raid protection faster but grants your team perks."
           ]
         }
       ]

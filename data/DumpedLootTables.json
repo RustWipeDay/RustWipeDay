@@ -1,0 +1,8571 @@
+{
+  "lootTables": {
+    "assets/bundled/prefabs/autospawn/resource/loot/loot-barrel-1.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 2,
+      "lootDefinition": "LootSpawn.Barrel",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/autospawn/resource/loot/loot-barrel-2.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 2,
+      "lootDefinition": "LootSpawn.Barrel",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/autospawn/resource/loot/trash-pile-1.prefab": {
+      "minSecondsBetweenRefresh": 900.0,
+      "maxSecondsBetweenRefresh": 1800.0,
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.TrashPile",
+      "maxDefinitionsToSpawn": 3,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/crate_basic.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 3,
+      "lootDefinition": "",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": [
+        {
+          "lootDefinition": "WorkbenchTier_0",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "WorkbenchTier_0",
+          "numberToSpawn": 1,
+          "probability": 0.5
+        }
+      ]
+    },
+    "assets/bundled/prefabs/radtown/crate_elite.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 25,
+      "lootDefinition": "LootSpawn.RadTownElite",
+      "maxDefinitionsToSpawn": 2,
+      "lootSpawnSlots": [
+        {
+          "lootDefinition": "LootSpawn.RadTown1",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "LootSpawn.RadTownElite",
+          "numberToSpawn": 2,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "Collection.Weapons",
+          "numberToSpawn": 1,
+          "probability": 0.5
+        },
+        {
+          "lootDefinition": "MLRSAmmo",
+          "numberToSpawn": 1,
+          "probability": 0.5
+        }
+      ]
+    },
+    "assets/bundled/prefabs/radtown/crate_mine.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.MineCrate",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/crate_normal.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 8,
+      "lootDefinition": "LootSpawn.RadTown1",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": [
+        {
+          "lootDefinition": "LootSpawn.Components.Tier3",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "WorkbenchTier_2",
+          "numberToSpawn": 1,
+          "probability": 0.40000000596046448
+        },
+        {
+          "lootDefinition": "supply.signal",
+          "numberToSpawn": 1,
+          "probability": 0.0099999997764825821
+        },
+        {
+          "lootDefinition": "LargeBackpack",
+          "numberToSpawn": 1,
+          "probability": 0.05000000074505806
+        }
+      ]
+    },
+    "assets/bundled/prefabs/radtown/crate_normal_2.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 5,
+      "lootDefinition": "LootSpawn.RadTown2",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": [
+        {
+          "lootDefinition": "LootSpawn.Components.Tier2",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "WorkbenchTier_1",
+          "numberToSpawn": 1,
+          "probability": 0.40000000596046448
+        },
+        {
+          "lootDefinition": "Radsuit",
+          "numberToSpawn": 1,
+          "probability": 0.039999999105930328
+        },
+        {
+          "lootDefinition": "diving",
+          "numberToSpawn": 1,
+          "probability": 0.10000000149011612
+        },
+        {
+          "lootDefinition": "TurretParts",
+          "numberToSpawn": 0,
+          "probability": 0.039999999105930328
+        },
+        {
+          "lootDefinition": "Collection",
+          "numberToSpawn": 1,
+          "probability": 0.15000000596046448
+        }
+      ]
+    },
+    "assets/bundled/prefabs/radtown/crate_normal_2_food.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "DM.LootSpawn.FoodCrate",
+      "maxDefinitionsToSpawn": 3,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/crate_normal_2_medical.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "DM.LootSpawn.MedicalCrate",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/crate_tools.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 5,
+      "lootDefinition": "LootSpawn.BlackBox",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/crate_underwater_advanced.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 10,
+      "lootDefinition": "",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": [
+        {
+          "lootDefinition": "LootSpawn.Components.Tier1",
+          "numberToSpawn": 3,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "LootSpawn.Components.Tier2",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "WorkbenchTier_1",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "HQMetal_Medium",
+          "numberToSpawn": 1,
+          "probability": 0.25
+        }
+      ]
+    },
+    "assets/bundled/prefabs/radtown/crate_underwater_basic.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 5,
+      "lootDefinition": "",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": [
+        {
+          "lootDefinition": "LootSpawn.Components.Tier1",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "LootSpawn.BlackBox",
+          "numberToSpawn": 1,
+          "probability": 0.66699999570846558
+        },
+        {
+          "lootDefinition": "LootSpawn.Components.Tier1",
+          "numberToSpawn": 1,
+          "probability": 0.5
+        },
+        {
+          "lootDefinition": "LootSpawn.Components.Tier2",
+          "numberToSpawn": 1,
+          "probability": 0.33399999141693115
+        }
+      ]
+    },
+    "assets/bundled/prefabs/radtown/dmloot/dm ammo.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "DM.LootSpawn.AmmoCrate",
+      "maxDefinitionsToSpawn": 2,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/dmloot/dm c4.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "explosive.timed",
+      "maxDefinitionsToSpawn": 4,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/dmloot/dm construction resources.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "DM.ConstructionResources",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/dmloot/dm construction tools.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "DM.ConstructionTools",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/dmloot/dm food.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "DM.LootSpawn.FoodCrate",
+      "maxDefinitionsToSpawn": 2,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/dmloot/dm medical.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "DM.LootSpawn.MedicalCrate",
+      "maxDefinitionsToSpawn": 2,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/dmloot/dm res.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "DM.ConstructionResourcesAlt",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/dmloot/dm tier1 lootbox.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "DM.LootSpawn.T1",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/dmloot/dm tier2 lootbox.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "DM.LootSpawn.T2",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/dmloot/dm tier3 lootbox.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "DM.LootSpawn.T3",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/foodbox.prefab": {
+      "minSecondsBetweenRefresh": 900.0,
+      "maxSecondsBetweenRefresh": 1800.0,
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.FoodBox",
+      "maxDefinitionsToSpawn": 2,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/loot_barrel_1.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 2,
+      "lootDefinition": "LootSpawn.Barrel",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/loot_barrel_2.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 2,
+      "lootDefinition": "LootSpawn.Barrel",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/loot_trash.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.Components.Tier0",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/minecart.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.MineCrate",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/oil_barrel.prefab": {
+      "minSecondsBetweenRefresh": 1800.0,
+      "maxSecondsBetweenRefresh": 3600.0,
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.OilBarrel",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/underwater_labs/crate_ammunition.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "Ammo",
+      "maxDefinitionsToSpawn": 3,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/underwater_labs/crate_elite.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 25,
+      "lootDefinition": "LootSpawn.RadTownElite",
+      "maxDefinitionsToSpawn": 2,
+      "lootSpawnSlots": [
+        {
+          "lootDefinition": "LootSpawn.RadTown1",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "LootSpawn.RadTownElite",
+          "numberToSpawn": 2,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "Collection.Weapons",
+          "numberToSpawn": 1,
+          "probability": 0.5
+        }
+      ]
+    },
+    "assets/bundled/prefabs/radtown/underwater_labs/crate_food_1.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.FoodCrate",
+      "maxDefinitionsToSpawn": 3,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/underwater_labs/crate_food_2.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.FoodBox",
+      "maxDefinitionsToSpawn": 3,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/underwater_labs/crate_fuel.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.OilBarrel",
+      "maxDefinitionsToSpawn": 2,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/underwater_labs/crate_medical.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.MedicalCrate",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/underwater_labs/crate_normal.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 8,
+      "lootDefinition": "LootSpawn.RadTown1",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": [
+        {
+          "lootDefinition": "LootSpawn.Components.Tier3",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "WorkbenchTier_2",
+          "numberToSpawn": 1,
+          "probability": 0.40000000596046448
+        },
+        {
+          "lootDefinition": "supply.signal",
+          "numberToSpawn": 1,
+          "probability": 0.0099999997764825821
+        }
+      ]
+    },
+    "assets/bundled/prefabs/radtown/underwater_labs/crate_normal_2.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 5,
+      "lootDefinition": "LootSpawn.RadTown2",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": [
+        {
+          "lootDefinition": "LootSpawn.Components.Tier2",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "WorkbenchTier_1",
+          "numberToSpawn": 1,
+          "probability": 0.40000000596046448
+        },
+        {
+          "lootDefinition": "Radsuit",
+          "numberToSpawn": 1,
+          "probability": 0.039999999105930328
+        },
+        {
+          "lootDefinition": "diving",
+          "numberToSpawn": 1,
+          "probability": 0.10000000149011612
+        },
+        {
+          "lootDefinition": "TurretParts",
+          "numberToSpawn": 0,
+          "probability": 0.039999999105930328
+        },
+        {
+          "lootDefinition": "Collection",
+          "numberToSpawn": 1,
+          "probability": 0.15000000596046448
+        }
+      ]
+    },
+    "assets/bundled/prefabs/radtown/underwater_labs/crate_tools.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 5,
+      "lootDefinition": "LootSpawn.BlackBox",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/underwater_labs/tech_parts_1.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 8,
+      "lootDefinition": "LootSpawn.Components.Tier2",
+      "maxDefinitionsToSpawn": 2,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/underwater_labs/tech_parts_2.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 8,
+      "lootDefinition": "LootSpawn.Components.Tier3",
+      "maxDefinitionsToSpawn": 2,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/underwater_labs/vehicle_parts.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 8,
+      "lootDefinition": "EngineComponents",
+      "maxDefinitionsToSpawn": 2,
+      "lootSpawnSlots": []
+    },
+    "assets/bundled/prefabs/radtown/vehicle_parts.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 8,
+      "lootDefinition": "EngineComponents",
+      "maxDefinitionsToSpawn": 2,
+      "lootSpawnSlots": []
+    },
+    "assets/content/props/roadsigns/roadsign1.prefab": {
+      "minSecondsBetweenRefresh": "Infinity",
+      "maxSecondsBetweenRefresh": "Infinity",
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.Roadsign",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/content/props/roadsigns/roadsign2.prefab": {
+      "minSecondsBetweenRefresh": "Infinity",
+      "maxSecondsBetweenRefresh": "Infinity",
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.Roadsign",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/content/props/roadsigns/roadsign3.prefab": {
+      "minSecondsBetweenRefresh": "Infinity",
+      "maxSecondsBetweenRefresh": "Infinity",
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.Roadsign",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/content/props/roadsigns/roadsign4.prefab": {
+      "minSecondsBetweenRefresh": "Infinity",
+      "maxSecondsBetweenRefresh": "Infinity",
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.Roadsign",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/content/props/roadsigns/roadsign5.prefab": {
+      "minSecondsBetweenRefresh": "Infinity",
+      "maxSecondsBetweenRefresh": "Infinity",
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.Roadsign",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/content/props/roadsigns/roadsign6.prefab": {
+      "minSecondsBetweenRefresh": "Infinity",
+      "maxSecondsBetweenRefresh": "Infinity",
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.Roadsign",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/content/props/roadsigns/roadsign7.prefab": {
+      "minSecondsBetweenRefresh": "Infinity",
+      "maxSecondsBetweenRefresh": "Infinity",
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.Roadsign",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/content/props/roadsigns/roadsign8.prefab": {
+      "minSecondsBetweenRefresh": "Infinity",
+      "maxSecondsBetweenRefresh": "Infinity",
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.Roadsign",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/content/props/roadsigns/roadsign9.prefab": {
+      "minSecondsBetweenRefresh": "Infinity",
+      "maxSecondsBetweenRefresh": "Infinity",
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.Roadsign",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    },
+    "assets/prefabs/deployable/chinooklockedcrate/codelockedhackablecrate.prefab": {
+      "minSecondsBetweenRefresh": "Infinity",
+      "maxSecondsBetweenRefresh": "Infinity",
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.RadTownElite",
+      "maxDefinitionsToSpawn": 6,
+      "lootSpawnSlots": [
+        {
+          "lootDefinition": "Workbench_Experiment_Tier_3",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "ArmorRare",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "LootSpawn.RadTownElite",
+          "numberToSpawn": 6,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "Collection.Rifles",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "aiming.module.mlrs",
+          "numberToSpawn": 1,
+          "probability": 0.5
+        },
+        {
+          "lootDefinition": "minigun with ammo",
+          "numberToSpawn": 1,
+          "probability": 0.10000000149011612
+        }
+      ]
+    },
+    "assets/prefabs/deployable/chinooklockedcrate/codelockedhackablecrate_oilrig.prefab": {
+      "minSecondsBetweenRefresh": "Infinity",
+      "maxSecondsBetweenRefresh": "Infinity",
+      "scrapAmount": 0,
+      "lootDefinition": "LootSpawn.RadTownElite",
+      "maxDefinitionsToSpawn": 6,
+      "lootSpawnSlots": [
+        {
+          "lootDefinition": "Workbench_Experiment_Tier_3",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "ArmorRare",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "LootSpawn.RadTownElite",
+          "numberToSpawn": 6,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "Collection.Rifles",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "aiming.module.mlrs",
+          "numberToSpawn": 1,
+          "probability": 0.5
+        },
+        {
+          "lootDefinition": "minigun with ammo",
+          "numberToSpawn": 1,
+          "probability": 0.10000000149011612
+        }
+      ]
+    },
+    "assets/prefabs/misc/supply drop/supply_drop.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "",
+      "maxDefinitionsToSpawn": 8,
+      "lootSpawnSlots": [
+        {
+          "lootDefinition": "ResourceRoll",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "ArmorRoll",
+          "numberToSpawn": 2,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "GunRoll",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "Ammo",
+          "numberToSpawn": 3,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "ToolRoll",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        }
+      ]
+    },
+    "assets/prefabs/npc/m2bradley/bradley_crate.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "",
+      "maxDefinitionsToSpawn": 0,
+      "lootSpawnSlots": [
+        {
+          "lootDefinition": "HighEndWeapons",
+          "numberToSpawn": 1,
+          "probability": 0.25
+        },
+        {
+          "lootDefinition": "ItemModsRare",
+          "numberToSpawn": 1,
+          "probability": 0.5
+        },
+        {
+          "lootDefinition": "HighEndOrdinance",
+          "numberToSpawn": 2,
+          "probability": 0.40000000596046448
+        },
+        {
+          "lootDefinition": "TechPartsLarge",
+          "numberToSpawn": 1,
+          "probability": 0.25
+        },
+        {
+          "lootDefinition": "RareBaseParts",
+          "numberToSpawn": 1,
+          "probability": 0.75
+        },
+        {
+          "lootDefinition": "TurretParts",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        },
+        {
+          "lootDefinition": "MLRSAmmo",
+          "numberToSpawn": 1,
+          "probability": 1.0
+        }
+      ]
+    },
+    "assets/prefabs/npc/patrol helicopter/heli_crate.prefab": {
+      "minSecondsBetweenRefresh": 3600.0,
+      "maxSecondsBetweenRefresh": 7200.0,
+      "scrapAmount": 0,
+      "lootDefinition": "HeliLoot",
+      "maxDefinitionsToSpawn": 1,
+      "lootSpawnSlots": []
+    }
+  },
+  "lootDefinitions": {
+    "LootSpawn.Barrel": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "WorkbenchTier_0",
+          "extraSpawns": 0,
+          "weight": 35
+        },
+        {
+          "category": "LootSpawn.Components.Tier1",
+          "extraSpawns": 0,
+          "weight": 55
+        },
+        {
+          "category": "LootSpawn.Components.Tier2",
+          "extraSpawns": 0,
+          "weight": 10
+        }
+      ]
+    },
+    "WorkbenchTier_0": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "shutter.wood.a",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "burlap.gloves",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "hat.beenie",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "hat.boonie",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "hat.cap",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "mask.balaclava",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "mask.bandana",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "pants.shorts",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "shirt.tanktop",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "barricade.wood.cover",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "barricade.stone",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "barricade.wood",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "fireplace.stone",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "spikes.floor",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "water.barrel",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "mailbox",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "planter.large",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.igniter",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "rug.bear",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "rug",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "shelves",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "sign.wooden.huge",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "sign.wooden.large",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "spinner.wheel",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "table",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "tunalight",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "fun.guitar",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "tool.binoculars",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "paddle",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "bucket.water",
+          "extraSpawns": 0,
+          "weight": 100
+        }
+      ]
+    },
+    "shutter.wood.a": {
+      "items": [
+        {
+          "name": "shutter.wood.a",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "burlap.gloves": {
+      "items": [
+        {
+          "name": "burlap.gloves",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "hat.beenie": {
+      "items": [
+        {
+          "name": "hat.beenie",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "hat.boonie": {
+      "items": [
+        {
+          "name": "hat.boonie",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "hat.cap": {
+      "items": [
+        {
+          "name": "hat.cap",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "mask.balaclava": {
+      "items": [
+        {
+          "name": "mask.balaclava",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "mask.bandana": {
+      "items": [
+        {
+          "name": "mask.bandana",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "pants.shorts": {
+      "items": [
+        {
+          "name": "pants.shorts",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "shirt.tanktop": {
+      "items": [
+        {
+          "name": "shirt.tanktop",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "barricade.wood.cover": {
+      "items": [
+        {
+          "name": "barricade.wood.cover",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "barricade.stone": {
+      "items": [
+        {
+          "name": "barricade.stone",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "barricade.wood": {
+      "items": [
+        {
+          "name": "barricade.wood",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "fireplace.stone": {
+      "items": [
+        {
+          "name": "fireplace.stone",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "spikes.floor": {
+      "items": [
+        {
+          "name": "spikes.floor",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "water.barrel": {
+      "items": [
+        {
+          "name": "water.barrel",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "mailbox": {
+      "items": [
+        {
+          "name": "mailbox",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "planter.large": {
+      "items": [
+        {
+          "name": "planter.large",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.igniter": {
+      "items": [
+        {
+          "name": "electric.igniter",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "rug.bear": {
+      "items": [
+        {
+          "name": "rug.bear",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "rug": {
+      "items": [
+        {
+          "name": "rug",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "shelves": {
+      "items": [
+        {
+          "name": "shelves",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "sign.wooden.huge": {
+      "items": [
+        {
+          "name": "sign.wooden.huge",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "sign.wooden.large": {
+      "items": [
+        {
+          "name": "sign.wooden.large",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "spinner.wheel": {
+      "items": [
+        {
+          "name": "spinner.wheel",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "table": {
+      "items": [
+        {
+          "name": "table",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "tunalight": {
+      "items": [
+        {
+          "name": "tunalight",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "fun.guitar": {
+      "items": [
+        {
+          "name": "fun.guitar",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "tool.binoculars": {
+      "items": [
+        {
+          "name": "tool.binoculars",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "paddle": {
+      "items": [
+        {
+          "name": "paddle",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "bucket.water": {
+      "items": [
+        {
+          "name": "bucket.water",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LootSpawn.Components.Tier1": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Rope",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "Metal Blades",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "Propane Tank",
+          "extraSpawns": 0,
+          "weight": 13
+        },
+        {
+          "category": "Tarps",
+          "extraSpawns": 0,
+          "weight": 13
+        },
+        {
+          "category": "SewingKits",
+          "extraSpawns": 0,
+          "weight": 13
+        }
+      ]
+    },
+    "Rope": {
+      "items": [
+        {
+          "name": "rope",
+          "amount": 1.0,
+          "maxAmount": 3.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Metal Blades": {
+      "items": [
+        {
+          "name": "metalblade",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Propane Tank": {
+      "items": [
+        {
+          "name": "propanetank",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Tarps": {
+      "items": [
+        {
+          "name": "tarp",
+          "amount": 1.0,
+          "maxAmount": 2.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "SewingKits": {
+      "items": [
+        {
+          "name": "sewingkit",
+          "amount": 3.0,
+          "maxAmount": 5.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LootSpawn.Components.Tier2": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Gears",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "Pipes",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "Springs",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "Roadsigns",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "Sheetmetal",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "SemiBody",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "fuse",
+          "extraSpawns": 0,
+          "weight": 25
+        }
+      ]
+    },
+    "Gears": {
+      "items": [
+        {
+          "name": "gears",
+          "amount": 2.0,
+          "maxAmount": 3.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Pipes": {
+      "items": [
+        {
+          "name": "metalpipe",
+          "amount": 1.0,
+          "maxAmount": 5.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Springs": {
+      "items": [
+        {
+          "name": "metalspring",
+          "amount": 1.0,
+          "maxAmount": 2.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Roadsigns": {
+      "items": [
+        {
+          "name": "roadsigns",
+          "amount": 2.0,
+          "maxAmount": 4.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Sheetmetal": {
+      "items": [
+        {
+          "name": "sheetmetal",
+          "amount": 1.0,
+          "maxAmount": 2.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "SemiBody": {
+      "items": [
+        {
+          "name": "semibody",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "fuse": {
+      "items": [
+        {
+          "name": "fuse",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LootSpawn.TrashPile": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Nothing",
+          "extraSpawns": 0,
+          "weight": 1
+        },
+        {
+          "category": "Items.Common.Food",
+          "extraSpawns": 0,
+          "weight": 30
+        },
+        {
+          "category": "RadPills",
+          "extraSpawns": 0,
+          "weight": 5
+        }
+      ]
+    },
+    "Nothing": {
+      "items": [],
+      "subSpawn": []
+    },
+    "Items.Common.Food": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Apple",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "can.beans",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "can.tuna",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "chocolate",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "granolabar",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "smallwaterbottle",
+          "extraSpawns": 0,
+          "weight": 100
+        }
+      ]
+    },
+    "Apple": {
+      "items": [
+        {
+          "name": "apple",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "can.beans": {
+      "items": [
+        {
+          "name": "can.beans",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "can.tuna": {
+      "items": [
+        {
+          "name": "can.tuna",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "chocolate": {
+      "items": [
+        {
+          "name": "chocolate",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "granolabar": {
+      "items": [
+        {
+          "name": "granolabar",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "smallwaterbottle": {
+      "items": [
+        {
+          "name": "smallwaterbottle",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "RadPills": {
+      "items": [
+        {
+          "name": "antiradpills",
+          "amount": 1.0,
+          "maxAmount": 2.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LootSpawn.RadTownElite": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "LootSpawn.RadTown1",
+          "extraSpawns": 0,
+          "weight": 90
+        },
+        {
+          "category": "WorkbenchTier_3",
+          "extraSpawns": 0,
+          "weight": 20
+        }
+      ]
+    },
+    "LootSpawn.RadTown1": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "LootSpawn.Components.Tier3",
+          "extraSpawns": 0,
+          "weight": 98
+        },
+        {
+          "category": "supply.signal",
+          "extraSpawns": 0,
+          "weight": 2
+        },
+        {
+          "category": "WorkbenchTier_2",
+          "extraSpawns": 0,
+          "weight": 40
+        }
+      ]
+    },
+    "LootSpawn.Components.Tier3": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "SMGBody",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "RifleBody",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "TechParts",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "Pipes_large",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "TurretParts",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "HQMetal_Medium",
+          "extraSpawns": 0,
+          "weight": 100
+        }
+      ]
+    },
+    "SMGBody": {
+      "items": [
+        {
+          "name": "smgbody",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "RifleBody": {
+      "items": [
+        {
+          "name": "riflebody",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "TechParts": {
+      "items": [
+        {
+          "name": "techparts",
+          "amount": 2.0,
+          "maxAmount": 4.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Pipes_large": {
+      "items": [
+        {
+          "name": "metalpipe",
+          "amount": 5.0,
+          "maxAmount": 6.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "TurretParts": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "targeting_computer",
+          "extraSpawns": 0,
+          "weight": 55
+        },
+        {
+          "category": "cctv_camera",
+          "extraSpawns": 0,
+          "weight": 45
+        }
+      ]
+    },
+    "targeting_computer": {
+      "items": [
+        {
+          "name": "targeting.computer",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "cctv_camera": {
+      "items": [
+        {
+          "name": "cctv.camera",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "HQMetal_Medium": {
+      "items": [
+        {
+          "name": "metal.refined",
+          "amount": 15.0,
+          "maxAmount": 25.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "supply.signal": {
+      "items": [
+        {
+          "name": "supply.signal",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "WorkbenchTier_2": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "floor.ladder.hatch",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "floor.triangle.ladder.hatch",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "gates.external.high.stone",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "wall.external.high.stone",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "wall.frame.cell.gate",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "wall.frame.cell",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "wall.frame.garagedoor",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "shutter.metal.embrasure.a",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "shutter.metal.embrasure.b",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "wall.window.glass.reinforced",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "roadsign.gloves",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "coffeecan.helmet",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "heavy.plate.helmet",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "hoodie",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "heavy.plate.jacket",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "nightvisiongoggles",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "heavy.plate.pants",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "roadsign.kilt",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "shoes.boots",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "hazmatsuit",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "roadsign.jacket",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "barricade.concrete",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "barricade.metal",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "computerstation",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "drone",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "elevator",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "furnace.large",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "trap.landmine",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "locker",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "modularcarlift",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "small.oil.refinery",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "smart.alarm",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "smart.switch",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "storage.monitor",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.battery.rechargable.large",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.battery.rechargable.medium",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.counter",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.hbhfsensor",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.laserdetector",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.furnace",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.andswitch",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electrical.memorycell",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.random.switch",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.rf.broadcaster",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.rf.receiver",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.fuelgenerator.small",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "industrial.crafter",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "powered.water.purifier",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.teslacoil",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "waterpump",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "ptz.cctv.camera",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "searchlight",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "water.catcher.large",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "generator.wind.scrap",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "parachute",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "autoturret",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "rf.detonator",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "largemedkit",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "syringe.medical",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "rf_pager",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "grenade.smoke",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "weapon.mod.extendedmags",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "weapon.mod.holosight",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "weapon.mod.muzzleboost",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "weapon.mod.muzzlebrake",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "chainsaw",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "grenade.f1",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "flamethrower",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "grenade.flashbang",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "homingmissile.launcher",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "grenade.molotov",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "pistol.python",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "rocket.launcher",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "axe.salvaged",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "icepick.salvaged",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "shotgun.pump",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "pistol.semiauto",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "rifle.semiauto",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "smg.2",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "Longsword",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "smg.thompson",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "horse.armor.roadsign",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "horse.shoes.advanced",
+          "extraSpawns": 0,
+          "weight": 100
+        }
+      ]
+    },
+    "floor.ladder.hatch": {
+      "items": [
+        {
+          "name": "floor.ladder.hatch",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "floor.triangle.ladder.hatch": {
+      "items": [
+        {
+          "name": "floor.triangle.ladder.hatch",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "gates.external.high.stone": {
+      "items": [
+        {
+          "name": "gates.external.high.stone",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "wall.external.high.stone": {
+      "items": [
+        {
+          "name": "wall.external.high.stone",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "wall.frame.cell.gate": {
+      "items": [
+        {
+          "name": "wall.frame.cell.gate",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "wall.frame.cell": {
+      "items": [
+        {
+          "name": "wall.frame.cell",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "wall.frame.garagedoor": {
+      "items": [
+        {
+          "name": "wall.frame.garagedoor",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "shutter.metal.embrasure.a": {
+      "items": [
+        {
+          "name": "shutter.metal.embrasure.a",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "shutter.metal.embrasure.b": {
+      "items": [
+        {
+          "name": "shutter.metal.embrasure.b",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "wall.window.glass.reinforced": {
+      "items": [
+        {
+          "name": "wall.window.glass.reinforced",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "roadsign.gloves": {
+      "items": [
+        {
+          "name": "roadsign.gloves",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "coffeecan.helmet": {
+      "items": [
+        {
+          "name": "coffeecan.helmet",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "heavy.plate.helmet": {
+      "items": [
+        {
+          "name": "heavy.plate.helmet",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "hoodie": {
+      "items": [
+        {
+          "name": "hoodie",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "heavy.plate.jacket": {
+      "items": [
+        {
+          "name": "heavy.plate.jacket",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "nightvisiongoggles": {
+      "items": [
+        {
+          "name": "nightvisiongoggles",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "heavy.plate.pants": {
+      "items": [
+        {
+          "name": "heavy.plate.pants",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "roadsign.kilt": {
+      "items": [
+        {
+          "name": "roadsign.kilt",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "shoes.boots": {
+      "items": [
+        {
+          "name": "shoes.boots",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "hazmatsuit": {
+      "items": [
+        {
+          "name": "hazmatsuit",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "roadsign.jacket": {
+      "items": [
+        {
+          "name": "roadsign.jacket",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "barricade.concrete": {
+      "items": [
+        {
+          "name": "barricade.concrete",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "barricade.metal": {
+      "items": [
+        {
+          "name": "barricade.metal",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "computerstation": {
+      "items": [
+        {
+          "name": "computerstation",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "drone": {
+      "items": [
+        {
+          "name": "drone",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "elevator": {
+      "items": [
+        {
+          "name": "elevator",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "furnace.large": {
+      "items": [
+        {
+          "name": "furnace.large",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "trap.landmine": {
+      "items": [
+        {
+          "name": "trap.landmine",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "locker": {
+      "items": [
+        {
+          "name": "locker",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "modularcarlift": {
+      "items": [
+        {
+          "name": "modularcarlift",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "small.oil.refinery": {
+      "items": [
+        {
+          "name": "small.oil.refinery",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "smart.alarm": {
+      "items": [
+        {
+          "name": "smart.alarm",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "smart.switch": {
+      "items": [
+        {
+          "name": "smart.switch",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "storage.monitor": {
+      "items": [
+        {
+          "name": "storage.monitor",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.battery.rechargable.large": {
+      "items": [
+        {
+          "name": "electric.battery.rechargable.large",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.battery.rechargable.medium": {
+      "items": [
+        {
+          "name": "electric.battery.rechargable.medium",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.counter": {
+      "items": [
+        {
+          "name": "electric.counter",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.hbhfsensor": {
+      "items": [
+        {
+          "name": "electric.hbhfsensor",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.laserdetector": {
+      "items": [
+        {
+          "name": "electric.laserdetector",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.furnace": {
+      "items": [
+        {
+          "name": "electric.furnace",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.andswitch": {
+      "items": [
+        {
+          "name": "electric.andswitch",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electrical.memorycell": {
+      "items": [
+        {
+          "name": "electrical.memorycell",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.random.switch": {
+      "items": [
+        {
+          "name": "electric.random.switch",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.rf.broadcaster": {
+      "items": [
+        {
+          "name": "electric.rf.broadcaster",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.rf.receiver": {
+      "items": [
+        {
+          "name": "electric.rf.receiver",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.fuelgenerator.small": {
+      "items": [
+        {
+          "name": "electric.fuelgenerator.small",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "industrial.crafter": {
+      "items": [
+        {
+          "name": "industrial.crafter",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "powered.water.purifier": {
+      "items": [
+        {
+          "name": "powered.water.purifier",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.teslacoil": {
+      "items": [
+        {
+          "name": "electric.teslacoil",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "waterpump": {
+      "items": [
+        {
+          "name": "waterpump",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ptz.cctv.camera": {
+      "items": [
+        {
+          "name": "ptz.cctv.camera",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "searchlight": {
+      "items": [
+        {
+          "name": "searchlight",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "water.catcher.large": {
+      "items": [
+        {
+          "name": "water.catcher.large",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "generator.wind.scrap": {
+      "items": [
+        {
+          "name": "generator.wind.scrap",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "parachute": {
+      "items": [
+        {
+          "name": "parachute",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "autoturret": {
+      "items": [
+        {
+          "name": "autoturret",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "rf.detonator": {
+      "items": [
+        {
+          "name": "rf.detonator",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "largemedkit": {
+      "items": [
+        {
+          "name": "largemedkit",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "syringe.medical": {
+      "items": [
+        {
+          "name": "syringe.medical",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "rf_pager": {
+      "items": [
+        {
+          "name": "rf_pager",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "grenade.smoke": {
+      "items": [
+        {
+          "name": "grenade.smoke",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "weapon.mod.extendedmags": {
+      "items": [
+        {
+          "name": "weapon.mod.extendedmags",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "weapon.mod.holosight": {
+      "items": [
+        {
+          "name": "weapon.mod.holosight",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "weapon.mod.muzzleboost": {
+      "items": [
+        {
+          "name": "weapon.mod.muzzleboost",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "weapon.mod.muzzlebrake": {
+      "items": [
+        {
+          "name": "weapon.mod.muzzlebrake",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "chainsaw": {
+      "items": [
+        {
+          "name": "chainsaw",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "grenade.f1": {
+      "items": [
+        {
+          "name": "grenade.f1",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "flamethrower": {
+      "items": [
+        {
+          "name": "flamethrower",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "grenade.flashbang": {
+      "items": [
+        {
+          "name": "grenade.flashbang",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "homingmissile.launcher": {
+      "items": [
+        {
+          "name": "homingmissile.launcher",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "grenade.molotov": {
+      "items": [
+        {
+          "name": "grenade.molotov",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "pistol.python": {
+      "items": [
+        {
+          "name": "pistol.python",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "rocket.launcher": {
+      "items": [
+        {
+          "name": "rocket.launcher",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "axe.salvaged": {
+      "items": [
+        {
+          "name": "axe.salvaged",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "icepick.salvaged": {
+      "items": [
+        {
+          "name": "icepick.salvaged",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "shotgun.pump": {
+      "items": [
+        {
+          "name": "shotgun.pump",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "pistol.semiauto": {
+      "items": [
+        {
+          "name": "pistol.semiauto",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "rifle.semiauto": {
+      "items": [
+        {
+          "name": "rifle.semiauto",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "smg.2": {
+      "items": [
+        {
+          "name": "smg.2",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Longsword": {
+      "items": [
+        {
+          "name": "longsword",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "smg.thompson": {
+      "items": [
+        {
+          "name": "smg.thompson",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "horse.armor.roadsign": {
+      "items": [
+        {
+          "name": "horse.armor.roadsign",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "horse.shoes.advanced": {
+      "items": [
+        {
+          "name": "horse.shoes.advanced",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "WorkbenchTier_3": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "door.double.hinged.toptier",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "door.hinged.toptier",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "wall.window.bars.toptier",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "metal.facemask",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "metal.plate.torso",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "Explosives",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "explosive.timed",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "weapon.mod.lasersight",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "weapon.mod.small.scope",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "rifle.ak",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "rifle.bolt",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "hmlmg",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "smg.mp5",
+          "extraSpawns": 0,
+          "weight": 100
+        }
+      ]
+    },
+    "door.double.hinged.toptier": {
+      "items": [
+        {
+          "name": "door.double.hinged.toptier",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "door.hinged.toptier": {
+      "items": [
+        {
+          "name": "door.hinged.toptier",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "wall.window.bars.toptier": {
+      "items": [
+        {
+          "name": "wall.window.bars.toptier",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "metal.facemask": {
+      "items": [
+        {
+          "name": "metal.facemask",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "metal.plate.torso": {
+      "items": [
+        {
+          "name": "metal.plate.torso",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Explosives": {
+      "items": [
+        {
+          "name": "explosives",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "explosive.timed": {
+      "items": [
+        {
+          "name": "explosive.timed",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "weapon.mod.lasersight": {
+      "items": [
+        {
+          "name": "weapon.mod.lasersight",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "weapon.mod.small.scope": {
+      "items": [
+        {
+          "name": "weapon.mod.small.scope",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "rifle.ak": {
+      "items": [
+        {
+          "name": "rifle.ak",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "rifle.bolt": {
+      "items": [
+        {
+          "name": "rifle.bolt",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "hmlmg": {
+      "items": [
+        {
+          "name": "hmlmg",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "smg.mp5": {
+      "items": [
+        {
+          "name": "smg.mp5",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Collection.Weapons": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Collection.Rifles",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "Items.Uncommon.Weapon",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "Flamethrower",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "Grenades",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "Double Shotgun with ammo",
+          "extraSpawns": 0,
+          "weight": 30
+        }
+      ]
+    },
+    "Collection.Rifles": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "AK47 With Ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "SMG with Ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "Bolt Rifle With Ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "Custom Smg With Ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "LR300 With Ammo",
+          "extraSpawns": 0,
+          "weight": 15
+        },
+        {
+          "category": "MP5 With Ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "M92 With Ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "Spas12 With Ammo",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "L96 Scope Ammo",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "m39 with ammo",
+          "extraSpawns": 0,
+          "weight": 15
+        },
+        {
+          "category": "P17 With Ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "M4 With Ammo",
+          "extraSpawns": 0,
+          "weight": 15
+        }
+      ]
+    },
+    "AK47 With Ammo": {
+      "items": [
+        {
+          "name": "rifle.ak",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle",
+          "amount": 12.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "SMG with Ammo": {
+      "items": [
+        {
+          "name": "smg.thompson",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.pistol",
+          "amount": 15.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Bolt Rifle With Ammo": {
+      "items": [
+        {
+          "name": "rifle.bolt",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle",
+          "amount": 8.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Custom Smg With Ammo": {
+      "items": [
+        {
+          "name": "smg.2",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.pistol",
+          "amount": 20.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LR300 With Ammo": {
+      "items": [
+        {
+          "name": "rifle.lr300",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle",
+          "amount": 20.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "MP5 With Ammo": {
+      "items": [
+        {
+          "name": "smg.mp5",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.pistol",
+          "amount": 30.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "M92 With Ammo": {
+      "items": [
+        {
+          "name": "pistol.m92",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.pistol",
+          "amount": 30.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Spas12 With Ammo": {
+      "items": [
+        {
+          "name": "shotgun.spas12",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.shotgun",
+          "amount": 8.0,
+          "maxAmount": 12.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "L96 Scope Ammo": {
+      "items": [
+        {
+          "name": "rifle.l96",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "weapon.mod.8x.scope",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle",
+          "amount": 8.0,
+          "maxAmount": 15.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "m39 with ammo": {
+      "items": [
+        {
+          "name": "rifle.m39",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle",
+          "amount": 50.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "P17 With Ammo": {
+      "items": [
+        {
+          "name": "pistol.prototype17",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.pistol",
+          "amount": 48.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "M4 With Ammo": {
+      "items": [
+        {
+          "name": "shotgun.m4",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.shotgun",
+          "amount": 8.0,
+          "maxAmount": 12.0
+        },
+        {
+          "name": "ammo.shotgun.slug",
+          "amount": 8.0,
+          "maxAmount": 12.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Items.Uncommon.Weapon": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "weapon.mod.flashlight",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "weapon.mod.simplesight",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "weapon.mod.silencer",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "grenade.beancan",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "salvaged.cleaver",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "bow.compound",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "crossbow",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "grenade.f1",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "grenade.flashbang",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "knife.combat",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "Mace",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "grenade.molotov",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "pistol.nailgun",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "shotgun.waterpipe",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "pistol.revolver",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "Longsword",
+          "extraSpawns": 0,
+          "weight": 100
+        }
+      ]
+    },
+    "weapon.mod.flashlight": {
+      "items": [
+        {
+          "name": "weapon.mod.flashlight",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "weapon.mod.simplesight": {
+      "items": [
+        {
+          "name": "weapon.mod.simplesight",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "weapon.mod.silencer": {
+      "items": [
+        {
+          "name": "weapon.mod.silencer",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "grenade.beancan": {
+      "items": [
+        {
+          "name": "grenade.beancan",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "salvaged.cleaver": {
+      "items": [
+        {
+          "name": "salvaged.cleaver",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "bow.compound": {
+      "items": [
+        {
+          "name": "bow.compound",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "crossbow": {
+      "items": [
+        {
+          "name": "crossbow",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "knife.combat": {
+      "items": [
+        {
+          "name": "knife.combat",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Mace": {
+      "items": [
+        {
+          "name": "mace",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "pistol.nailgun": {
+      "items": [
+        {
+          "name": "pistol.nailgun",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "shotgun.waterpipe": {
+      "items": [
+        {
+          "name": "shotgun.waterpipe",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "pistol.revolver": {
+      "items": [
+        {
+          "name": "pistol.revolver",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Flamethrower": {
+      "items": [
+        {
+          "name": "flamethrower",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "lowgradefuel",
+          "amount": 35.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Grenades": {
+      "items": [
+        {
+          "name": "grenade.f1",
+          "amount": 2.0,
+          "maxAmount": 4.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Double Shotgun with ammo": {
+      "items": [
+        {
+          "name": "shotgun.double",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.shotgun",
+          "amount": 5.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "MLRSAmmo": {
+      "items": [
+        {
+          "name": "ammo.rocket.mlrs",
+          "amount": 1.0,
+          "maxAmount": 2.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LootSpawn.MineCrate": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Hat Mining with fuel",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "Hat Candle with fuel",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "HQMetal",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "ToolsBasic",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "Mining Gunpowder",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "Mining metalfrags",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "ToolsPrimitive",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "flare",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "flashlight.held",
+          "extraSpawns": 0,
+          "weight": 5
+        }
+      ]
+    },
+    "Hat Mining with fuel": {
+      "items": [
+        {
+          "name": "lowgradefuel",
+          "amount": 5.0,
+          "maxAmount": 2.0
+        },
+        {
+          "name": "hat.miner",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Hat Candle with fuel": {
+      "items": [
+        {
+          "name": "lowgradefuel",
+          "amount": 2.0,
+          "maxAmount": 5.0
+        },
+        {
+          "name": "hat.candle",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "HQMetal": {
+      "items": [
+        {
+          "name": "metal.refined",
+          "amount": 1.0,
+          "maxAmount": 2.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ToolsBasic": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Hatchet",
+          "extraSpawns": 0,
+          "weight": 1
+        },
+        {
+          "category": "pickaxe",
+          "extraSpawns": 0,
+          "weight": 1
+        },
+        {
+          "category": "Binoculars",
+          "extraSpawns": 0,
+          "weight": 1
+        }
+      ]
+    },
+    "Hatchet": {
+      "items": [
+        {
+          "name": "hatchet",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "pickaxe": {
+      "items": [
+        {
+          "name": "pickaxe",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Binoculars": {
+      "items": [
+        {
+          "name": "tool.binoculars",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Mining Gunpowder": {
+      "items": [
+        {
+          "name": "gunpowder",
+          "amount": 15.0,
+          "maxAmount": 25.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Mining metalfrags": {
+      "items": [
+        {
+          "name": "metal.fragments",
+          "amount": 30.0,
+          "maxAmount": 50.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ToolsPrimitive": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "stonehatchet",
+          "extraSpawns": 0,
+          "weight": 1
+        },
+        {
+          "category": "stone.pickaxe",
+          "extraSpawns": 0,
+          "weight": 1
+        }
+      ]
+    },
+    "stonehatchet": {
+      "items": [
+        {
+          "name": "stonehatchet",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "stone.pickaxe": {
+      "items": [
+        {
+          "name": "stone.pickaxe",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "flare": {
+      "items": [
+        {
+          "name": "flare",
+          "amount": 4.0,
+          "maxAmount": 6.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "flashlight.held": {
+      "items": [
+        {
+          "name": "flashlight.held",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LargeBackpack": {
+      "items": [
+        {
+          "name": "largebackpack",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LootSpawn.RadTown2": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "LootSpawn.Components.Tier2",
+          "extraSpawns": 0,
+          "weight": 90
+        },
+        {
+          "category": "Radsuit",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "TurretParts",
+          "extraSpawns": 0,
+          "weight": 1
+        },
+        {
+          "category": "WorkbenchTier_1",
+          "extraSpawns": 0,
+          "weight": 40
+        }
+      ]
+    },
+    "Radsuit": {
+      "items": [
+        {
+          "name": "hazmatsuit",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "WorkbenchTier_1": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "kayak",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "floor.grill",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "floor.triangle.grill",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "gates.external.high.wood",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "ladder.wooden.wall",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "wall.external.high",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "wall.frame.fence.gate",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "wall.frame.fence",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "wall.window.bars.metal",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "watchtower.wood",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "bucket.helmet",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "hat.miner",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "riot.helmet",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "jacket.snow",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "jacket",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "pants",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "shirt.collared",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "tshirt",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "tshirt.long",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "barricade.sandbags",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "barricade.woodwire",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "trap.bear",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "bed",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "ceilinglight",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "chair",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "dropbox",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "fridge",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "hab.armor",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "mixingtable",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.audioalarm",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.battery.rechargable.small",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.button",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.pressurepad",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.doorcontroller",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.heater",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "fluid.combiner",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "fluid.splitter",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "fluid.switch",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.blocker",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electrical.branch",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electrical.combiner",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.orswitch",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.xorswitch",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.solarpanel.large",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "storageadaptor",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "industrial.combiner",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "industrial.conveyor",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "industrial.splitter",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.flasherlight",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.sirenlight",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.switch",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.splitter",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.sprinkler",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "electric.timer",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "target.reactive",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "guntrap",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "water.catcher.small",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "flameturret",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "flare",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "metal.detector",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "telephone",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "weapon.mod.flashlight",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "weapon.mod.silencer",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "grenade.beancan",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "salvaged.cleaver",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "bow.compound",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "shotgun.double",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "Hatchet",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "knife.combat",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "Mace",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "pickaxe",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "shotgun.waterpipe",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "pistol.revolver",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "hammer.salvaged",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "explosive.satchel",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "speargun",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "salvaged.sword",
+          "extraSpawns": 0,
+          "weight": 100
+        }
+      ]
+    },
+    "kayak": {
+      "items": [
+        {
+          "name": "kayak",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "floor.grill": {
+      "items": [
+        {
+          "name": "floor.grill",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "floor.triangle.grill": {
+      "items": [
+        {
+          "name": "floor.triangle.grill",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "gates.external.high.wood": {
+      "items": [
+        {
+          "name": "gates.external.high.wood",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ladder.wooden.wall": {
+      "items": [
+        {
+          "name": "ladder.wooden.wall",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "wall.external.high": {
+      "items": [
+        {
+          "name": "wall.external.high",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "wall.frame.fence.gate": {
+      "items": [
+        {
+          "name": "wall.frame.fence.gate",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "wall.frame.fence": {
+      "items": [
+        {
+          "name": "wall.frame.fence",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "wall.window.bars.metal": {
+      "items": [
+        {
+          "name": "wall.window.bars.metal",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "watchtower.wood": {
+      "items": [
+        {
+          "name": "watchtower.wood",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "bucket.helmet": {
+      "items": [
+        {
+          "name": "bucket.helmet",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "hat.miner": {
+      "items": [
+        {
+          "name": "hat.miner",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "riot.helmet": {
+      "items": [
+        {
+          "name": "riot.helmet",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "jacket.snow": {
+      "items": [
+        {
+          "name": "jacket.snow",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "jacket": {
+      "items": [
+        {
+          "name": "jacket",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "pants": {
+      "items": [
+        {
+          "name": "pants",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "shirt.collared": {
+      "items": [
+        {
+          "name": "shirt.collared",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "tshirt": {
+      "items": [
+        {
+          "name": "tshirt",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "tshirt.long": {
+      "items": [
+        {
+          "name": "tshirt.long",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "barricade.sandbags": {
+      "items": [
+        {
+          "name": "barricade.sandbags",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "barricade.woodwire": {
+      "items": [
+        {
+          "name": "barricade.woodwire",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "trap.bear": {
+      "items": [
+        {
+          "name": "trap.bear",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "bed": {
+      "items": [
+        {
+          "name": "bed",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ceilinglight": {
+      "items": [
+        {
+          "name": "ceilinglight",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "chair": {
+      "items": [
+        {
+          "name": "chair",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "dropbox": {
+      "items": [
+        {
+          "name": "dropbox",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "fridge": {
+      "items": [
+        {
+          "name": "fridge",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "hab.armor": {
+      "items": [
+        {
+          "name": "hab.armor",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "mixingtable": {
+      "items": [
+        {
+          "name": "mixingtable",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.audioalarm": {
+      "items": [
+        {
+          "name": "electric.audioalarm",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.battery.rechargable.small": {
+      "items": [
+        {
+          "name": "electric.battery.rechargable.small",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.button": {
+      "items": [
+        {
+          "name": "electric.button",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.pressurepad": {
+      "items": [
+        {
+          "name": "electric.pressurepad",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.doorcontroller": {
+      "items": [
+        {
+          "name": "electric.doorcontroller",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.heater": {
+      "items": [
+        {
+          "name": "electric.heater",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "fluid.combiner": {
+      "items": [
+        {
+          "name": "fluid.combiner",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "fluid.splitter": {
+      "items": [
+        {
+          "name": "fluid.splitter",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "fluid.switch": {
+      "items": [
+        {
+          "name": "fluid.switch",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.blocker": {
+      "items": [
+        {
+          "name": "electric.blocker",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electrical.branch": {
+      "items": [
+        {
+          "name": "electrical.branch",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electrical.combiner": {
+      "items": [
+        {
+          "name": "electrical.combiner",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.orswitch": {
+      "items": [
+        {
+          "name": "electric.orswitch",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.xorswitch": {
+      "items": [
+        {
+          "name": "electric.xorswitch",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.solarpanel.large": {
+      "items": [
+        {
+          "name": "electric.solarpanel.large",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "storageadaptor": {
+      "items": [
+        {
+          "name": "storageadaptor",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "industrial.combiner": {
+      "items": [
+        {
+          "name": "industrial.combiner",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "industrial.conveyor": {
+      "items": [
+        {
+          "name": "industrial.conveyor",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "industrial.splitter": {
+      "items": [
+        {
+          "name": "industrial.splitter",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.flasherlight": {
+      "items": [
+        {
+          "name": "electric.flasherlight",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.sirenlight": {
+      "items": [
+        {
+          "name": "electric.sirenlight",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.switch": {
+      "items": [
+        {
+          "name": "electric.switch",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.splitter": {
+      "items": [
+        {
+          "name": "electric.splitter",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.sprinkler": {
+      "items": [
+        {
+          "name": "electric.sprinkler",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "electric.timer": {
+      "items": [
+        {
+          "name": "electric.timer",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "target.reactive": {
+      "items": [
+        {
+          "name": "target.reactive",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "guntrap": {
+      "items": [
+        {
+          "name": "guntrap",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "water.catcher.small": {
+      "items": [
+        {
+          "name": "water.catcher.small",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "flameturret": {
+      "items": [
+        {
+          "name": "flameturret",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "metal.detector": {
+      "items": [
+        {
+          "name": "metal.detector",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "telephone": {
+      "items": [
+        {
+          "name": "telephone",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "shotgun.double": {
+      "items": [
+        {
+          "name": "shotgun.double",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "hammer.salvaged": {
+      "items": [
+        {
+          "name": "hammer.salvaged",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "explosive.satchel": {
+      "items": [
+        {
+          "name": "explosive.satchel",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "speargun": {
+      "items": [
+        {
+          "name": "speargun",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "salvaged.sword": {
+      "items": [
+        {
+          "name": "salvaged.sword",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "diving": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "diving.mask",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "diving.tank",
+          "extraSpawns": 0,
+          "weight": 30
+        },
+        {
+          "category": "diving.wetsuit",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "diving.fins",
+          "extraSpawns": 0,
+          "weight": 20
+        }
+      ]
+    },
+    "diving.mask": {
+      "items": [
+        {
+          "name": "diving.mask",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "diving.tank": {
+      "items": [
+        {
+          "name": "diving.tank",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "diving.wetsuit": {
+      "items": [
+        {
+          "name": "diving.wetsuit",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "diving.fins": {
+      "items": [
+        {
+          "name": "diving.fins",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Collection": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Basic",
+          "extraSpawns": 0,
+          "weight": 75
+        },
+        {
+          "category": "Advanced",
+          "extraSpawns": 0,
+          "weight": 25
+        }
+      ]
+    },
+    "Basic": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "ANDSwitch",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "Blocker",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "Branch",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "ORSwitch",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "PressurePad",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "SmallBattery",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "SolarLarge",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "Splitter",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "Timer",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "XORSwitch",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "Switch",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "RandSwitch",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "MediumBattery",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "Igniter",
+          "extraSpawns": 0,
+          "weight": 10
+        }
+      ]
+    },
+    "ANDSwitch": {
+      "items": [
+        {
+          "name": "electric.andswitch",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Blocker": {
+      "items": [
+        {
+          "name": "electric.blocker",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Branch": {
+      "items": [
+        {
+          "name": "electrical.branch",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ORSwitch": {
+      "items": [
+        {
+          "name": "electric.orswitch",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "PressurePad": {
+      "items": [
+        {
+          "name": "electric.pressurepad",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "SmallBattery": {
+      "items": [
+        {
+          "name": "electric.battery.rechargable.small",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "SolarLarge": {
+      "items": [
+        {
+          "name": "electric.solarpanel.large",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Splitter": {
+      "items": [
+        {
+          "name": "electric.splitter",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Timer": {
+      "items": [
+        {
+          "name": "electric.timer",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "XORSwitch": {
+      "items": [
+        {
+          "name": "electric.xorswitch",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Switch": {
+      "items": [
+        {
+          "name": "electric.switch",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "RandSwitch": {
+      "items": [
+        {
+          "name": "electric.random.switch",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "MediumBattery": {
+      "items": [
+        {
+          "name": "electric.battery.rechargable.medium",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Igniter": {
+      "items": [
+        {
+          "name": "electric.igniter",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Advanced": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Counter",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "DoorController",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "LargeBattery",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "LaserDetector",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "MemoryCell",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "RootCombiner",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "SolarLarge",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "HFHB",
+          "extraSpawns": 0,
+          "weight": 8
+        },
+        {
+          "category": "Flasher",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "SirenLight",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "RFBroadcaster",
+          "extraSpawns": 0,
+          "weight": 8
+        },
+        {
+          "category": "RFReceiver",
+          "extraSpawns": 0,
+          "weight": 8
+        },
+        {
+          "category": "Pager",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "Detonator",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "FuelGenerator",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "TeslaCoil",
+          "extraSpawns": 0,
+          "weight": 5
+        }
+      ]
+    },
+    "Counter": {
+      "items": [
+        {
+          "name": "electric.counter",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DoorController": {
+      "items": [
+        {
+          "name": "electric.doorcontroller",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LargeBattery": {
+      "items": [
+        {
+          "name": "electric.battery.rechargable.large",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LaserDetector": {
+      "items": [
+        {
+          "name": "electric.laserdetector",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "MemoryCell": {
+      "items": [
+        {
+          "name": "electrical.memorycell",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "RootCombiner": {
+      "items": [
+        {
+          "name": "electrical.combiner",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "HFHB": {
+      "items": [
+        {
+          "name": "electric.hbhfsensor",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Flasher": {
+      "items": [
+        {
+          "name": "electric.flasherlight",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "SirenLight": {
+      "items": [
+        {
+          "name": "electric.sirenlight",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "RFBroadcaster": {
+      "items": [
+        {
+          "name": "electric.rf.broadcaster",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "RFReceiver": {
+      "items": [
+        {
+          "name": "electric.rf.receiver",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Pager": {
+      "items": [
+        {
+          "name": "rf_pager",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Detonator": {
+      "items": [
+        {
+          "name": "rf.detonator",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "FuelGenerator": {
+      "items": [
+        {
+          "name": "electric.fuelgenerator.small",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "TeslaCoil": {
+      "items": [
+        {
+          "name": "electric.teslacoil",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM.LootSpawn.FoodCrate": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "DM.Food",
+          "extraSpawns": 0,
+          "weight": 100
+        }
+      ]
+    },
+    "DM.Food": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Apple",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "black.raspberries",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "Blueberries",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "can.beans",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "can.tuna",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "chocholate",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "granolabar",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "pumpkin",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "smallwaterbottle",
+          "extraSpawns": 0,
+          "weight": 400
+        },
+        {
+          "category": "WaterJug",
+          "extraSpawns": 0,
+          "weight": 100
+        }
+      ]
+    },
+    "black.raspberries": {
+      "items": [
+        {
+          "name": "black.raspberries",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Blueberries": {
+      "items": [
+        {
+          "name": "blueberries",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "chocholate": {
+      "items": [
+        {
+          "name": "chocolate",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "pumpkin": {
+      "items": [
+        {
+          "name": "pumpkin",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "WaterJug": {
+      "items": [
+        {
+          "name": "waterjug",
+          "amount": 1.0,
+          "maxAmount": 2.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM.LootSpawn.MedicalCrate": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Bandage",
+          "extraSpawns": 0,
+          "weight": 40
+        },
+        {
+          "category": "largemedkit",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "syringe.medical",
+          "extraSpawns": 0,
+          "weight": 10
+        }
+      ]
+    },
+    "Bandage": {
+      "items": [
+        {
+          "name": "bandage",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LootSpawn.BlackBox": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Tools",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "ArmorBasic",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "BasicWeapons",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "TurretParts",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "Ammo",
+          "extraSpawns": 0,
+          "weight": 10
+        }
+      ]
+    },
+    "Tools": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "ToolsBasic",
+          "extraSpawns": 0,
+          "weight": 80
+        },
+        {
+          "category": "ToolsMedium",
+          "extraSpawns": 0,
+          "weight": 20
+        }
+      ]
+    },
+    "ToolsMedium": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "icepick.salvaged",
+          "extraSpawns": 0,
+          "weight": 2
+        },
+        {
+          "category": "axe.salvaged",
+          "extraSpawns": 0,
+          "weight": 2
+        },
+        {
+          "category": "Chainsaw with fuel",
+          "extraSpawns": 0,
+          "weight": 1
+        },
+        {
+          "category": "jackhammer",
+          "extraSpawns": 0,
+          "weight": 1
+        }
+      ]
+    },
+    "Chainsaw with fuel": {
+      "items": [
+        {
+          "name": "chainsaw",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        },
+        {
+          "name": "lowgradefuel",
+          "amount": 20.0,
+          "maxAmount": 40.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "jackhammer": {
+      "items": [
+        {
+          "name": "jackhammer",
+          "amount": 1.0,
+          "maxAmount": -1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ArmorBasic": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "hoodie",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "pants",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "tshirt.long",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "WoodArmorSet",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "diving",
+          "extraSpawns": 0,
+          "weight": 10
+        }
+      ]
+    },
+    "WoodArmorSet": {
+      "items": [
+        {
+          "name": "wood.armor.jacket",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        },
+        {
+          "name": "wood.armor.pants",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "BasicWeapons": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "salvaged.sword",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "Mace",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "salvaged.cleaver",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "Bow And Arrow",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "Crossbow",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "ArrowHeads",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "knife.combat",
+          "extraSpawns": 0,
+          "weight": 5
+        }
+      ]
+    },
+    "Bow And Arrow": {
+      "items": [
+        {
+          "name": "bow.hunting",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "arrow.wooden",
+          "amount": 5.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Crossbow": {
+      "items": [
+        {
+          "name": "crossbow",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "arrow.wooden",
+          "amount": 5.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ArrowHeads": {
+      "items": [
+        {
+          "name": "arrow.bone",
+          "amount": 5.0,
+          "maxAmount": 10.0
+        },
+        {
+          "name": "arrow.fire",
+          "amount": 3.0,
+          "maxAmount": 6.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Ammo": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Pistol",
+          "extraSpawns": 0,
+          "weight": 40
+        },
+        {
+          "category": "Rifle",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "Shotgun",
+          "extraSpawns": 0,
+          "weight": 40
+        }
+      ]
+    },
+    "Pistol": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "PistolRegular",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "PistolFire",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "PistolHV",
+          "extraSpawns": 0,
+          "weight": 10
+        }
+      ]
+    },
+    "PistolRegular": {
+      "items": [
+        {
+          "name": "ammo.pistol",
+          "amount": 15.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "PistolFire": {
+      "items": [
+        {
+          "name": "ammo.pistol.fire",
+          "amount": 10.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "PistolHV": {
+      "items": [
+        {
+          "name": "ammo.pistol.hv",
+          "amount": 10.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Rifle": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "RifleRegular",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "RifleFire",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "RifleHV",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "RifleEXP",
+          "extraSpawns": 0,
+          "weight": 10
+        }
+      ]
+    },
+    "RifleRegular": {
+      "items": [
+        {
+          "name": "ammo.rifle",
+          "amount": 12.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "RifleFire": {
+      "items": [
+        {
+          "name": "ammo.rifle.incendiary",
+          "amount": 8.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "RifleHV": {
+      "items": [
+        {
+          "name": "ammo.rifle.hv",
+          "amount": 10.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "RifleEXP": {
+      "items": [
+        {
+          "name": "ammo.rifle.explosive",
+          "amount": 8.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Shotgun": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "ShotgunShells",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "ShotgunSlugs",
+          "extraSpawns": 0,
+          "weight": 30
+        },
+        {
+          "category": "ShotgunIncendiary",
+          "extraSpawns": 0,
+          "weight": 30
+        }
+      ]
+    },
+    "ShotgunShells": {
+      "items": [
+        {
+          "name": "ammo.shotgun",
+          "amount": 6.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ShotgunSlugs": {
+      "items": [
+        {
+          "name": "ammo.shotgun.slug",
+          "amount": 4.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ShotgunIncendiary": {
+      "items": [
+        {
+          "name": "ammo.shotgun.fire",
+          "amount": 4.0,
+          "maxAmount": 8.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM.LootSpawn.AmmoCrate": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "DM Ammo (handmade)",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "DM Ammo (pistol fire)",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "DM Ammo (pistol hv)",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "DM Ammo (pistol)",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "DM Ammo (rifle explosive)",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "DM Ammo (rifle fire)",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "DM Ammo (rifle hv)",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "DM Ammo (rifle)",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "DM Ammo (rocket fire)",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "DM Ammo (rocket hv)",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "DM Ammo (rocket)",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "DM Ammo (shotgun)",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "DM Ammo (slugs)",
+          "extraSpawns": 0,
+          "weight": 20
+        }
+      ]
+    },
+    "DM Ammo (handmade)": {
+      "items": [
+        {
+          "name": "ammo.handmade.shell",
+          "amount": 30.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Ammo (pistol fire)": {
+      "items": [
+        {
+          "name": "ammo.pistol.fire",
+          "amount": 30.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Ammo (pistol hv)": {
+      "items": [
+        {
+          "name": "ammo.pistol.hv",
+          "amount": 30.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Ammo (pistol)": {
+      "items": [
+        {
+          "name": "ammo.pistol",
+          "amount": 30.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Ammo (rifle explosive)": {
+      "items": [
+        {
+          "name": "ammo.rifle.explosive",
+          "amount": 30.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Ammo (rifle fire)": {
+      "items": [
+        {
+          "name": "ammo.rifle.incendiary",
+          "amount": 30.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Ammo (rifle hv)": {
+      "items": [
+        {
+          "name": "ammo.rifle.hv",
+          "amount": 30.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Ammo (rifle)": {
+      "items": [
+        {
+          "name": "ammo.rifle",
+          "amount": 30.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Ammo (rocket fire)": {
+      "items": [
+        {
+          "name": "ammo.rocket.fire",
+          "amount": 5.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Ammo (rocket hv)": {
+      "items": [
+        {
+          "name": "ammo.rocket.hv",
+          "amount": 5.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Ammo (rocket)": {
+      "items": [
+        {
+          "name": "ammo.rocket.basic",
+          "amount": 5.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Ammo (shotgun)": {
+      "items": [
+        {
+          "name": "ammo.shotgun",
+          "amount": 20.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Ammo (slugs)": {
+      "items": [
+        {
+          "name": "ammo.shotgun.slug",
+          "amount": 20.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM.ConstructionResources": {
+      "items": [
+        {
+          "name": "wood",
+          "amount": 5000.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "stones",
+          "amount": 5000.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "cloth",
+          "amount": 200.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "metal.ore",
+          "amount": 2500.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "fat.animal",
+          "amount": 100.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "sulfur",
+          "amount": 900.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM.ConstructionTools": {
+      "items": [
+        {
+          "name": "hammer",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "building.planner",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "axe.salvaged",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "icepick.salvaged",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM.ConstructionResourcesAlt": {
+      "items": [
+        {
+          "name": "wood",
+          "amount": 8000.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "stones",
+          "amount": 5000.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "sulfur.ore",
+          "amount": 2750.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "metal.ore",
+          "amount": 10000.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "hq.metal.ore",
+          "amount": 50.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM.LootSpawn.T1": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "DM.LootSpawn.T1.Armour",
+          "extraSpawns": 0,
+          "weight": 60
+        },
+        {
+          "category": "DM.LootSpawn.T1.Weapon",
+          "extraSpawns": 0,
+          "weight": 40
+        }
+      ]
+    },
+    "DM.LootSpawn.T1.Armour": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "wood.armor.jacket",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "wood.armor.pants",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "burlap.gloves",
+          "extraSpawns": 0,
+          "weight": 35
+        },
+        {
+          "category": "burlap.headwrap",
+          "extraSpawns": 0,
+          "weight": 35
+        },
+        {
+          "category": "burlap.shirt",
+          "extraSpawns": 0,
+          "weight": 35
+        },
+        {
+          "category": "burlap.shoes",
+          "extraSpawns": 0,
+          "weight": 35
+        },
+        {
+          "category": "burlap.trousers",
+          "extraSpawns": 0,
+          "weight": 35
+        },
+        {
+          "category": "hat.candle",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "mask.bandana",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "hat.cap",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "hat.boonie",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "pumpkin",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "tshirt",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "hoodie",
+          "extraSpawns": 0,
+          "weight": 25
+        }
+      ]
+    },
+    "wood.armor.jacket": {
+      "items": [
+        {
+          "name": "wood.armor.jacket",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "wood.armor.pants": {
+      "items": [
+        {
+          "name": "wood.armor.pants",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "burlap.headwrap": {
+      "items": [
+        {
+          "name": "burlap.headwrap",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "burlap.shirt": {
+      "items": [
+        {
+          "name": "burlap.shirt",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "burlap.shoes": {
+      "items": [
+        {
+          "name": "burlap.shoes",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "burlap.trousers": {
+      "items": [
+        {
+          "name": "burlap.trousers",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "hat.candle": {
+      "items": [
+        {
+          "name": "hat.candle",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM.LootSpawn.T1.Weapon": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "DM Bone club",
+          "extraSpawns": 0,
+          "weight": 30
+        },
+        {
+          "category": "DM Bone knife",
+          "extraSpawns": 0,
+          "weight": 30
+        },
+        {
+          "category": "DM Bow",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Crossbow",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Eoka",
+          "extraSpawns": 0,
+          "weight": 35
+        },
+        {
+          "category": "DM Guitar",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "DM Spear (Stone)",
+          "extraSpawns": 0,
+          "weight": 30
+        },
+        {
+          "category": "DM Spear (Wood)",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM chainsaw",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "DM nailgun",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "DM Compound Bow",
+          "extraSpawns": 0,
+          "weight": 30
+        }
+      ]
+    },
+    "DM Bone club": {
+      "items": [
+        {
+          "name": "bone.club",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Bone knife": {
+      "items": [
+        {
+          "name": "knife.bone",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Bow": {
+      "items": [
+        {
+          "name": "bow.hunting",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "arrow.wooden",
+          "amount": 20.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "arrow.fire",
+          "amount": 3.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Crossbow": {
+      "items": [
+        {
+          "name": "crossbow",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "arrow.wooden",
+          "amount": 20.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "arrow.fire",
+          "amount": 4.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Eoka": {
+      "items": [
+        {
+          "name": "pistol.eoka",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.handmade.shell",
+          "amount": 20.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Guitar": {
+      "items": [
+        {
+          "name": "fun.guitar",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Spear (Stone)": {
+      "items": [
+        {
+          "name": "spear.stone",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Spear (Wood)": {
+      "items": [
+        {
+          "name": "spear.wooden",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM chainsaw": {
+      "items": [
+        {
+          "name": "chainsaw",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "lowgradefuel",
+          "amount": 150.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM nailgun": {
+      "items": [
+        {
+          "name": "pistol.nailgun",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.nailgun.nails",
+          "amount": 50.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Compound Bow": {
+      "items": [
+        {
+          "name": "bow.compound",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "arrow.wooden",
+          "amount": 20.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "arrow.fire",
+          "amount": 4.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM.LootSpawn.T2": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "DM.LootSpawn.T2.Armour",
+          "extraSpawns": 0,
+          "weight": 60
+        },
+        {
+          "category": "DM.LootSpawn.T2.Weapon",
+          "extraSpawns": 0,
+          "weight": 40
+        }
+      ]
+    },
+    "DM.LootSpawn.T2.Armour": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "bone.armor.jacket",
+          "extraSpawns": 0,
+          "weight": 40
+        },
+        {
+          "category": "bone.armor.pants",
+          "extraSpawns": 0,
+          "weight": 40
+        },
+        {
+          "category": "attire.hide.boots",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "attire.hide.pants",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "attire.hide.poncho",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "attire.hide.vest",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "hat.wolf",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "jacket.snow",
+          "extraSpawns": 0,
+          "weight": 35
+        },
+        {
+          "category": "riot.helmet",
+          "extraSpawns": 0,
+          "weight": 35
+        },
+        {
+          "category": "mask.balaclava",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "hazmatsuit",
+          "extraSpawns": 0,
+          "weight": 5
+        }
+      ]
+    },
+    "bone.armor.jacket": {
+      "items": [
+        {
+          "name": "bone.armor.suit",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "bone.armor.pants": {
+      "items": [
+        {
+          "name": "bone.armor.suit",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "attire.hide.boots": {
+      "items": [
+        {
+          "name": "attire.hide.boots",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "attire.hide.pants": {
+      "items": [
+        {
+          "name": "attire.hide.pants",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "attire.hide.poncho": {
+      "items": [
+        {
+          "name": "attire.hide.poncho",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "attire.hide.vest": {
+      "items": [
+        {
+          "name": "attire.hide.vest",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "hat.wolf": {
+      "items": [
+        {
+          "name": "hat.wolf",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM.LootSpawn.T2.Weapon": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "DM Beancan grenade",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Bolt Rifle",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Longsword",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Mace",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Machete",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Revolver",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Salv cleaver",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Salv sword",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Semiauto pistol",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Waterpipe shotgun",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Waterpipe shotgun (slug)",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM SAR",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Python",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM flamethrower",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Double shotgun",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM M39",
+          "extraSpawns": 0,
+          "weight": 50
+        }
+      ]
+    },
+    "DM Beancan grenade": {
+      "items": [
+        {
+          "name": "grenade.beancan",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "grenade.beancan",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "grenade.beancan",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "grenade.beancan",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Bolt Rifle": {
+      "items": [
+        {
+          "name": "rifle.bolt",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle",
+          "amount": 32.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Longsword": {
+      "items": [
+        {
+          "name": "longsword",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Mace": {
+      "items": [
+        {
+          "name": "mace",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Machete": {
+      "items": [
+        {
+          "name": "machete",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Revolver": {
+      "items": [
+        {
+          "name": "pistol.revolver",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.pistol",
+          "amount": 36.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Salv cleaver": {
+      "items": [
+        {
+          "name": "salvaged.cleaver",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Salv sword": {
+      "items": [
+        {
+          "name": "salvaged.sword",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Semiauto pistol": {
+      "items": [
+        {
+          "name": "pistol.semiauto",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.pistol",
+          "amount": 48.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Waterpipe shotgun": {
+      "items": [
+        {
+          "name": "shotgun.waterpipe",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.shotgun",
+          "amount": 20.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Waterpipe shotgun (slug)": {
+      "items": [
+        {
+          "name": "shotgun.waterpipe",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.shotgun.slug",
+          "amount": 20.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM SAR": {
+      "items": [
+        {
+          "name": "rifle.semiauto",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle",
+          "amount": 32.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Python": {
+      "items": [
+        {
+          "name": "pistol.python",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.pistol",
+          "amount": 36.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM flamethrower": {
+      "items": [
+        {
+          "name": "flamethrower",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "lowgradefuel",
+          "amount": 150.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Double shotgun": {
+      "items": [
+        {
+          "name": "shotgun.double",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.shotgun",
+          "amount": 20.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM M39": {
+      "items": [
+        {
+          "name": "rifle.m39",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle",
+          "amount": 64.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM.LootSpawn.T3": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "DM.LootSpawn.T3.Armour",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM.LootSpawn.T3.Weapon",
+          "extraSpawns": 0,
+          "weight": 50
+        }
+      ]
+    },
+    "DM.LootSpawn.T3.Armour": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "roadsign.jacket",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "roadsign.kilt",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "metal.plate.torso",
+          "extraSpawns": 0,
+          "weight": 35
+        },
+        {
+          "category": "shoes.boots",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "metal.facemask",
+          "extraSpawns": 0,
+          "weight": 35
+        },
+        {
+          "category": "coffeecan.helmet",
+          "extraSpawns": 0,
+          "weight": 35
+        }
+      ]
+    },
+    "DM.LootSpawn.T3.Weapon": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "DM AK47",
+          "extraSpawns": 0,
+          "weight": 15
+        },
+        {
+          "category": "DM Custom SMG",
+          "extraSpawns": 0,
+          "weight": 40
+        },
+        {
+          "category": "DM F1 grenade",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Pump shotgun",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Pump shotgun (slug)",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "DM Rocketlauncher",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "DM Rocketlauncher (fire)",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "DM Signal",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "DM Augments",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "DM Augments 2",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "DM Augments 3",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "DM Thompson",
+          "extraSpawns": 0,
+          "weight": 35
+        },
+        {
+          "category": "DM LR300",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "DM MP5",
+          "extraSpawns": 0,
+          "weight": 15
+        },
+        {
+          "category": "DM Spas12 shotgun",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "DM L96",
+          "extraSpawns": 0,
+          "weight": 10
+        }
+      ]
+    },
+    "DM AK47": {
+      "items": [
+        {
+          "name": "rifle.ak",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle",
+          "amount": 90.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Custom SMG": {
+      "items": [
+        {
+          "name": "smg.2",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.pistol",
+          "amount": 96.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM F1 grenade": {
+      "items": [
+        {
+          "name": "grenade.f1",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "grenade.f1",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "grenade.f1",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "grenade.f1",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Pump shotgun": {
+      "items": [
+        {
+          "name": "shotgun.pump",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.shotgun",
+          "amount": 20.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Pump shotgun (slug)": {
+      "items": [
+        {
+          "name": "shotgun.pump",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.shotgun.slug",
+          "amount": 20.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Rocketlauncher": {
+      "items": [
+        {
+          "name": "rocket.launcher",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rocket.basic",
+          "amount": 3.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Rocketlauncher (fire)": {
+      "items": [
+        {
+          "name": "rocket.launcher",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rocket.fire",
+          "amount": 3.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Signal": {
+      "items": [
+        {
+          "name": "supply.signal",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Augments": {
+      "items": [
+        {
+          "name": "weapon.mod.small.scope",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "weapon.mod.muzzleboost",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Augments 2": {
+      "items": [
+        {
+          "name": "weapon.mod.holosight",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "weapon.mod.muzzlebrake",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Augments 3": {
+      "items": [
+        {
+          "name": "weapon.mod.lasersight",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "weapon.mod.silencer",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Thompson": {
+      "items": [
+        {
+          "name": "smg.thompson",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.pistol",
+          "amount": 80.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM LR300": {
+      "items": [
+        {
+          "name": "rifle.lr300",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle",
+          "amount": 90.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM MP5": {
+      "items": [
+        {
+          "name": "smg.mp5",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.pistol",
+          "amount": 80.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM Spas12 shotgun": {
+      "items": [
+        {
+          "name": "shotgun.spas12",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.shotgun.fire",
+          "amount": 20.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.shotgun",
+          "amount": 20.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "DM L96": {
+      "items": [
+        {
+          "name": "rifle.l96",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle",
+          "amount": 50.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LootSpawn.FoodBox": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "RadPills",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "Items.Common.Food",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "WaterJug",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "Pickles",
+          "extraSpawns": 0,
+          "weight": 5
+        }
+      ]
+    },
+    "Pickles": {
+      "items": [
+        {
+          "name": "jar.pickle",
+          "amount": 1.0,
+          "maxAmount": 3.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LootSpawn.Components.Tier0": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Metal",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "Wood",
+          "extraSpawns": 0,
+          "weight": 75
+        }
+      ]
+    },
+    "Metal": {
+      "items": [
+        {
+          "name": "metal.fragments",
+          "amount": 10.0,
+          "maxAmount": 15.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Wood": {
+      "items": [
+        {
+          "name": "wood",
+          "amount": 100.0,
+          "maxAmount": 150.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LootSpawn.OilBarrel": {
+      "items": [
+        {
+          "name": "crude.oil",
+          "amount": 15.0,
+          "maxAmount": 20.0
+        },
+        {
+          "name": "lowgradefuel",
+          "amount": 5.0,
+          "maxAmount": 10.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LootSpawn.FoodCrate": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Items.Common.Food",
+          "extraSpawns": 0,
+          "weight": 50
+        }
+      ]
+    },
+    "LootSpawn.MedicalCrate": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Bandage",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "largemedkit",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "syringe.medical",
+          "extraSpawns": 0,
+          "weight": 25
+        }
+      ]
+    },
+    "EngineComponents": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "carburtor",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "crankshaft",
+          "extraSpawns": 0,
+          "weight": 10
+        },
+        {
+          "category": "pistions",
+          "extraSpawns": 0,
+          "weight": 15
+        },
+        {
+          "category": "sparkplugs",
+          "extraSpawns": 0,
+          "weight": 15
+        },
+        {
+          "category": "valves",
+          "extraSpawns": 0,
+          "weight": 15
+        }
+      ]
+    },
+    "carburtor": {
+      "items": [
+        {
+          "name": "carburetor1",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "crankshaft": {
+      "items": [
+        {
+          "name": "crankshaft1",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "pistions": {
+      "items": [
+        {
+          "name": "piston1",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "sparkplugs": {
+      "items": [
+        {
+          "name": "sparkplug1",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "valves": {
+      "items": [
+        {
+          "name": "valve1",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "LootSpawn.Roadsign": {
+      "items": [
+        {
+          "name": "metalpipe",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        },
+        {
+          "name": "roadsigns",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "Workbench_Experiment_Tier_3": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "ammo.rifle.explosive",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "ammo.rifle.incendiary",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "ammo.rifle.hv",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "ammo.rocket.basic",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "door.double.hinged.toptier",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "door.hinged.toptier",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "wall.window.bars.toptier",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "metal.facemask",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "metal.plate.torso",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "Explosives",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "explosive.timed",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "weapon.mod.lasersight",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "weapon.mod.small.scope",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "rifle.ak",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "rifle.bolt",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "hmlmg",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "smg.mp5",
+          "extraSpawns": 0,
+          "weight": 100
+        }
+      ]
+    },
+    "ammo.rifle.explosive": {
+      "items": [
+        {
+          "name": "ammo.rifle.explosive",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ammo.rifle.incendiary": {
+      "items": [
+        {
+          "name": "ammo.rifle.incendiary",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ammo.rifle.hv": {
+      "items": [
+        {
+          "name": "ammo.rifle.hv",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ammo.rocket.basic": {
+      "items": [
+        {
+          "name": "ammo.rocket.basic",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ArmorRare": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "metal.plate.torso",
+          "extraSpawns": 0,
+          "weight": 30
+        },
+        {
+          "category": "metal.facemask",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "jacket",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "HeavyArmorPieces",
+          "extraSpawns": 0,
+          "weight": 50
+        }
+      ]
+    },
+    "HeavyArmorPieces": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "heavy.plate.helmet",
+          "extraSpawns": 0,
+          "weight": 1
+        },
+        {
+          "category": "heavy.plate.jacket",
+          "extraSpawns": 0,
+          "weight": 1
+        },
+        {
+          "category": "heavy.plate.pants",
+          "extraSpawns": 0,
+          "weight": 1
+        }
+      ]
+    },
+    "aiming.module.mlrs": {
+      "items": [
+        {
+          "name": "aiming.module.mlrs",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "minigun with ammo": {
+      "items": [
+        {
+          "name": "minigun",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle",
+          "amount": 50.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ResourceRoll": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "ResourceRoll_Components",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "ResourceRoll_Scrap",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "ResourceRoll_HQM",
+          "extraSpawns": 0,
+          "weight": 100
+        }
+      ]
+    },
+    "ResourceRoll_Components": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "GearsLarge",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "Pipes_large",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "SheetmetalLarge",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "TechParts5",
+          "extraSpawns": 0,
+          "weight": 100
+        }
+      ]
+    },
+    "GearsLarge": {
+      "items": [
+        {
+          "name": "gears",
+          "amount": 5.0,
+          "maxAmount": 5.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "SheetmetalLarge": {
+      "items": [
+        {
+          "name": "sheetmetal",
+          "amount": 5.0,
+          "maxAmount": 5.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "TechParts5": {
+      "items": [
+        {
+          "name": "techparts",
+          "amount": 4.0,
+          "maxAmount": 5.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ResourceRoll_Scrap": {
+      "items": [
+        {
+          "name": "scrap",
+          "amount": 140.0,
+          "maxAmount": 160.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ResourceRoll_HQM": {
+      "items": [
+        {
+          "name": "metal.refined",
+          "amount": 32.0,
+          "maxAmount": 40.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ArmorRoll": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "ArmorMedium",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "Armor_Supplydrop_rare",
+          "extraSpawns": 0,
+          "weight": 50
+        }
+      ]
+    },
+    "ArmorMedium": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "coffeecan.helmet",
+          "extraSpawns": 0,
+          "weight": 40
+        },
+        {
+          "category": "bucket.helmet",
+          "extraSpawns": 0,
+          "weight": 40
+        },
+        {
+          "category": "jacket.snow",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "riot.helmet",
+          "extraSpawns": 0,
+          "weight": 40
+        },
+        {
+          "category": "hoodie",
+          "extraSpawns": 0,
+          "weight": 40
+        },
+        {
+          "category": "pants",
+          "extraSpawns": 0,
+          "weight": 40
+        }
+      ]
+    },
+    "Armor_Supplydrop_rare": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "roadsign.jacket",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "roadsign.kilt",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "roadsign.gloves",
+          "extraSpawns": 0,
+          "weight": 50
+        }
+      ]
+    },
+    "GunRoll": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "GunRoll_Medium",
+          "extraSpawns": 1,
+          "weight": 100
+        },
+        {
+          "category": "GunRoll_Rare",
+          "extraSpawns": 0,
+          "weight": 100
+        }
+      ]
+    },
+    "GunRoll_Medium": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "GunRoll_Sub_Medium",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "GunRoll_Sub_Medium",
+          "extraSpawns": 0,
+          "weight": 100
+        }
+      ]
+    },
+    "GunRoll_Sub_Medium": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "Pump With Ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "SAR with ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "Custom Smg With Ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "SMG with Ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        }
+      ]
+    },
+    "Pump With Ammo": {
+      "items": [
+        {
+          "name": "shotgun.pump",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.shotgun",
+          "amount": 8.0,
+          "maxAmount": 12.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "SAR with ammo": {
+      "items": [
+        {
+          "name": "rifle.semiauto",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle",
+          "amount": 35.0,
+          "maxAmount": 50.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "GunRoll_Rare": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "MP5 With Ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "Spas12 With Ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "M92 With Ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "m39 with ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "LR300 With Ammo",
+          "extraSpawns": 0,
+          "weight": 5
+        },
+        {
+          "category": "P17 With Ammo",
+          "extraSpawns": 0,
+          "weight": 25
+        }
+      ]
+    },
+    "ToolRoll": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "ToolRoll_Sub_Tools",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "Grenades",
+          "extraSpawns": 2,
+          "weight": 100
+        },
+        {
+          "category": "Satchels",
+          "extraSpawns": 1,
+          "weight": 100
+        },
+        {
+          "category": "C4",
+          "extraSpawns": 0,
+          "weight": 50
+        }
+      ]
+    },
+    "ToolRoll_Sub_Tools": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "chainsaw",
+          "extraSpawns": 0,
+          "weight": 100
+        },
+        {
+          "category": "jackhammer",
+          "extraSpawns": 0,
+          "weight": 100
+        }
+      ]
+    },
+    "Satchels": {
+      "items": [
+        {
+          "name": "explosive.satchel",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "C4": {
+      "items": [
+        {
+          "name": "explosive.timed",
+          "amount": 1.0,
+          "maxAmount": 1.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "HighEndWeapons": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "L96 Scope Ammo",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "m249 with ammo",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "Collection.Rifles",
+          "extraSpawns": 0,
+          "weight": 50
+        }
+      ]
+    },
+    "m249 with ammo": {
+      "items": [
+        {
+          "name": "lmg.m249",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle",
+          "amount": 50.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "ItemModsRare": {
+      "items": [
+        {
+          "name": "weapon.mod.lasersight",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "weapon.mod.small.scope",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "weapon.mod.burstmodule",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "weapon.mod.extendedmags",
+          "amount": 1.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "HighEndOrdinance": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "RocketAmmoCollection",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "RifleAmmoCollection",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "C4",
+          "extraSpawns": 0,
+          "weight": 50
+        }
+      ]
+    },
+    "RocketAmmoCollection": {
+      "items": [
+        {
+          "name": "ammo.rocket.fire",
+          "amount": 5.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rocket.hv",
+          "amount": 3.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rocket.mlrs",
+          "amount": 2.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "RifleAmmoCollection": {
+      "items": [
+        {
+          "name": "ammo.rifle",
+          "amount": 120.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle.incendiary",
+          "amount": 60.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle.explosive",
+          "amount": 30.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rifle.hv",
+          "amount": 40.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "TechPartsLarge": {
+      "items": [
+        {
+          "name": "techparts",
+          "amount": 10.0,
+          "maxAmount": 12.0
+        }
+      ],
+      "subSpawn": []
+    },
+    "RareBaseParts": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "door.double.hinged.toptier",
+          "extraSpawns": 0,
+          "weight": 25
+        },
+        {
+          "category": "door.hinged.toptier",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "floor.ladder.hatch",
+          "extraSpawns": 0,
+          "weight": 50
+        }
+      ]
+    },
+    "HeliLoot": {
+      "items": [],
+      "subSpawn": [
+        {
+          "category": "RifleAmmoCollection",
+          "extraSpawns": 0,
+          "weight": 30
+        },
+        {
+          "category": "RocketAmmoCollection",
+          "extraSpawns": 0,
+          "weight": 30
+        },
+        {
+          "category": "ExplosivesCollection",
+          "extraSpawns": 0,
+          "weight": 50
+        },
+        {
+          "category": "Collection.Rifles",
+          "extraSpawns": 0,
+          "weight": 30
+        },
+        {
+          "category": "m249 with ammo",
+          "extraSpawns": 0,
+          "weight": 20
+        },
+        {
+          "category": "ItemModsRare",
+          "extraSpawns": 0,
+          "weight": 15
+        },
+        {
+          "category": "WorkbenchTier_3",
+          "extraSpawns": 0,
+          "weight": 25
+        }
+      ]
+    },
+    "ExplosivesCollection": {
+      "items": [
+        {
+          "name": "explosive.timed",
+          "amount": 2.0,
+          "maxAmount": 0.0
+        },
+        {
+          "name": "ammo.rocket.basic",
+          "amount": 3.0,
+          "maxAmount": 0.0
+        }
+      ],
+      "subSpawn": []
+    }
+  }
+}

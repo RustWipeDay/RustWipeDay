@@ -1,0 +1,9 @@
+{
+  "Template": {
+    "Field Title": "#{discordplayers.player.index} {player.name:clan}",
+    "Field Value": "**Connected:** {timespan.hours}h {timespan.minutes}m {timespan.seconds}s",
+    "Keep Field On Same Row": true,
+    "Hide Field If Value Empty": false
+  },
+  "Template Version": "1.0.0"
+}

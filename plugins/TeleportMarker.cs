@@ -65,13 +65,13 @@ namespace Oxide.Plugins
         {
             lang.RegisterMessages(new Dictionary<string, string>
             {
-                ["Teleported"] = "You are teleported to <color=#FFA600>{0}</color>.",
-                ["Cooldown"] = "Your health has been set to {0}, you can teleport again."
+                ["Teleported"] = "<color=#c45508>[RustWipeDay]</color>: You are teleported to <color=#FFA600>{0}</color>.",
+                ["Cooldown"] = "<color=#c45508>[RustWipeDay]</color>: Your health has been set to {0}, you can teleport again."
             }, this);
             lang.RegisterMessages(new Dictionary<string, string>
             {
-                ["Teleported"] = "<color=#FFA600>{0}</color> konumuna ışınlandınız.",
-                ["Cooldown"] = "Canın eskisi gibi <color=#FFA600>{0}</color> olarak ayarlandı, yeniden ışınlanabilirsiniz."
+                ["Teleported"] = "<color=#c45508>[RustWipeDay]</color>: <color=#FFA600>{0}</color> konumuna ışınlandınız.",
+                ["Cooldown"] = "<color=#c45508>[RustWipeDay]</color>: Canın eskisi gibi <color=#FFA600>{0}</color> olarak ayarlandı, yeniden ışınlanabilirsiniz."
             }, this, "tr");
         }
         private void TP(BasePlayer player, MapNote note)
@@ -85,16 +85,17 @@ namespace Oxide.Plugins
             Message(player, "Teleported", pos);
             timer.Once(6f, () => { if (player == null) return; Message(player, "Cooldown", (100 - health2)); player.SetMaxHealth(100); player.Hurt(health2); });
         }
+
         private void OnMapMarkerAdded(BasePlayer player, MapNote note)
         {
             if (player == null || note == null || player.isMounted || !player.IsAlive()) return;
-            if (config.admins == true)
-            {
-                if (player.IsAdmin) {TP(player, note);}
+            if (config.admins == true && player.IsAdmin) {
+                TP(player, note);
+                return;
             }
-            else
-            {
-                if (player.IPlayer.HasPermission(permUse)) {TP(player, note);}
+            if (player.IPlayer.HasPermission(permUse)) {
+                TP(player, note);
+                return;
             }
         }
     }

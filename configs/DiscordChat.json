@@ -1,0 +1,87 @@
+{
+  "Discord Bot Token": "",
+  "Chat Settings": {
+    "Chat Channel ID": "",
+    "Team Channel ID": "",
+    "Cards Channel ID": "",
+    "Clans Channel ID": "",
+    "Replace Discord User Message With Bot Message": true,
+    "Send Messages From Server Chat To Discord Channel": true,
+    "Send Messages From Discord Channel To Server Chat": true,
+    "Add Discord Tag To In Game Messages When Sent From Discord": "[#5f79d6][Discord][/#]",
+    "Allow plugins to process Discord to Server Chat Messages": true,
+    "Text Replacements": {
+      "TextToBeReplaced": "ReplacedText"
+    },
+    "Unlinked Settings": {
+      "Allow Unlinked Players To Chat With Server": true,
+      "Steam Icon ID": 76561199144296099
+    },
+    "Message Filter Settings": {
+      "Ignore messages from users in this list (Discord ID)": [],
+      "Ignore messages from users in this role (Role ID)": [],
+      "Ignored Prefixes": []
+    }
+  },
+  "Player State Settings": {
+    "Player State Channel ID": "",
+    "Show Admins": true,
+    "Send Connecting Message": true,
+    "Send Connected Message": true,
+    "Send Disconnected Message": true
+  },
+  "Server State Settings": {
+    "Server State Channel ID": "",
+    "Send Booting Message": true,
+    "Send Online Message": true,
+    "Send Shutdown Message": true
+  },
+  "Plugin Support": {
+    "AdminChat Settings": {
+      "Enable AdminChat Plugin Support": false,
+      "Chat Channel ID": "",
+      "Chat Prefix": "@",
+      "Replace Discord Message With Bot": true
+    },
+    "AntiSpam Settings": {
+      "Use AntiSpam On Player Names": false,
+      "Use AntiSpam On Server Messages": false,
+      "Use AntiSpam On Chat Messages": false,
+      "Use AntiSpam On Plugin Messages": false,
+      "Use AntiSpam On Team Messages": false,
+      "Use AntiSpam On Card Messages": false,
+      "Use AntiSpam On Clan Messages": false
+    },
+    "BetterChat Settings": {
+      "Max BetterChat Tags To Show When Sent From Discord": 3
+    },
+    "BetterChatMute Settings": {
+      "Ignore Muted Players": true
+    },
+    "ChatTranslator Settings": {
+      "Enable Chat Translator": false,
+      "Use ChatTranslator On Server Messages": false,
+      "Use ChatTranslator On Chat Messages": false,
+      "Use ChatTranslator On Plugin Messages": false,
+      "Use ChatTranslator On Team Messages": false,
+      "Use ChatTranslator On Card Messages": false,
+      "Use ChatTranslator On Clan Messages": false,
+      "Discord Server Chat Language": "en"
+    },
+    "Clan Settings": {
+      "Clans Chat Channel ID": "",
+      "Alliance Chat Channel ID": ""
+    },
+    "UFilter Settings": {
+      "Use UFilter On Player Names": false,
+      "Use UFilter On Server Messages": false,
+      "Use UFilter On Discord Messages": false,
+      "Use UFilter On Plugin Messages": false,
+      "Use UFilter On Team Messages": false,
+      "Use UFilter On Card Messages": false,
+      "Use UFilter On Clan Messages": false,
+      "Replacement Character": "＊"
+    }
+  },
+  "Discord Extension Log Level (Verbose, Debug, Info, Warning, Error, Exception, Off)": "Info"
+}

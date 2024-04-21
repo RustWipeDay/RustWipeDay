@@ -1,9 +1,17 @@
 {
   "WizardDisplayed": true,
+  "HidePluginIcons": false,
   "Colors": {
     "SelectedTabColor": "0.4 0.7 0.2",
     "EditableInputHighlight": "0.259 0.529 0.961",
-    "OptionNameOpacity": 0.7,
-    "TitleUnderlineOpacity": 0.9
+    "NameTextColor": "1 1 1 0.7",
+    "ButtonSelectedColor": "0.4 0.7 0.2 0.75",
+    "ButtonWarnedColor": "0.8 0.7 0.2 0.75",
+    "ButtonImportantColor": "0.97 0.2 0.1 0.75",
+    "OptionColor": "0.2 0.2 0.2 0.75",
+    "OptionColor2": "0.2 0.2 0.2 0.1",
+    "OptionNameColor": "1 1 1 0.7",
+    "TitleUnderlineOpacity": 0.9,
+    "OptionWidth": 0.475
   }
 }

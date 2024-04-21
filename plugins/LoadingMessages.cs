@@ -4,6 +4,7 @@ using Network;
 using Newtonsoft.Json;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using Oxide.Core.Plugins;
 
 namespace Oxide.Plugins
 {
@@ -17,6 +18,11 @@ namespace Oxide.Plugins
         private static MsgConfig _config;
         private Timer _timer;
         private static MsgCollection _messages, _messagesQueue;
+
+        [PluginReference]
+        public Plugin HonorSystem = null;
+
+        public static LoadingMessages Instance;
 
         private class MsgCollection
         {
@@ -113,6 +119,10 @@ namespace Oxide.Plugins
 
         protected override void SaveConfig() => Config.WriteObject(_config);
 
+        public void Debug(string puts) {
+            Puts(puts);
+        }
+
         private void Unload()
         {
             _messages = null;
@@ -121,6 +131,7 @@ namespace Oxide.Plugins
 
         private void Loaded()
         {
+            Instance = this;
             if (_config?.Msgs == null || _config.Msgs.Count == 0)
             {
                 Unsubscribe(nameof(OnUserApprove));
@@ -238,6 +249,10 @@ namespace Oxide.Plugins
             GetMessagesCollection().AdvanceMessage();
             GetQueueMessagesCollection().AdvanceMessage();
         }
-        private static string GetPlayerName(Connection conn) => conn.username;
+
+        private static string GetPlayerName(Connection conn) {
+            var name = LoadingMessages.Instance.HonorSystem.Call<string>("FormatPlayerName", conn.userid, conn.username);
+            return name;
+        }
     }
 }

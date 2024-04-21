@@ -1,0 +1,31 @@
+{
+  "Template": {
+    "Command Localization": {
+      "Command Name": "roles",
+      "Command Description": "Discord Roles Command",
+      "Command Options": {
+        "player": {
+          "Command Name": "player",
+          "Command Description": "Sync Oxide Player",
+          "Argument Localization": {
+            "player": {
+              "Argument Name": "player",
+              "Argument Description": "Player to Sync"
+            }
+          }
+        },
+        "user": {
+          "Command Name": "user",
+          "Command Description": "Sync Discord User",
+          "Argument Localization": {
+            "user": {
+              "Argument Name": "user",
+              "Argument Description": "User to Sync"
+            }
+          }
+        }
+      }
+    }
+  },
+  "Template Version": "1.0.0"
+}

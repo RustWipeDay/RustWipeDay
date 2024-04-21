@@ -5707,6 +5707,17 @@
             "skinId": -1
           }
         }
+      },
+      "cupboard.tool.retro.deployed": {
+        "Remove Allowed": true,
+        "Display Name": "Retro Tool Cupboard",
+        "Price": {},
+        "Refund": {
+          "cupboard.tool.retro": {
+            "amount": 1,
+            "skinId": -1
+          }
+        }
       }
     }
   },

@@ -1,0 +1,19 @@
+{
+  "Template": {
+    "Command Localization": {
+      "Command Name": "pm",
+      "Command Description": "Private message a player",
+      "Argument Localization": {
+        "name": {
+          "Argument Name": "name",
+          "Argument Description": "Name of the player"
+        },
+        "message": {
+          "Argument Name": "message",
+          "Argument Description": "Message to send the player"
+        }
+      }
+    }
+  },
+  "Template Version": "1.0.0"
+}

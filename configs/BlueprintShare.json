@@ -1,0 +1,13 @@
+{
+  "Teams Sharing Enabled": true,
+  "Clans Sharing Enabled": true,
+  "Friends Sharing Enabled": true,
+  "Share Blueprint Items": true,
+  "Share Tech Tree Blueprints": true,
+  "Allow Manual Sharing of Blueprints": true,
+  "Share Blueprints on Join": true,
+  "Share Blueprints with New Member or Friend": true,
+  "Lose Blueprints on Leave": false,
+  "Clear Data File on Wipe": true,
+  "Items Blocked from Sharing": []
+}

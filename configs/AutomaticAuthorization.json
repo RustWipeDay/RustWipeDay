@@ -4,7 +4,7 @@
     "Send Authorization Success Message": true,
     "Chat Command": "autoauth",
     "Chat UI Command": "autoauthui",
-    "Chat Prefix": "<color=#00FFFF>[AutoAuth]</color>: ",
+    "Chat Prefix": "<color=#c45508>[RustWipeDay]</color>: ",
     "Chat SteamID Icon": 0
   },
   "Teams Share Settings": {

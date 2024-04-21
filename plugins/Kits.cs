@@ -146,7 +146,7 @@ namespace Oxide.Plugins
 
         private object CanClaimKit(BasePlayer player, KitData.Kit kit, bool ignoreAuthCost = false)
         {
-            object success = Interface.Oxide.CallDeprecatedHook("canRedeemKit", "CanRedeemKit", _deprecatedHookTime, player) ?? Interface.Oxide.CallHook("CanRedeemKit", player);
+            object success = Interface.Oxide.CallDeprecatedHook("canRedeemKit", "CanRedeemKit", _deprecatedHookTime, new object[] { player, kit.Name }) ?? Interface.Oxide.CallHook("CanRedeemKit", new object[] { player, kit.Name });
             if (success != null)
             {
                 if (success is string s)
@@ -324,10 +324,13 @@ namespace Oxide.Plugins
                     if (kit.IsHidden && !isAdmin)
                         return;
 
-                    if (isPvPReward && kit.Currency != CostType.PvP)
+                    if ((!isPvPReward && kit.Currency == CostType.PvP) && !isAdmin)
                         return;
 
-                    if (!isPvPReward && kit.Currency == CostType.PvP && GetHonorRank(player) < kit.HonorRankRequirement)
+                    if ((isPvPReward && kit.Currency != CostType.PvP) && !isAdmin)
+                        return;
+
+                    if ((isPvPReward && kit.Currency == CostType.PvP && GetHonorRank(player) < kit.HonorRankRequirement) && !isAdmin)
                         return;
 
                     if (!viewPermissionKits && !string.IsNullOrEmpty(kit.RequiredPermission) && !permission.UserHasPermission(player.UserIDString, kit.RequiredPermission) && !isAdmin)
@@ -601,7 +604,7 @@ namespace Oxide.Plugins
 
             UI.Panel(container, UI_MENU, Configuration.Menu.Panel.Get, new UI4(0.005f, 0.93f, 0.995f, 0.99f));
 
-            UI.Label(container, UI_MENU, Message("UI.Title", player.userID), 20, new UI4(0.015f, 0.93f, 0.99f, 0.99f), TextAnchor.MiddleLeft);
+            UI.Label(container, UI_MENU, isPvPReward ? "Bounty Rewards" : Message("UI.Title", player.userID), 20, new UI4(0.015f, 0.93f, 0.99f, 0.99f), TextAnchor.MiddleLeft);
 
             UI.Button(container, UI_MENU, Configuration.Menu.Color3.Get, "<b>×</b>", 20, new UI4(0.9575f, 0.9375f, 0.99f, 0.9825f), "kits.close");
 
@@ -616,9 +619,13 @@ namespace Oxide.Plugins
 
         private void CreateGridView(BasePlayer player, CuiElementContainer container, int page = 0, ulong npcId = 0UL, bool isPvPReward = false)
         {
-            List<KitData.Kit> list = Facepunch.Pool.GetList<KitData.Kit>();
+            List<KitData.Kit> list = new List<KitData.Kit>();
 
             GetUserValidKits(player, list, npcId, isPvPReward);
+
+            list = list.OrderBy(kit => kit.HonorRankRequirement)
+                    .ThenBy(kit => kit.Cost)
+                    .ToList();
 
             if (list.Count == 0)
             {
@@ -637,11 +644,11 @@ namespace Oxide.Plugins
             }
 
             if (page > 0)
-                UI.Button(container, UI_MENU, Configuration.Menu.Color1.Get, "◀\n\n◀\n\n◀", 16, new UI4(0.005f, 0.35f, 0.03f, 0.58f), $"kits.gridview page {page - 1} {npcId}");
+                UI.Button(container, UI_MENU, Configuration.Menu.Color1.Get, "◀\n\n◀\n\n◀", 16, new UI4(0.005f, 0.35f, 0.03f, 0.58f), $"kits.gridview page {page - 1} {npcId} {isPvPReward}");
             if (max < list.Count)
-                UI.Button(container, UI_MENU, Configuration.Menu.Color1.Get, "▶\n\n▶\n\n▶", 16, new UI4(0.97f, 0.35f, 0.995f, 0.58f), $"kits.gridview page {page + 1} {npcId}");
+                UI.Button(container, UI_MENU, Configuration.Menu.Color1.Get, "▶\n\n▶\n\n▶", 16, new UI4(0.97f, 0.35f, 0.995f, 0.58f), $"kits.gridview page {page + 1} {npcId} {isPvPReward}");
 
-            Facepunch.Pool.FreeList(ref list);
+            // Facepunch.Pool.FreeList(ref list);
         }
 
         private void CreateKitEntry(BasePlayer player, PlayerData.PlayerUsageData playerUsageData, CuiElementContainer container, KitData.Kit kit, int index, int page, ulong npcId, bool isPvPReward)
@@ -928,9 +935,11 @@ namespace Oxide.Plugins
             AddInputField(container, 12, Message("UI.MaxUses", player.userID), "maximumUses", kit.MaximumUses);
             AddInputField(container, 13, Message("UI.CooldownSeconds", player.userID), "cooldown", kit.Cooldown);
             AddInputField(container, 14, Message("UI.PurchaseCost", player.userID), "cost", kit.Cost);
+            AddInputField(container, 15, Message("UI.Currency", player.userID), "currency", kit.Currency);
+            AddInputField(container, 16, Message("UI.HonorRankRequirement", player.userID), "honorRankRequirement", kit.HonorRankRequirement);
 
-            AddTitleSperator(container, 15, Message("UI.CopyPaste", player.userID));
-            AddInputField(container, 16, Message("UI.FileName", player.userID), "copyPaste", kit.CopyPasteFile);
+            AddTitleSperator(container, 17, Message("UI.CopyPaste", player.userID));
+            AddInputField(container, 18, Message("UI.FileName", player.userID), "copyPaste", kit.CopyPasteFile);
 
             // Kit Items
             CreateKitLayout(player, container, kit);
@@ -1110,11 +1119,14 @@ namespace Oxide.Plugins
                     return;
                 case "redeem":
                     {
+                        var isPvp = arg.GetBool(4);
                         string kit = CommandSafe(arg.GetString(1), true);
                         if (TryClaimKit(player, kit, true))
                         {
-                            CuiHelper.DestroyUi(player, UI_MENU);
-                            CuiHelper.DestroyUi(player, UI_POPUP);
+                            if (!isPvp) {
+                                CuiHelper.DestroyUi(player, UI_MENU);
+                                CuiHelper.DestroyUi(player, UI_POPUP);
+                            }
                             player.ChatMessage(string.Format(Message("Notification.KitReceived", player.userID), kit));
                         }
                         else OpenKitGrid(player, arg.GetInt(2), arg.GetULong(3), arg.GetBool(4));
@@ -1281,6 +1293,12 @@ namespace Oxide.Plugins
                 case "cost":
                     kit.Cost = 0;
                     break;
+                case "currency":
+                    kit.Currency = 0;
+                    break;
+                case "honorRankRequirement":
+                    kit.HonorRankRequirement = 0;
+                    break;
                 case "cooldown":
                     kit.Cooldown = 0;
                     break;                
@@ -1347,6 +1365,20 @@ namespace Oxide.Plugins
                         if (!TryConvertValue<int>(value, out int intValue))
                             CreateMenuPopup(player, Message("EditKit.Number", player.userID));
                         else kit.Cost = intValue;
+                    }
+                    break;
+                case "currency":
+                    {
+                        if (!TryConvertValue<int>(value, out int intValue))
+                            CreateMenuPopup(player, Message("EditKit.Number", player.userID));
+                        else kit.Currency = (CostType)intValue;
+                    }
+                    break;
+                case "honorRankRequirement":
+                    {
+                        if (!TryConvertValue<int>(value, out int intValue))
+                            CreateMenuPopup(player, Message("EditKit.Number", player.userID));
+                        else kit.HonorRankRequirement = intValue;
                     }
                     break;
                 case "cooldown":
@@ -3490,7 +3522,7 @@ namespace Oxide.Plugins
             ["Cost.Economics"] = "Coins",
             ["Cost.PvP"] = "Bounty points",
 
-            ["Notification.KitReceived"] = "You have received the kit: <color=#ce422b>{0}</color>",
+            ["Notification.KitReceived"] = "<color=#c45508>[RustWipeDay]</color>: You have received the kit: <color=#ce422b>{0}</color>",
 
             ["Chat.Help.Title"] = "<size=18><color=#ce422b>Kits </color></size><size=14>v{0}</size>",
             ["Chat.Help.1"] = "<color=#ce422b>/kit</color> - Open the Kit menu",
@@ -3525,6 +3557,7 @@ namespace Oxide.Plugins
             ["UI.Cooldown"] = "Cooldown : {0}",
             ["UI.MaximumUses"] = "At Redeem Limit",
             ["UI.Purchase"] = "Purchase",
+            ["UI.HonorRankRequirement"] = "Honor Rank Requirement",
             ["UI.Cost"] = "Cost : {0} {1}",
             ["UI.Redeem"] = "Redeem",
             ["UI.Details"] = "Kit Details",

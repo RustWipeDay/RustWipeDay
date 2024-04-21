@@ -1,0 +1,58 @@
+{
+  "Discord Application Bot Token": "",
+  "Enable Sending Message Per Update Rate": false,
+  "Enable Sending Message On Player Leave/Join": false,
+  "Enable Sending Server Loading Message": false,
+  "Update Rate (Seconds)": 3.0,
+  "Status Messages": [
+    {
+      "Message": "{server.name}",
+      "Type": "Custom"
+    },
+    {
+      "Message": "{server.players}/{server.players.max} Players",
+      "Type": "Custom"
+    },
+    {
+      "Message": "{server.players.sleepers} Sleepers",
+      "Type": "Custom"
+    },
+    {
+      "Message": "{server.players.stored} Total Players",
+      "Type": "Custom"
+    },
+    {
+      "Message": "Server FPS {server.fps}",
+      "Type": "Custom"
+    },
+    {
+      "Message": "{server.entities} Entities",
+      "Type": "Custom"
+    },
+    {
+      "Message": "{server.players.total} Lifetime Players",
+      "Type": "Custom"
+    },
+    {
+      "Message": "{server.players.queued} Queued",
+      "Type": "Custom"
+    },
+    {
+      "Message": "{server.players.loading} Joining",
+      "Type": "Custom"
+    },
+    {
+      "Message": "Wiped: {server.map.wipe.last!local}",
+      "Type": "Custom"
+    },
+    {
+      "Message": "Size: {world.size} Seed: {world.seed}",
+      "Type": "Custom"
+    }
+  ],
+  "Server Loading Message": {
+    "Message": "Server is booting",
+    "Type": "Game"
+  },
+  "Discord Extension Log Level (Verbose, Debug, Info, Warning, Error, Exception, Off)": "Verbose"
+}

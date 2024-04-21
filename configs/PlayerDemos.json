@@ -1,0 +1,7 @@
+{
+  "Global settings": {
+    "Log To Console": false,
+    "Alert Player": false,
+    "Max record time": 1800.0
+  }
+}

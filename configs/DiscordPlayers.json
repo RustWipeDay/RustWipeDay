@@ -1,0 +1,28 @@
+{
+  "Discord Bot Token": null,
+  "Command Messages": [
+    {
+      "Command Name (Must Be Unique)": "players",
+      "Allow Command In Direct Messages": true,
+      "Display Admins In The Player List": true,
+      "Players Per Embed (0 - 25)": 25
+    },
+    {
+      "Command Name (Must Be Unique)": "playersadmin",
+      "Allow Command In Direct Messages": true,
+      "Display Admins In The Player List": true,
+      "Players Per Embed (0 - 25)": 25
+    }
+  ],
+  "Permanent Messages": [
+    {
+      "Enabled": false,
+      "Template Name (Must Be Unique)": "Permanent",
+      "Permanent Message Channel ID": "",
+      "Update Rate (Minutes)": 1.0,
+      "Display Admins In The Player List": false,
+      "Players Per Embed (0 - 25)": 25
+    }
+  ],
+  "Discord Extension Log Level (Verbose, Debug, Info, Warning, Error, Exception, Off)": "Verbose"
+}

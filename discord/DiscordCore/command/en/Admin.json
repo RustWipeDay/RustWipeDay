@@ -1,0 +1,91 @@
+{
+  "Template": {
+    "Command Localization": {
+      "Command Name": "dca",
+      "Command Description": "Discord Core Admin Commands",
+      "Command Options": {
+        "link": {
+          "Command Name": "link",
+          "Command Description": "admin link player game account and Discord user",
+          "Argument Localization": {
+            "player": {
+              "Argument Name": "player",
+              "Argument Description": "player to link"
+            },
+            "user": {
+              "Argument Name": "user",
+              "Argument Description": "user to link"
+            }
+          }
+        },
+        "unlink": {
+          "Command Name": "unlink",
+          "Command Description": "admin unlink player game account and Discord user",
+          "Argument Localization": {
+            "player": {
+              "Argument Name": "player",
+              "Argument Description": "player to unlink"
+            },
+            "user": {
+              "Argument Name": "user",
+              "Argument Description": "user to unlink"
+            }
+          }
+        },
+        "search": {
+          "Command Name": "search",
+          "Command Description": "search linked accounts by discord or player",
+          "Command Options": {
+            "player": {
+              "Command Name": "player",
+              "Command Description": "search by player",
+              "Argument Localization": {
+                "player": {
+                  "Argument Name": "player",
+                  "Argument Description": "player to search"
+                }
+              }
+            },
+            "user": {
+              "Command Name": "user",
+              "Command Description": "search by user",
+              "Argument Localization": {
+                "user": {
+                  "Argument Name": "user",
+                  "Argument Description": "user to search"
+                }
+              }
+            }
+          }
+        },
+        "unban": {
+          "Command Name": "unban",
+          "Command Description": "unban player who is link banned",
+          "Command Options": {
+            "player": {
+              "Command Name": "player",
+              "Command Description": "unban by player",
+              "Argument Localization": {
+                "player": {
+                  "Argument Name": "player",
+                  "Argument Description": "player to unban"
+                }
+              }
+            },
+            "user": {
+              "Command Name": "user",
+              "Command Description": "unban by user",
+              "Argument Localization": {
+                "user": {
+                  "Argument Name": "user",
+                  "Argument Description": "user to unban"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "Template Version": "1.0.0"
+}

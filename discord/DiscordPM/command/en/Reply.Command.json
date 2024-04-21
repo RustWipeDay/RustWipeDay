@@ -1,0 +1,15 @@
+{
+  "Template": {
+    "Command Localization": {
+      "Command Name": "r",
+      "Command Description": "Reply to the last received private message",
+      "Argument Localization": {
+        "message": {
+          "Argument Name": "message",
+          "Argument Description": "Message to send the player"
+        }
+      }
+    }
+  },
+  "Template Version": "1.0.0"
+}

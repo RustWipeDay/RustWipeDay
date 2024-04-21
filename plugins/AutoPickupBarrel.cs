@@ -178,6 +178,9 @@ namespace Oxide.Plugins
             {
                 NextTick(() =>
                 {
+                    if (LootEntContainer.IsDestroyed) {
+                        return;
+                    }
                     // Call the OnEntityDeath call back as some plugins hook this to award bonus for breaking barrels.
                     Interface.CallHook("OnEntityDeath", LootEntContainer, HitEntInfo);
 
@@ -188,7 +191,6 @@ namespace Oxide.Plugins
 
                     } else {
                         LootEntContainer?.Kill(BaseNetworkable.DestroyMode.Gib);
-
                     }
                 });
             }
