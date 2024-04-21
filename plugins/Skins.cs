@@ -569,7 +569,7 @@ namespace Oxide.Plugins
 
             container.OnItemTaken(item);
 
-            Interface.CallHook("OnItemSkinChanged", player, item);
+            Interface.CallHook("OnItemSkinChanged", container.Owner, item);
 
             container.Clear();
         }
@@ -1189,8 +1189,7 @@ namespace Oxide.Plugins
                     if (!TotalSkinsCache.TryGetValue(source.info.shortname, out totalSkins))
                     {
                         // Fetch custom skins
-
-                        var newSkins = new List<ulong>();
+                        var newSkins = new List<ulong>() { 0 };
 
                         Interface.CallHook("OnSkinsFetch", Owner, source.info, newSkins);
 

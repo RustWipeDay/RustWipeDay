@@ -51,6 +51,9 @@ namespace Oxide.Plugins
             [JsonProperty(PropertyName = "Cooldown Between Auto Responses For User")]
             public string Cooldown = "10s";
 
+            [JsonProperty(PropertyName = "Font Size")]
+            public int Fontsize = 12;
+
             [JsonProperty(PropertyName = "Global Cooldown Between Auto Responses")]
             public string CooldownGlobal = "2s";
 
@@ -436,7 +439,7 @@ namespace Oxide.Plugins
             player.SendConsoleCommand("chat.add", 2, _config.ChatSteamId, message);
         }
 
-        private string FormatMessage(string message) => _config.ShowPrefix ? _config.Prefix + message : message;
+        private string FormatMessage(string message) => _config.ShowPrefix ? $"<size={_config.Fontsize}>{_config.Prefix}{message}</size>" : $"<size={_config.Fontsize}>{message}</size>";
 
         private string RunPlaceholders(IPlayer player, string message)
         {
