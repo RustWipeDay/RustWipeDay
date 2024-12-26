@@ -1,0 +1,210 @@
+{
+  "Assets/Rust.Ai/Agents/Bear/Bear.Corpse.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Bear/Bear.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Bear/Bear_Tutorial.Corpse.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Bear/Bear_Tutorial.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Bear/PolarBear.Corpse.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Bear/PolarBear.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Boar/Boar.Corpse.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Boar/Boar.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/BotTest/Bottest.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Chicken/Chicken.Corpse.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Chicken/Chicken.Corpse.tutorial.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Chicken/Chicken.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Chicken/Chicken.tutorial.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Fish/Shark.Corpse.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Fish/Shark_Unused.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Fish/SimpleShark.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Horse/Horse.Corpse.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Horse/Horse.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/BanditGuard/NPC_Bandit_Guard.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Arena.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Bradley.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Bradley_Heavy.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Cargo.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Cargo_Turret_Any.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Cargo_Turret_LR300.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_CH47_Gunner.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Excavator.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Full_Any.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Full_LR300.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Full_MP5.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Full_Pistol.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Full_Shotgun.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Heavy.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Junkpile_Pistol.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Oilrig.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Patrol.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Peacekeeper.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Roam.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_Roam_NVG_Variant.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/Scientist/ScientistNPC_RoamTethered.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/TunnelDweller/NPC_TunnelDweller.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/TunnelDweller/NPC_TunnelDwellerSpawned.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/HumanNPC/UnderwaterDweller/NPC_UnderwaterDweller.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/NPCPlayerTest.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/Pet/FrankensteinPet.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/NPCPlayer/Pet/frankensteinpet_corpse.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Stag/Stag.Corpse.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Stag/Stag.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Wolf/Wolf.Corpse.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Wolf/Wolf.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Zombie/Zombie.Corpse.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  },
+  "Assets/Rust.Ai/Agents/Zombie/Zombie.prefab": {
+    "HealthScale": 1.0,
+    "DamageScale": 1.0
+  }
+}

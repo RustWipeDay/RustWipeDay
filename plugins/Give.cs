@@ -608,6 +608,9 @@ namespace Oxide.Plugins
 
         private bool TryGiveKit(IPlayer player, string kitName)
         {
+
+            Puts(player, kitName);
+
             if (!Kits.Call<bool>("isKit", kitName))
             {
                 Message(player, "InvalidKit", kitName);

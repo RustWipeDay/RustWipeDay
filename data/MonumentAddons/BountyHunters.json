@@ -5,15 +5,15 @@
     "compound": {
       "CustomAddons": [
         {
-          "Id": "0cd4d53c-2b55-4392-bcba-1b03447e1151",
+          "Id": "ad19ddbf-1439-47c4-8f43-2dee197584ae",
           "Position": {
-            "x": -9.074726,
-            "y": 10.3700867,
-            "z": -6.719102
+            "x": -9.038696,
+            "y": 10.9625244,
+            "z": -6.771451
           },
           "RotationAngles": {
             "x": 0.0,
-            "y": 91.160614,
+            "y": 44.0585938,
             "z": 0.0
           },
           "AddonName": "bountyhunter"

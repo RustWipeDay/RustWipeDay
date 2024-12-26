@@ -41,6 +41,34 @@
       "Protect from decay after recent use (minutes)": 10.0,
       "Decay interval (seconds)": 60.0
     },
+    "Motor Bike": {
+      "Allow the plugin to influence decay": true,
+      "Decay multiplier while inside": 0.0,
+      "Decay multiplier near tool cupboard": 1.0,
+      "Protect from decay after recent use (minutes)": 45.0,
+      "Decay interval (seconds)": 60.0
+    },
+    "Motor Bike Sidecar": {
+      "Allow the plugin to influence decay": true,
+      "Decay multiplier while inside": 0.0,
+      "Decay multiplier near tool cupboard": 1.0,
+      "Protect from decay after recent use (minutes)": 45.0,
+      "Decay interval (seconds)": 60.0
+    },
+    "Pedal Bike": {
+      "Allow the plugin to influence decay": true,
+      "Decay multiplier while inside": 0.0,
+      "Decay multiplier near tool cupboard": 1.0,
+      "Protect from decay after recent use (minutes)": 45.0,
+      "Decay interval (seconds)": 60.0
+    },
+    "Pedal Trike": {
+      "Allow the plugin to influence decay": true,
+      "Decay multiplier while inside": 0.0,
+      "Decay multiplier near tool cupboard": 1.0,
+      "Protect from decay after recent use (minutes)": 45.0,
+      "Decay interval (seconds)": 60.0
+    },
     "RHIB": {
       "Allow the plugin to influence decay": true,
       "Decay multiplier while inside": 0.0,

@@ -18,7 +18,10 @@ namespace Oxide.Plugins
     {
         #region Fields
         [PluginReference]
-        private Plugin CopyPaste, ImageLibrary, ServerRewards, Economics, DogTags, HonorSystem;
+        private Plugin CopyPaste, ImageLibrary, ServerRewards, Economics;
+
+        [PluginReference]
+        private Plugin DogTags, HonorSystem, BaseBounty;
 
         private DateTime _deprecatedHookTime = new DateTime(2021, 12, 31);
 
@@ -38,6 +41,9 @@ namespace Oxide.Plugins
             kitData.RegisterPermissions(permission, this);
 
             cmd.AddChatCommand(Configuration.Command, this, cmdKit);
+            cmd.AddChatCommand("menu", this, cmdKit);
+            cmd.AddChatCommand("h", this, cmdKit);
+            cmd.AddChatCommand("k", this, cmdKit);
             cmd.AddConsoleCommand(Configuration.Command, this, "ccmdKit");
         }
 
@@ -105,6 +111,7 @@ namespace Oxide.Plugins
             foreach (BasePlayer player in BasePlayer.activePlayerList)
             {
                 CuiHelper.DestroyUi(player, UI_MENU);
+                CuiHelper.DestroyUi(player, "LeaderboardOverlay");
                 CuiHelper.DestroyUi(player, UI_POPUP);
             }
 
@@ -259,7 +266,8 @@ namespace Oxide.Plugins
                 case CostType.Economics:
                     return (bool)Economics?.Call("Withdraw", player.UserIDString, (double)amount);
                 case CostType.PvP:
-                    return (bool)DogTags?.Call("TakePoints", player.userID, amount);
+                    var result = (bool)DogTags?.Call<bool>("TakePoints", player.userID.Get(), amount);
+                    return result;  
             }
             return false;
         }
@@ -324,10 +332,10 @@ namespace Oxide.Plugins
                     if (kit.IsHidden && !isAdmin)
                         return;
 
-                    if ((!isPvPReward && kit.Currency == CostType.PvP) && !isAdmin)
+                    if ((!isPvPReward && kit.Currency == CostType.PvP))
                         return;
 
-                    if ((isPvPReward && kit.Currency != CostType.PvP) && !isAdmin)
+                    if ((isPvPReward && kit.Currency != CostType.PvP)) // && !isAdmin
                         return;
 
                     if ((isPvPReward && kit.Currency == CostType.PvP && GetHonorRank(player) < kit.HonorRankRequirement) && !isAdmin)
@@ -385,8 +393,32 @@ namespace Oxide.Plugins
             return title;
         }
 
+        private string GetHonorRankColor(int rank)
+        {
+            (string title, string color, int required, double percentPopulation) = HonorSystem?.Call<(string title, string color, int required, double percentPopulation)>
+                ("GetRankInfo", rank) ?? ("", "", 0, 0.000);
+
+            try
+            {
+                int r = int.Parse(color.Substring(1, 2), NumberStyles.HexNumber);
+                int g = int.Parse(color.Substring(3, 2), NumberStyles.HexNumber);
+                int b = int.Parse(color.Substring(5, 2), NumberStyles.HexNumber);
+
+                float rNormalized = r / 255.0f;
+                float gNormalized = g / 255.0f;
+                float bNormalized = b / 255.0f;
+
+                return $"{rNormalized} {gNormalized} {bNormalized}";
+            }
+            catch
+            {
+                return "0 0 0";
+            }
+
+        }
+
         private int GetHonorRank(BasePlayer player) {
-            return HonorSystem?.Call<int>("GetPlayerHonorRank", player.userID) ?? 0;
+            return HonorSystem?.Call<int>("GetPlayerHonorRank", player.userID.Get()) ?? 0;
         }
 
         #region Deprecated API 
@@ -597,28 +629,217 @@ namespace Oxide.Plugins
         private const string DEFAULT_ICON = "kits.defaultkiticon";
         private const string MAGNIFY_ICON = "kits.magnifyicon";
 
-        #region Kit Grid View
-        private void OpenKitGrid(BasePlayer player, int page = 0, ulong npcId = 0UL, bool isPvPReward = false)
+        private string GetPlayerName(BasePlayer basePlayer)
         {
-            CuiElementContainer container = UI.Container(UI_MENU, "0 0 0 0.9", new UI4(0.2f, 0.15f, 0.8f, 0.85f), true, "Hud");
-
-            UI.Panel(container, UI_MENU, Configuration.Menu.Panel.Get, new UI4(0.005f, 0.93f, 0.995f, 0.99f));
-
-            UI.Label(container, UI_MENU, isPvPReward ? "Bounty Rewards" : Message("UI.Title", player.userID), 20, new UI4(0.015f, 0.93f, 0.99f, 0.99f), TextAnchor.MiddleLeft);
-
-            UI.Button(container, UI_MENU, Configuration.Menu.Color3.Get, "<b>×</b>", 20, new UI4(0.9575f, 0.9375f, 0.99f, 0.9825f), "kits.close");
-
-            if (IsAdmin(player) && npcId == 0UL)            
-                UI.Button(container, UI_MENU, Configuration.Menu.Color2.Get, Message("UI.CreateNew", player.userID), 14, new UI4(0.85f, 0.9375f, 0.9525f, 0.9825f), "kits.create");
-            
-            CreateGridView(player, container, page, npcId, isPvPReward);
-
-            CuiHelper.DestroyUi(player, UI_MENU);
-            CuiHelper.AddUi(player, container);
+            var name = HonorSystem.Call<string>("FormatPlayerName", basePlayer.userID.Get(), basePlayer.displayName);
+            return name;
         }
+
+        #region Kit Grid View
+        private void OpenKitGrid(BasePlayer player, int page = -1, ulong npcId = 0UL, bool isPvPReward = false, string subTitle = "")
+        {
+            var container = CreateMenuSection(player);
+
+            if (page >= 0 && IsAdmin(player) && npcId == 0UL)            
+                 UI.Button(container, UI_MENU, Configuration.Menu.Color2.Get, Message("UI.CreateNew", player.userID), 14, new UI4(0.85f, 0.9375f, 0.9525f, 0.9825f), "kits.create");
+
+            if (page >= 0 && isPvPReward)
+            {
+                subTitle = "BOUNTY SHOP";
+                CreateGridView(player, container, page, npcId, isPvPReward);
+            }
+            else if(page >= 0)
+            {
+                subTitle = "KITS";
+                CreateKitGridView(player, container, page, npcId, isPvPReward);
+            }
+
+            if (subTitle != "")
+            {
+                UI.Panel(container, UI_MENU, HexToCuiColor("#c45508ff"), new UI4(0.22f, 0.95f, 0.4f, 0.99f));
+                UI.Label(container, UI_MENU, subTitle, 24, new UI4(0.22f, 0.95f, 0.4f, 0.99f), TextAnchor.MiddleCenter);
+            }
+
+            if (subTitle == "WELCOME")
+            {
+                UI.Label(
+                    container,
+                    UI_MENU,
+                    $"<size=48>Ods Scott's Rust Wipe Day</size>\n\n\n🚧 <b>SERVER CLOSED FOR DEVELOPMENT</b>\nThe server is currently offline as we prepare the next update of our mod pack. Stay tuned!\n\n\nBy continuing to play, you agree to the following rules:\n- <b>No Cheating</b>\n- <b>No Insiding</b>\n- <b>Adhere to all Facepunch Rules</b>\n- <b>Respect Staff and Fellow Players</b>\n\nEnjoy your time and play fair! 💥",
+                    32,
+                    new UI4(0.2f, 0f, 0.95f, 0.9f),
+                    TextAnchor.UpperCenter
+                );
+            }
+
+
+            CuiHelper.DestroyUi(player, "kits.hud");
+            CuiHelper.DestroyUi(player, "kits.menu");
+            CuiHelper.AddUi(player, container);
+            //CuiHelper.AddUi(player, hud);
+        }
+
+
+        private string HexToCuiColor(string hex)
+        {
+            if (hex == null || !hex.StartsWith("#") || (hex.Length != 7 && hex.Length != 9))
+                return "1 1 1 0.5"; // Default to white color if invalid hex
+
+            var r = int.Parse(hex.Substring(1, 2), NumberStyles.HexNumber) / 255f;
+            var g = int.Parse(hex.Substring(3, 2), NumberStyles.HexNumber) / 255f;
+            var b = int.Parse(hex.Substring(5, 2), NumberStyles.HexNumber) / 255f;
+            var a = hex.Length == 9 ? int.Parse(hex.Substring(7, 2), NumberStyles.HexNumber) / 255f : 1f;
+
+            return $"{r} {g} {b} {a}";
+        }
+
+
+        private void DrawExperienceBar(CuiElementContainer container, BasePlayer player)
+        {
+            int rank = HonorSystem.Call<int>("GetPlayerHonorRank", player.userID.Get());
+            (string title, string color, int rankNow, double percentPopulation) = HonorSystem.Call<(string title, string color, int required, double percentPopulation)>("GetRankInfo", rank);
+            (string _, string _, int required, double _) = HonorSystem.Call<(string title, string color, int required, double percentPopulation)>("GetRankInfo", rank + 1);
+
+            int currentHonor = HonorSystem.Call<int>("GetPlayerHonorPoints", player.userID.Get());
+
+            // Main panel to hold the experience bar
+            var mainPanel = new CuiPanel
+            {
+                Image = { Color = "0 0 0 0.5" }, // Background color
+                RectTransform = { AnchorMin = "0.01 0.65", AnchorMax = "0.19 0.7" }, // Position and size
+                CursorEnabled = false
+            };
+
+            (int baseXp, int baseXpRequired, int baseLevel) = BaseBounty.Call<(int, int, int)>("GetPlayerBaseLevel", player.userID.Get());
+            UI.Label(container, UI_MENU, $"{GetPlayerName(player)}", 12, new UI4(0f, 0.71f, 00.20f, 0.76f));
+
+            //Puts($"{baseXp} {baseXpRequired} {baseLevel}");
+            container.Add(mainPanel, "kits.menu", "HonorExperienceBars_MainPanel");
+            //Puts($"{currentHonor}, {required}");
+
+            float now = currentHonor - rankNow;
+            float max = required - rankNow;
+
+            //Puts($"{now}, {max}");
+
+            // Calculate the fill amount
+            float fillAmount = Mathf.Clamp(now / max, 0f, 1f);
+            float fillAmount2 = Mathf.Clamp((float)baseXp / (float)baseXpRequired, 0f, 1f);
+            //Puts(fillAmount);
+
+
+            // Experience bar background
+            var barBackground = new CuiPanel
+            {
+                Image = { Color = "0.2 0.2 0.2 1" },
+                RectTransform = { AnchorMin = "0.0 0.0", AnchorMax = "1.0 1.0" },
+                CursorEnabled = false
+            };
+
+            container.Add(barBackground, "HonorExperienceBars_MainPanel");
+
+            // Experience bar background
+            var barBackground2 = new CuiPanel
+            {
+                Image = { Color = HexToCuiColor(color + "a5") },
+                RectTransform = { AnchorMin = "0.0 0.0", AnchorMax = "1.0 1.0" },
+                CursorEnabled = false
+            };
+
+            container.Add(barBackground2, "HonorExperienceBars_MainPanel");
+
+            var barFill = new CuiPanel
+            {
+                Image = { Color = HexToCuiColor(color) },
+                RectTransform = { AnchorMin = "0.0 0.0", AnchorMax = $"{fillAmount} 1.0" },
+                CursorEnabled = false
+            };
+
+            container.Add(barFill, "HonorExperienceBars_MainPanel");
+
+           
+            // Experience bar background
+            barBackground = new CuiPanel
+            {
+                Image = { Color = "0.2 0.2 0.2 1" },
+                RectTransform = { AnchorMin = "0.0 0.1", AnchorMax = "1.0 1.0" },
+                CursorEnabled = false
+            };
+
+          //  container.Add(barBackground, "HonorExperienceBars_MainPanel");
+
+
+            // Add percentage text in the middle of the experience bar
+            var percentText = new CuiLabel
+            {
+                Text = { Text = $"{(fillAmount * 100):0.0}%\n<size=8>({currentHonor} / {required})</size>", FontSize = 10, Align = TextAnchor.MiddleCenter, Color = "1 1 1 1" },
+                RectTransform = { AnchorMin = "0.0 0.0", AnchorMax = "1.0 1.0" }
+            };
+
+            container.Add(percentText, "HonorExperienceBars_MainPanel");
+
+    
+            // Main panel to hold the experience bar
+            var mainPanel2 = new CuiPanel
+            {
+                Image = { Color = "0 0 0 0.5" }, // Background color
+                RectTransform = { AnchorMin = "0.01 0.59", AnchorMax = "0.19 0.64" }, // Position and size
+                CursorEnabled = false
+            };
+
+            //Puts($"{baseXp} {baseXpRequired} {baseLevel}");
+            container.Add(mainPanel2, "kits.menu", "HonorExperienceBars2_MainPanel");
+
+
+            // Experience bar background
+            var barBackground3 = new CuiPanel
+            {
+                Image = { Color = "0.2 0.2 0.2 1" },
+                RectTransform = { AnchorMin = "0.0 0.0", AnchorMax = "1.0 1.0" },
+                CursorEnabled = false
+            };
+
+            container.Add(barBackground3, "HonorExperienceBars2_MainPanel");
+
+            // Experience bar background
+            var barBackground4 = new CuiPanel
+            {
+                Image = { Color = HexToCuiColor(color + "a5") },
+                RectTransform = { AnchorMin = "0.0 0.0", AnchorMax = "1.0 1.0" },
+                CursorEnabled = false
+            };
+
+            container.Add(barBackground4, "HonorExperienceBars2_MainPanel");
+
+            var barFill2 = new CuiPanel
+            {
+                Image = { Color = HexToCuiColor(color) },
+                RectTransform = { AnchorMin = "0.0 0.0", AnchorMax = $"{fillAmount2} 1.0" },
+                CursorEnabled = false
+            };
+
+            container.Add(barFill2, "HonorExperienceBars2_MainPanel");
+
+
+            // Add percentage text in the middle of the experience bar
+            var percentText2 = new CuiLabel
+            {
+                Text = { Text = $"{(fillAmount2 * 100):0.0}%\n<size=8>({baseXp} / {baseXpRequired})</size>", FontSize = 10, Align = TextAnchor.MiddleCenter, Color = "1 1 1 1" },
+                RectTransform = { AnchorMin = "0.0 0.0", AnchorMax = "1.0 1.0" }
+            };
+
+            container.Add(percentText2, "HonorExperienceBars2_MainPanel");
+
+            // CuiHelper.AddUi(player, container);
+        }
+
 
         private void CreateGridView(BasePlayer player, CuiElementContainer container, int page = 0, ulong npcId = 0UL, bool isPvPReward = false)
         {
+            var balance = DogTags.Call<int>("GetPoints", player.userID.Get());
+            UI.Label(container, UI_MENU, $"<color=#FFD700>Balance:</color> <color=#00FA9A>{balance} Points</color>", 24, new UI4(0.25f, 0f, 0.5f, 0.9f), TextAnchor.UpperLeft, "1 1 1 1");
+            // UI.Button(container, UI_MENU, Configuration.Menu.Color1.Get, "Deposit Tags", 16, new UI4(0.47f, 0.85f, 0.57f, 0.90f), $"dogtags.deposit");
+
             List<KitData.Kit> list = new List<KitData.Kit>();
 
             GetUserValidKits(player, list, npcId, isPvPReward);
@@ -635,35 +856,187 @@ namespace Oxide.Plugins
 
             PlayerData.PlayerUsageData playerUsageData = playerData[player.userID];
 
-            int max = Mathf.Min(list.Count, (page + 1) * 8);
+            int max = Mathf.Min(list.Count, (page + 1) * 24);
             int count = 0;
-            for (int i = page * 8; i < max; i++)                
+            for (int i = page * 24; i < max; i++)                
             {
                 CreateKitEntry(player, playerUsageData, container, list[i], count, page, npcId, isPvPReward);                
                 count += 1;
             }
 
-            if (page > 0)
-                UI.Button(container, UI_MENU, Configuration.Menu.Color1.Get, "◀\n\n◀\n\n◀", 16, new UI4(0.005f, 0.35f, 0.03f, 0.58f), $"kits.gridview page {page - 1} {npcId} {isPvPReward}");
-            if (max < list.Count)
-                UI.Button(container, UI_MENU, Configuration.Menu.Color1.Get, "▶\n\n▶\n\n▶", 16, new UI4(0.97f, 0.35f, 0.995f, 0.58f), $"kits.gridview page {page + 1} {npcId} {isPvPReward}");
+            
 
-            // Facepunch.Pool.FreeList(ref list);
+            if (page > 0)
+                UI.Button(container, UI_MENU, Configuration.Menu.Color1.Get, "Previous", 16, new UI4(0.69f, 0.85f, 0.79f, 0.90f), $"kits.gridview page {page - 1} {npcId} {isPvPReward}");
+            if (max < list.Count)
+                UI.Button(container, UI_MENU, Configuration.Menu.Color1.Get, "Next", 16, new UI4(0.8f, 0.85f, 0.90f, 0.90f), $"kits.gridview page {page + 1} {npcId} {isPvPReward}");
+
+            //Facepunch.Pool.FreeList(ref list);
         }
+
+
+        private void CreateKitGridView(BasePlayer player, CuiElementContainer container, int page = 0, ulong npcId = 0UL, bool isPvPReward = false)
+        {         
+            List<KitData.Kit> list = new List<KitData.Kit>();
+
+            GetUserValidKits(player, list, npcId, isPvPReward);
+
+            list = list.OrderBy(kit => kit.HonorRankRequirement)
+                    .ThenBy(kit => kit.Cost)
+                    .ToList();
+
+            if (list.Count == 0)
+            {
+                UI.Label(container, UI_MENU, Message("UI.NoKitsAvailable", player.userID), 14, new UI4(0.015f, 0.88f, 0.99f, 0.92f), TextAnchor.MiddleLeft);
+                return;
+            }
+
+            PlayerData.PlayerUsageData playerUsageData = playerData[player.userID];
+
+            int max = Mathf.Min(list.Count, (page + 1) * 6);
+            int count = 0;
+            for (int i = page * 6; i < max; i++)
+            {
+                CreateKitEntry2(player, playerUsageData, container, list[i], count, page, npcId, isPvPReward);
+                count += 1;
+            }
+
+            if (page > 0)
+                UI.Button(container, UI_MENU, Configuration.Menu.Color1.Get, "Previous", 16, new UI4(0.59f, 0.85f, 0.74f, 0.90f), $"kits.gridview page {page - 1} {npcId} {isPvPReward}");
+            if (max < list.Count)
+                UI.Button(container, UI_MENU, Configuration.Menu.Color1.Get, "Next", 16, new UI4(0.75f, 0.85f, 0.90f, 0.90f), $"kits.gridview page {page + 1} {npcId} {isPvPReward}");
+
+            //Facepunch.Pool.FreeList(ref list);
+        }
+        private void CreateKitEntry2(BasePlayer player, PlayerData.PlayerUsageData playerUsageData, CuiElementContainer container, KitData.Kit kit, int index, int page, ulong npcId, bool isPvPReward)
+        {
+            UI4 position = KitAlign2.Get(index);
+            var panelColor = Configuration.Menu.Color4.Get;
+
+            if (kit.HonorRankRequirement > 0)
+            {
+                panelColor = $"{GetHonorRankColor(kit.HonorRankRequirement)} 1";
+            }
+
+            // Panel for the Kit Entry
+            UI.Panel(container, UI_MENU, Configuration.Menu.Panel.Get, position);
+
+            // Image with a border
+            string imageId = string.IsNullOrEmpty(kit.KitImage) ? GetImage(DEFAULT_ICON) : GetImage(kit.Name);
+            UI.Panel(container, UI_MENU, "1 1 1 0.5", new UI4(position.xMin - 0.002f, position.yMin - 0.002f, position.xMin + 0.118f, position.yMax + 0.002f)); // Image border
+            UI.Image(container, UI_MENU, imageId, new UI4(position.xMin, position.yMin, position.xMin + 0.116f, position.yMax));
+
+            string buttonText;
+            string buttonCommand = string.Empty;
+            string buttonColor;
+
+            double cooldown = playerUsageData.GetCooldownRemaining(kit.Name);
+            int currentUses = playerUsageData.GetKitUses(kit.Name);
+
+            if (Configuration.AdminIgnoreRestrictions && IsAdmin(player))
+            {
+                buttonText = Message("UI.Redeem", player.userID);
+                buttonColor = Configuration.Menu.Color2.Get;
+                buttonCommand = $"kits.gridview redeem {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}";
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(kit.RequiredPermission) && !permission.UserHasPermission(player.UserIDString, kit.RequiredPermission))
+                {
+                    buttonText = Message("UI.NeedsPermission", player.userID);
+                    buttonColor = Configuration.Menu.Disabled.Get;
+                }
+                else if (kit.Cooldown > 0 && cooldown > 0)
+                {
+                    UI.Label(container, UI_MENU, string.Format(Message("UI.Cooldown", player.userID), FormatTime(cooldown)), 14,
+                        new UI4(position.xMin + 0.12f, position.yMin + 0.06f, position.xMax, position.yMin + 0.1f),
+                        TextAnchor.UpperLeft);
+
+                    buttonText = Message("UI.OnCooldown", player.userID);
+                    buttonColor = Configuration.Menu.Disabled.Get;
+                }
+                else if (kit.MaximumUses > 0 && currentUses >= kit.MaximumUses)
+                {
+                    buttonText = Message("UI.MaximumUses", player.userID);
+                    buttonColor = Configuration.Menu.Disabled.Get;
+                }
+                else if (kit.Cost > 0)
+                {
+                    UI.Label(container, UI_MENU, $"Cost: {kit.Cost}", 14,
+                        new UI4(position.xMin + 0.12f, position.yMin + 0.1f, position.xMax, position.yMin + 0.15f),
+                        TextAnchor.UpperLeft);
+
+                    buttonText = Message("UI.Purchase", player.userID).ToUpper();
+                    buttonColor = Configuration.Menu.Color2.Get;
+                    buttonCommand = $"kits.gridview redeem {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}";
+                }
+                else
+                {
+                    buttonText = Message("UI.Redeem", player.userID);
+                    buttonColor = Configuration.Menu.Color2.Get;
+                    buttonCommand = $"kits.gridview redeem {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}";
+                }
+            }
+
+            // Simulated Drop Shadow for Title
+            UI.Label(container, UI_MENU, kit.Name, 24,
+                new UI4(position.xMin + 0.121f, position.yMax - 0.045f, position.xMax + 0.121f, position.yMax),
+                TextAnchor.UpperLeft, "0 0 0 0.8"); // Shadow effect (offset slightly)
+
+            // Main Title with Underline (aligned at the top)
+            UI.Label(container, UI_MENU, kit.Name, 24,
+                new UI4(position.xMin + 0.12f, position.yMax - 0.05f, position.xMax, position.yMax),
+                TextAnchor.UpperLeft, "1 1 1 1");
+
+            // Underline Effect (Thin Panel under the title)
+            UI.Panel(container, UI_MENU, "1 1 1 0.8",
+                new UI4(position.xMin + 0.12f, position.yMax - 0.055f, position.xMax, position.yMax - 0.053f));
+
+            // Description text aligned below the title
+            UI.Label(container, UI_MENU, kit.Description ?? "No description available", 14,
+                new UI4(position.xMin + 0.12f, position.yMax - 0.1f, position.xMax, position.yMax - 0.06f),
+                TextAnchor.UpperLeft);
+
+            // Redeem Button (Right-Aligned)
+            UI.Button(container, UI_MENU, buttonColor, buttonText, 18,
+                new UI4(position.xMax - 0.15f, position.yMin + 0.01f, position.xMax - 0.01f, position.yMin + 0.05f),
+                buttonCommand);
+
+            // Magnify Glass Icon in Top-Right Corner (Square)
+            UI.Button(container, UI_MENU, ICON_BACKGROUND_COLOR, GetImage(MAGNIFY_ICON),
+                new UI4(position.xMax - 0.04f, position.yMax - 0.04f, position.xMax - 0.01f, position.yMax - 0.01f),
+                $"kits.gridview inspect {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}");
+        }
+
+
+
+
 
         private void CreateKitEntry(BasePlayer player, PlayerData.PlayerUsageData playerUsageData, CuiElementContainer container, KitData.Kit kit, int index, int page, ulong npcId, bool isPvPReward)
         {          
             UI4 position = KitAlign.Get(index);
-
-            UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(position.xMin, position.yMax, position.xMax, position.yMax + 0.04f));
-            UI.Label(container, UI_MENU, kit.Name, 14, new UI4(position.xMin, position.yMax, position.xMax, position.yMax + 0.04f));
+            float containerAspectRatio = 16.0f / 9.0f; // 16:9 aspect ratio
+            var panelColor = Configuration.Menu.Color4.Get;
+            if (kit.HonorRankRequirement > 0)
+            {
+                //UI.Label(container, UI_MENU, $"Rank requirement: ", 12,
+                panelColor = $"{GetHonorRankColor(kit.HonorRankRequirement)} 1";
+            }
+            UI.Panel(container, UI_MENU, panelColor, new UI4(position.xMin, position.yMax, position.xMax, position.yMax + 0.04f));
+            UI.Label(container, UI_MENU, kit.Name, 10, new UI4(position.xMin + 0.004f, position.yMax, position.xMax, position.yMax + 0.04f), TextAnchor.MiddleLeft);
 
             UI.Panel(container, UI_MENU, Configuration.Menu.Panel.Get, position);
 
             string imageId = string.IsNullOrEmpty(kit.KitImage) ? GetImage(DEFAULT_ICON) : GetImage(kit.Name);
-            UI.Image(container, UI_MENU, imageId, new UI4(position.xMin + 0.005f, position.yMax - 0.3f, position.xMax - 0.005f, position.yMax - 0.0075f));
-            
-            UI.Button(container, UI_MENU, "0 0 0 0", string.Empty, 0, new UI4(position.xMin + 0.005f, position.yMax - 0.3f, position.xMax - 0.005f, position.yMax - 0.0075f), $"kits.gridview inspect {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}");
+            // the images arent loading correctly
+
+
+            // UI.Panel(container, UI_MENU, "1 1 1 0.1", new UI4(position.xMin + 0.0275f, position.yMin + 0.0275f, position.xMax - 0.0275f, position.yMax));
+            UI.Image(container, UI_MENU, imageId, new UI4(position.xMin + 0.001f * 16, position.yMin + 0.001f * 9, position.xMax - 0.001f * 16, position.yMax - 0.001f * 9));
+
+            //UI.Image(container, UI_MENU, imageId, new UI4(position.xMin + 0.005f, position.yMax - 0.3f, position.xMax - 0.005f, position.yMax - 0.0075f));
+
+            // UI.Button(container, UI_MENU, "0 0 0 0", string.Empty, 0, new UI4(position.xMin + 0.005f, position.yMax - 0.3f, position.xMax - 0.005f, position.yMax - 0.0075f), $"kits.gridview inspect {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}");
 
             string buttonText;
             string buttonCommand = string.Empty;
@@ -700,14 +1073,20 @@ namespace Oxide.Plugins
                 }
                 else if (kit.Cost > 0)
                 {
-                    if (kit.HonorRankRequirement > 0) {
-                        UI.Label(container, UI_MENU, $"Rank requirement: {GetHonorRankTitle(kit.HonorRankRequirement)}", 12,
-                        new UI4(position.xMin + 0.005f, position.yMin + 0.0475f, position.xMax - 0.005f, position.yMax - 0.2f), TextAnchor.MiddleLeft);
-                    }
-                    UI.Label(container, UI_MENU, string.Format(Message("UI.Cost", player.userID), kit.Cost, Message($"Cost.{kit.Currency}", player.userID)), 12,
-                        new UI4(position.xMin + 0.005f, position.yMin + 0.0475f, position.xMax - 0.005f, position.yMax - 0.3f), TextAnchor.MiddleLeft);
+                    /* if (kit.HonorRankRequirement > 0) {
+                         UI.Label(container, UI_MENU, $"Rank requirement: {GetHonorRankTitle(kit.HonorRankRequirement)}", 12,
+                         new UI4(position.xMin + 0.005f, position.yMin + 0.0475f, position.xMax - 0.005f, position.yMax - 0.2f), TextAnchor.MiddleLeft);
+                     }*/
+                    //UI.Label(container, UI_MENU, string.Format(Message("UI.Cost", player.userID), kit.Cost), 12,
+                    //    new UI4(position.xMin, position.yMin, position.xMin + 0.093f, position.yMin + 0.0475f), TextAnchor.MiddleLeft);
+                    //new UI4(position.xMin + 0.005f, position.yMin + 0.0475f, position.xMax - 0.005f, position.yMax - 0.3f), TextAnchor.MiddleLeft);
 
-                    buttonText = Message("UI.Purchase", player.userID);
+
+                    UI.Label(container, UI_MENU, "●", 48, new UI4(position.xMin, position.yMin, position.xMax, position.yMax + 0.0625f), TextAnchor.UpperRight, "0 0 0 0.8");
+
+                    UI.Label(container, UI_MENU, $"{kit.Cost.ToString().PadLeft(2)}", 12, new UI4(position.xMin, position.yMin, position.xMax + 0.0775f, position.yMax + 0.03f), TextAnchor.UpperCenter, "1 1 1 1");
+
+                    buttonText =  Message("UI.Purchase", player.userID).ToUpper();
                     buttonColor = Configuration.Menu.Color2.Get;
                     buttonCommand = $"kits.gridview redeem {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}";
                 }
@@ -719,166 +1098,260 @@ namespace Oxide.Plugins
                 }
             }
 
-            UI.Button(container, UI_MENU, buttonColor, buttonText, 14, 
-                new UI4(position.xMin + 0.038f, position.yMin + 0.0075f, position.xMax - 0.005f, position.yMin + 0.0475f), buttonCommand);
+            UI.Button(container, UI_MENU, buttonColor, buttonText, 18, 
+                new UI4(position.xMin, position.yMin - 0.0275f, position.xMax, position.yMin), buttonCommand);
 
-            UI.Button(container, UI_MENU, ICON_BACKGROUND_COLOR, GetImage(MAGNIFY_ICON), 
-                new UI4(position.xMin + 0.005f, position.yMin + 0.0075f, position.xMin + 0.033f, position.yMin + 0.0475f), $"kits.gridview inspect {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}");
+            //UI.Button(container, UI_MENU, ICON_BACKGROUND_COLOR, GetImage(MAGNIFY_ICON), 
+            //    new UI4(position.xMin + 0.005f, position.yMin + 0.0075f, position.xMin + 0.033f, position.yMin + 0.0475f), $"kits.gridview inspect {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}");
         }
         #endregion
 
         #region Kit View       
+
+        private const float COLUMN_WIDTH = 0.11f;  // Each column is 0.11 wide
+        private const float ROW_HEIGHT = 0.04f;    // Height for each row
+
+
+        private CuiElementContainer CreateMenuSection(BasePlayer player)
+        {
+            // Destroy existing UI elements
+            DestroyExistingUI(player);
+
+            // Create the main menu container
+            var container = UI.Container(UI_MENU, "0 0 0 0.25", UI4.Full, true, "Overlay");
+
+            // Add Menu Panels
+            UI.Panel(container, UI_MENU, "0 0 0 0.5", new UI4(0f, 0f, 0.2f, 1f));
+            UI.Panel(container, UI_MENU, "0 0 0 0.8", new UI4(0.2f, 0f, 0.95f, 1f));
+
+            // Server Information
+            int currentOnline = BasePlayer.activePlayerList.Count;
+            int maxOnline = ConVar.Server.maxplayers;
+            string imageId = GetImage("logo");
+
+            UI.Label(container, UI_MENU, $"<color=#c45508>RUST WIPE DAY</color>\n<size=12>Population: {currentOnline}/{maxOnline}</size>",
+                32, new UI4(0f, 0.7f, 0.2f, 0.85f), TextAnchor.UpperCenter);
+
+            UI.Image(container, UI_MENU, imageId, new UI4(0.05f, 0.85f, 0.15f, 1f));
+
+            // Menu Buttons
+            AddMenuButtons(container);
+
+            // Experience Bar
+            DrawExperienceBar(container, player);
+
+            // Close Button
+            AddCloseButton(container);
+
+            return container;
+        }
+
+        private void DestroyExistingUI(BasePlayer player)
+        {
+            CuiHelper.DestroyUi(player, "LeaderboardOverlay");
+            CuiHelper.DestroyUi(player, UI_MENU);
+        }
+
+        private void AddMenuButtons(CuiElementContainer container)
+        {
+            var buttons = new Dictionary<string, string>
+            {
+                ["CLOSE"] = "kits.close",
+                ["WIPE SCHEDULE"] = "kits.wipes",
+                ["LEADERBOARD"] = "kits.leaderboard",
+                ["KITS"] = "kits.gridview page 0 0 false",
+                ["BOUNTY SHOP"] = "kits.gridview page 0 0 true",
+                ["BASE BOUNTY"] = "kits.base"
+            };
+
+            int row = 0;
+            foreach (var btn in buttons)
+            {
+                UI.Button(container, UI_MENU, Configuration.Menu.Color1.Get, btn.Key, 24,
+                    new UI4(0.01f, 0.05f + (row * 0.06f), 0.19f, 0.1f + (row * 0.06f)), btn.Value);
+                row++;
+                if (btn.Key == "CLOSE") row++; // Skip a row after the close button
+            }
+        }
+
+        private void AddCloseButton(CuiElementContainer container)
+        {
+            UI.Panel(container, UI_MENU, "0 0 0 0.5", new UI4(0.95f, 0f, 1f, 1f));
+            container.Add(new CuiButton
+            {
+                Button = { Command = "kits.close", Color = "0.8 0.1 0.1 1", FadeIn = 0 },
+                RectTransform = { AnchorMin = "0.96 0.96", AnchorMax = "0.99 0.99" },
+                Text = { Text = "X", Align = TextAnchor.MiddleCenter }
+            }, UI_MENU, "KitsMenu.CloseButton");
+        }
+
+
         private void OpenKitView(BasePlayer player, string name, int page, ulong npcId, bool isPvPReward)
         {
+            var container = CreateMenuSection(player);
+
             if (!kitData.Find(name, out KitData.Kit kit))
             {
                 OpenKitGrid(player);
                 return;
             }
 
-            CuiElementContainer container = UI.Container(UI_MENU, "0 0 0 0.9", new UI4(0.2f, 0.15f, 0.8f, 0.85f), true, "Hud");
-
-            UI.Panel(container, UI_MENU, Configuration.Menu.Panel.Get, new UI4(0.005f, 0.93f, 0.995f, 0.99f));
-
-            UI.Label(container, UI_MENU, $"{Message("UI.Title", player.userID)} - {name}", 20, new UI4(0.015f, 0.93f, 0.99f, 0.99f), TextAnchor.MiddleLeft);
-
-            UI.Button(container, UI_MENU, Configuration.Menu.Color3.Get, "<b>×</b>", 20, new UI4(0.9575f, 0.9375f, 0.99f, 0.9825f), $"kits.gridview page 0 {npcId} {isPvPReward}");
-
             bool isAdmin = IsAdmin(player);
-            if (isAdmin)
-            {
-                UI.Button(container, UI_MENU, Configuration.Menu.Color2.Get, Message("UI.EditKit", player.userID), 14, new UI4(0.7525f, 0.9375f, 0.845f, 0.9825f), $"kits.edit {CommandSafe(name)}");
-                UI.Button(container, UI_MENU, Configuration.Menu.Color2.Get, Message("UI.CreateNew", player.userID), 14, new UI4(0.85f, 0.9375f, 0.9525f, 0.9825f), "kits.create");
-            }
-
-            PlayerData.PlayerUsageData playerUsageData = playerData[player.userID];
-
-            int i = -1;
+            if (isAdmin) AddAdminButtons(container, name, player);
 
             if (!string.IsNullOrEmpty(kit.KitImage))
-            {
-                UI.Image(container, UI_MENU, GetImage(kit.Name), new UI4(0.15f, 0.62f, 0.35f, 0.92f));
-                i = 6;
-            }
+UI.Image(
+    container, 
+    UI_MENU, 
+    GetImage(kit.Name), 
+    new UI4(
+        0.22f, 
+        0.65f - (0.45f - 0.22f), // yMin to ensure square aspect ratio
+        0.45f, 
+        0.65f
+    )
+);
 
-            AddTitleSperator(container, i += 1, Message("UI.Details", player.userID));
-            AddLabelField(container, i += 1, Message("UI.Name", player.userID), kit.Name);
-
-            if (!string.IsNullOrEmpty(kit.Description)) 
-            {
-                int descriptionSlots = Mathf.Min(Mathf.CeilToInt(((float)kit.Description.Length / 38f) / 1.25f), 4);
-                AddLabelField(container, i += 1, Message("UI.Description", player.userID), kit.Description, descriptionSlots - 1);
-                i += descriptionSlots - 1;
-            }
-
-            string buttonText = string.Empty;
-            string buttonCommand = string.Empty;
-            string buttonColor = string.Empty;
-            
-            if (kit.Cooldown != 0 || kit.MaximumUses != 0 || kit.Cost != 0)
-            {
-                AddTitleSperator(container, i += 1, Message("UI.Usage", player.userID));
-
-                if (kit.MaximumUses != 0)
-                {
-                    int playerUses = playerUsageData.GetKitUses(kit.Name);
-
-                    AddLabelField(container, i += 1, Message("UI.MaxUses", player.userID), kit.MaximumUses.ToString());
-                    AddLabelField(container, i += 1, Message("UI.YourUses", player.userID), playerUses.ToString());
-
-                    if (playerUses >= kit.MaximumUses)
-                    {
-                        buttonText = Message("UI.MaximumUses", player.userID);
-                        buttonColor = Configuration.Menu.Disabled.Get;
-                    }
-                }
-                if (kit.Cooldown != 0)
-                {
-                    double cooldownRemaining = playerUsageData.GetCooldownRemaining(kit.Name);
-
-                    AddLabelField(container, i += 1, Message("UI.CooldownTime", player.userID), FormatTime(kit.Cooldown));
-                    AddLabelField(container, i += 1, Message("UI.CooldownRemaining", player.userID), cooldownRemaining == 0 ? Message("UI.None", player.userID) : 
-                                                                                                     FormatTime(cooldownRemaining));
-
-                    if (string.IsNullOrEmpty(buttonText) && cooldownRemaining > 0)
-                    {
-                        buttonText = Message("UI.OnCooldown", player.userID);
-                        buttonColor = Configuration.Menu.Disabled.Get;
-                    }
-                }
-                if (kit.HonorRankRequirement != 0) {
-                    AddLabelField(container, i += 1, Message("UI.HonorRankRequirement", player.userID), $"{GetHonorRankTitle(kit.HonorRankRequirement)}");
-                }
-                if (kit.Cost != 0)
-                {
-                    AddLabelField(container, i += 1, Message("UI.PurchaseCost", player.userID), $"{kit.Cost} {(Message($"Cost.{kit.Currency}", player.userID))}");
-
-                    if (string.IsNullOrEmpty(buttonText))
-                    {
-                        buttonText = Message("UI.Purchase", player.userID);
-                        buttonColor = Configuration.Menu.Color2.Get;
-                        buttonCommand = $"kits.gridview redeem {CommandSafe(kit.Name)} {page} {npcId} {isPvPReward}";
-                    }
-                }
-            }
-
-            if (!string.IsNullOrEmpty(kit.RequiredPermission) && !permission.UserHasPermission(player.UserIDString, kit.RequiredPermission))
-            {
-                buttonText = Message("UI.NeedsPermission", player.userID);
-                buttonColor = Configuration.Menu.Disabled.Get;
-            }
-            
-            if (i <= 16 && !string.IsNullOrEmpty(kit.CopyPasteFile))
-            {
-                AddTitleSperator(container, i += 1, Message("UI.CopyPaste", player.userID));
-                AddLabelField(container, i += 1, Message("UI.FileName", player.userID), kit.CopyPasteFile);
-            }
-
-            if ((Configuration.AdminIgnoreRestrictions && isAdmin) || string.IsNullOrEmpty(buttonText))
-            {
-                buttonText = Message("UI.Redeem", player.userID);
-                buttonCommand = $"kits.gridview redeem {CommandSafe(kit.Name)} {page} {npcId}";
-                buttonColor = Configuration.Menu.Color2.Get;
-            }
+            AddKitDetails(container, player, kit);
 
             CreateKitLayout(player, container, kit);
-
-            UI.Button(container, UI_MENU, buttonColor, buttonText, 14, new UI4(0.005f, 0.005f, 0.495f, 0.045f), buttonCommand);
 
             CuiHelper.DestroyUi(player, UI_MENU);
             CuiHelper.AddUi(player, container);
         }
+
+        private void AddAdminButtons(CuiElementContainer container, string kitName, BasePlayer player)
+        {
+            UI.Button(container, UI_MENU, Configuration.Menu.Color2.Get, Message("UI.EditKit", player.userID), 14,
+                new UI4(0.70f, 0.9375f, 0.79f, 0.9825f), $"kits.edit {CommandSafe(kitName)}");
+
+            UI.Button(container, UI_MENU, Configuration.Menu.Color2.Get, Message("UI.CreateNew", player.userID), 14,
+                new UI4(0.80f, 0.9375f, 0.90f, 0.9825f), "kits.create");
+        }
+
+        private void AddKitDetails(CuiElementContainer container, BasePlayer player, KitData.Kit kit)
+        {
+            PlayerData.PlayerUsageData playerUsageData = playerData[player.userID];
+
+            // Adjusting Y-coordinates to move everything below the image
+
+            // Row 1: Description
+            UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(0.22f, 0.58f, 0.33f, 0.62f));
+            UI.Label(
+                container,
+                UI_MENU,
+                $"<color=#FFD700><b>Description:</b></color> {kit.Description ?? "None"}",
+                16,
+                new UI4(0.225f, 0.58f, 0.33f, 0.615f),
+                TextAnchor.MiddleLeft
+            );
+
+            // Row 2: Max Uses
+            UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(0.22f, 0.53f, 0.33f, 0.57f));
+            UI.Label(
+                container,
+                UI_MENU,
+                $"<color=#FFD700><b>Max Uses:</b></color> {kit.MaximumUses}",
+                16,
+                new UI4(0.225f, 0.53f, 0.33f, 0.565f),
+                TextAnchor.MiddleLeft
+            );
+
+            // Row 3: Your Uses
+            UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(0.22f, 0.48f, 0.33f, 0.52f));
+            UI.Label(
+                container,
+                UI_MENU,
+                $"<color=#FFD700><b>Your Uses:</b></color> {playerUsageData.GetKitUses(kit.Name)}",
+                16,
+                new UI4(0.225f, 0.48f, 0.33f, 0.515f),
+                TextAnchor.MiddleLeft
+            );
+
+            // Row 4: Cooldown Time (if applicable)
+            if (kit.Cooldown > 0)
+            {
+                UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(0.22f, 0.43f, 0.33f, 0.47f));
+                UI.Label(
+                    container,
+                    UI_MENU,
+                    $"<color=#FFD700><b>Cooldown Time:</b></color> {FormatTime(kit.Cooldown)}",
+                    16,
+                    new UI4(0.225f, 0.43f, 0.33f, 0.465f),
+                    TextAnchor.MiddleLeft
+                );
+
+                // Row 5: Cooldown Remaining
+                double cooldownRemaining = playerUsageData.GetCooldownRemaining(kit.Name);
+                UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(0.22f, 0.38f, 0.33f, 0.42f));
+                UI.Label(
+                    container,
+                    UI_MENU,
+                    $"<color=#FFD700><b>Cooldown Remaining:</b></color> {(cooldownRemaining == 0 ? "None" : FormatTime(cooldownRemaining))}",
+                    16,
+                    new UI4(0.225f, 0.38f, 0.33f, 0.415f),
+                    TextAnchor.MiddleLeft
+                );
+            }
+
+            // Row 6: Honor Rank Requirement (if applicable)
+            if (kit.HonorRankRequirement > 0)
+            {
+                UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(0.22f, 0.33f, 0.33f, 0.37f));
+                UI.Label(
+                    container,
+                    UI_MENU,
+                    $"<color=#FFD700><b>Honor Rank:</b></color> {GetHonorRankTitle(kit.HonorRankRequirement)}",
+                    16,
+                    new UI4(0.225f, 0.33f, 0.33f, 0.365f),
+                    TextAnchor.MiddleLeft
+                );
+            }
+
+            // Row 7: Cost (if applicable)
+            if (kit.Cost > 0)
+            {
+                UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(0.22f, 0.28f, 0.33f, 0.32f));
+                UI.Label(
+                    container,
+                    UI_MENU,
+                    $"<color=#FFD700><b>Cost:</b></color> {kit.Cost} {Message($"Cost.{kit.Currency}", player.userID)}",
+                    16,
+                    new UI4(0.225f, 0.28f, 0.33f, 0.315f),
+                    TextAnchor.MiddleLeft
+                );
+            }
+        }
+
+
+
         #endregion
 
         #region Kit Layout
-        private const string ICON_BACKGROUND_COLOR = "1 1 1 0.15";
+        private const string ICON_BACKGROUND_COLOR = "1 1 1 0.15"; 
 
         private void CreateKitLayout(BasePlayer player, CuiElementContainer container, KitData.Kit kit)
         {
-            UI.Panel(container, UI_MENU, Configuration.Menu.Color1.Get, new UI4(0.505f, 0.88f, 0.995f, 0.92f));
-            UI.Label(container, UI_MENU, Message("UI.KitItems", player.userID), 14, new UI4(0.51f, 0.88f, 0.995f, 0.92f), TextAnchor.MiddleLeft);
+            // Kit Items Label - Aligned with second section
+            UI.Panel(container, UI_MENU, Configuration.Menu.Color1.Get, new UI4(0.55f, 0.88f, 0.95f, 0.92f));
+            UI.Label(container, UI_MENU, Message("UI.KitItems", player.userID), 14, new UI4(0.56f, 0.88f, 0.95f, 0.92f), TextAnchor.MiddleLeft);
 
-            // Main Items
-            UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(0.505f, 0.835f, 0.995f, 0.875f));
-            UI.Label(container, UI_MENU, Message("UI.MainItems", player.userID), 14, new UI4(0.51f, 0.835f, 0.995f, 0.875f), TextAnchor.MiddleLeft);
+            // Main Items - Aligned directly under Main Items line
+            UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(0.55f, 0.835f, 0.95f, 0.875f));
+            UI.Label(container, UI_MENU, Message("UI.MainItems", player.userID), 14, new UI4(0.56f, 0.835f, 0.95f, 0.875f), TextAnchor.MiddleLeft);
             CreateInventoryItems(container, MainAlign, kit.MainItems, 24);
-            
-            // Wear Items
-            UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(0.505f, 0.365f, 0.995f, 0.405f));
-            UI.Label(container, UI_MENU, Message("UI.WearItems", player.userID), 14, new UI4(0.51f, 0.365f, 0.995f, 0.405f), TextAnchor.MiddleLeft);
+
+            // Wear Items - Alignment matched to Main Items
+            UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(0.55f, 0.365f, 0.95f, 0.405f));
+            UI.Label(container, UI_MENU, Message("UI.WearItems", player.userID), 14, new UI4(0.56f, 0.365f, 0.95f, 0.405f), TextAnchor.MiddleLeft);
             CreateInventoryItems(container, WearAlign, kit.WearItems, 8);
-            
-            /*// Backpack slot
-            UI.Panel(container, UI_MENU, ICON_BACKGROUND_COLOR, new UI4(0.97f, 0.3675f, 0.9925f, 0.4025f));
-            ItemData itemData = kit.GetBackpackSlot();
-            if (itemData != null)
-                UI.Image(container, UI_MENU, itemData.ItemID, itemData.Skin, new UI4(0.97f, 0.3675f, 0.9925f, 0.4025f));*/
-            
-            // Belt Items
-            UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(0.505f, 0.2225f, 0.995f, 0.2625f));
-            UI.Label(container, UI_MENU, Message("UI.BeltItems", player.userID), 14, new UI4(0.51f, 0.2225f, 0.995f, 0.2625f), TextAnchor.MiddleLeft);
-            CreateInventoryItems(container, BeltAlign, kit.BeltItems, 6);            
+
+            // Belt Items - Alignment matched to Wear Items
+            UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(0.55f, 0.2225f, 0.95f, 0.2625f));
+            UI.Label(container, UI_MENU, Message("UI.BeltItems", player.userID), 14, new UI4(0.56f, 0.2225f, 0.95f, 0.2625f), TextAnchor.MiddleLeft);
+            CreateInventoryItems(container, BeltAlign, kit.BeltItems, 6);
         }
+        #endregion
 
         #region Item Layout Helpers
         private void CreateInventoryItems(CuiElementContainer container, GridAlignment alignment, ItemData[] items, int capacity)
@@ -894,16 +1367,18 @@ namespace Oxide.Plugins
 
                 UI4 position = alignment.Get(itemData.Position);
 
-                UI.Image(container, UI_MENU, itemData.ItemID, itemData.Skin /*GetImage(itemData.Shortname, itemData.Skin)*/, position);
+                UI.Image(container, UI_MENU, itemData.ItemID, itemData.Skin, position);
 
                 if (itemData.IsBlueprint && !string.IsNullOrEmpty(itemData.BlueprintShortname))
-                    UI.Image(container, UI_MENU, itemData.BlueprintItemID, 0UL /*GetImage(itemData.BlueprintShortname, 0UL)*/, position);
+                    UI.Image(container, UI_MENU, itemData.BlueprintItemID, 0UL, position);
 
                 if (itemData.Amount > 1)
                     UI.Label(container, UI_MENU, $"x{itemData.Amount}", 10, position, TextAnchor.LowerRight);
             }
         }
         #endregion
+
+
         #endregion
 
         #region Kit Editor
@@ -987,23 +1462,44 @@ namespace Oxide.Plugins
             float yMin = GetVerticalPos(index, 0.88f);
             float yMax = yMin + EDITOR_ELEMENT_HEIGHT;
 
-            UI.Panel(container, UI_MENU, Configuration.Menu.Color1.Get, new UI4(0.005f, yMin, 0.495f, yMax));
-            UI.Label(container, UI_MENU, title, 14, new UI4(0.01f, yMin, 0.495f, yMax), TextAnchor.MiddleLeft);
+            UI.Panel(container, UI_MENU, Configuration.Menu.Color1.Get, new UI4(0.55f, yMin, 0.75f, yMax));
+            UI.Label(container, UI_MENU, title, 14, new UI4(0.56f, yMin, 0.75f, yMax), TextAnchor.MiddleLeft);
         }
 
-        private void AddLabelField(CuiElementContainer container, int index, string title, string value, int additionalHeight = 0)
+        private void AddLabelField(CuiElementContainer container, int row, int column, string title, string value)
         {
-            float yMin = GetVerticalPos(index, 0.88f);
-            float yMax = yMin + EDITOR_ELEMENT_HEIGHT;
+            // Adjust column margins and width to prevent overlap and ensure readability
+            float columnOffset = 0.02f;  // Extra padding between columns
+            float xMin = column * COLUMN_WIDTH + columnOffset;
+            float xMax = xMin + COLUMN_WIDTH - columnOffset;
+            float yMin = GetVerticalPos(row);
+            float yMax = yMin + ROW_HEIGHT;
 
-            if (additionalHeight != 0)
-                yMin = GetVerticalPos(index + additionalHeight, 0.88f);
+            // Panel for the title with more space allocated
+            UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(xMin, yMin, xMax - 0.4f, yMax));
 
-            UI.Panel(container, UI_MENU, Configuration.Menu.Color4.Get, new UI4(0.005f, yMin, 0.175f, yMax));
-            UI.Label(container, UI_MENU, title, 12, new UI4(0.01f, yMin, 0.175f, yMax - 0.0075f), TextAnchor.UpperLeft);
+            // Title label with centered vertical alignment for readability
+            UI.Label(
+                container,
+                UI_MENU,
+                title,
+                14,
+                new UI4(xMin + 0.005f, yMin + 0.0025f, xMax - 0.4f, yMax - 0.005f),
+                TextAnchor.MiddleLeft
+            );
 
-            UI.Panel(container, UI_MENU, ICON_BACKGROUND_COLOR, new UI4(0.175f, yMin, 0.495f, yMax));
-            UI.Label(container, UI_MENU, value, 12, new UI4(0.18f, yMin, 0.495f, yMax - 0.0075f), TextAnchor.UpperLeft);
+            // Panel for the value (adjusted padding to align the value neatly)
+            UI.Panel(container, UI_MENU, ICON_BACKGROUND_COLOR, new UI4(xMax - 0.39f, yMin, xMax, yMax));
+
+            // Value label with consistent vertical centering
+            UI.Label(
+                container,
+                UI_MENU,
+                value,
+                14,
+                new UI4(xMax - 0.38f, yMin + 0.0025f, xMax - 0.005f, yMax - 0.005f),
+                TextAnchor.MiddleRight
+            );
         }
 
         private void AddToggleField(CuiElementContainer container, int index, string title, string fieldName, bool currentValue)
@@ -1027,7 +1523,7 @@ namespace Oxide.Plugins
             return null;
         }
 
-        private float GetVerticalPos(int i, float start = 0.9f) => start - (i * (EDITOR_ELEMENT_HEIGHT + 0.005f));
+        private float GetVerticalPos(int row, float start = 0.9f) => start - (row * (ROW_HEIGHT + 0.005f));
         #endregion
         #endregion
 
@@ -1045,11 +1541,22 @@ namespace Oxide.Plugins
         #endregion
 
         #region UI Grid Helper
-        private readonly GridAlignment KitAlign = new GridAlignment(4, 0.04f, 0.2f, 0.04f, 0.87f, 0.39f, 0.06f);
+        private readonly GridAlignment KitAlign = new GridAlignment(6, 0.25f, 0.10f, 0.01f, 0.8f, 0.10f, 0.1f);
+        private readonly GridAlignment KitAlign2 = new GridAlignment(2, 0.25f, 0.33f, 0.01f, 0.8f, 0.20f, 0.05f);
 
-        private readonly GridAlignment MainAlign = new GridAlignment(6, 0.545f, 0.065f, 0.0035f, 0.8275f, 0.1f, 0.005f);
-        private readonly GridAlignment WearAlign = new GridAlignment(8, 0.505f, 0.0581875f, 0.0035f, 0.3575f, 0.0875f, 0.005f);
-        private readonly GridAlignment BeltAlign = new GridAlignment(6, 0.545f, 0.065f, 0.0035f, 0.215f, 0.1f, 0.005f);
+        // MainAlign - Adjusted for better fit
+        private readonly GridAlignment MainAlign =
+            new GridAlignment(6, 0.55f, 0.062f, 0.003f, 0.8275f, 0.1f, 0.005f);
+
+        // WearAlign - Adjusted width to match the Main section, fitting within bounds
+        private readonly GridAlignment WearAlign =
+            new GridAlignment(8, 0.55f, 0.0465f, 0.0029f, 0.3575f, 0.0875f, 0.005f);
+
+        // BeltAlign - Consistent width with MainAlign
+        private readonly GridAlignment BeltAlign =
+            new GridAlignment(6, 0.55f, 0.062f, 0.003f, 0.215f, 0.1f, 0.005f);
+
+
 
         private class GridAlignment
         {
@@ -1085,10 +1592,42 @@ namespace Oxide.Plugins
             }
         }
         #endregion
-        #endregion
 
         #region UI Commands
         #region View Commands
+
+
+        [ConsoleCommand("kits.welcome")]
+        private void CommandKitsWelcome(ConsoleSystem.Arg arg)
+        {
+            BasePlayer player = arg.Connection.player as BasePlayer;
+            if (!player)
+                return;
+            OpenKitGrid(player, -1, 0, false, "WELCOME");
+
+        }
+
+
+        [ConsoleCommand("kits.base")]
+        private void CommandKitsBase(ConsoleSystem.Arg arg)
+        {
+            BasePlayer player = arg.Connection.player as BasePlayer;
+            if (!player)
+                return;
+            player.SendConsoleCommand("basebounty.panel");
+            
+        }
+
+        [ConsoleCommand("kits.leaderboard")]
+        private void CommandKitsLeaderboard(ConsoleSystem.Arg arg)
+        {
+            BasePlayer player = arg.Connection.player as BasePlayer;
+            if (!player)
+                return;
+            player.SendConsoleCommand("leaderboard");
+            OpenKitGrid(player, -1, 0, false, "LEADERBOARD");
+        }
+
         [ConsoleCommand("kits.close")]
         private void ccmdKitsClose(ConsoleSystem.Arg arg)
         {
@@ -1100,6 +1639,8 @@ namespace Oxide.Plugins
 
             CuiHelper.DestroyUi(player, UI_MENU);
             CuiHelper.DestroyUi(player, UI_POPUP);
+            CuiHelper.DestroyUi(player, "kits.hud");
+            CuiHelper.DestroyUi(player, "LeaderboardOverlay");
         }
 
         [ConsoleCommand("kits.gridview")]
@@ -1444,7 +1985,7 @@ namespace Oxide.Plugins
                     {
                         new CuiPanel
                         {
-                            Image = { Color = color, Material = blur ? "assets/content/ui/uibackgroundblur-ingamemenu.mat" : string.Empty },
+                            Image = { Color = color, Sprite = blur ?  "assets/content/materials/highlight.png" : string.Empty , Material = blur ? "assets/content/ui/uibackgroundblur-ingamemenu.mat" : string.Empty },
                             RectTransform = { AnchorMin = dimensions.GetMin(), AnchorMax = dimensions.GetMax() },
                             CursorEnabled = true
                         },
@@ -1474,11 +2015,11 @@ namespace Oxide.Plugins
                 panel);
             }
 
-            public static void Label(CuiElementContainer container, string panel, string text, int size, UI4 dimensions, TextAnchor align = TextAnchor.MiddleCenter)
+            public static void Label(CuiElementContainer container, string panel, string text, int size, UI4 dimensions, TextAnchor align = TextAnchor.MiddleCenter, string color = "1 1 1 1")
             {
                 container.Add(new CuiLabel
                 {
-                    Text = { FontSize = size, Align = align, Text = text },
+                    Text = { FontSize = size, Align = align, Text = text, Color = color },
                     RectTransform = { AnchorMin = dimensions.GetMin(), AnchorMax = dimensions.GetMax() }
                 },
                 panel);
@@ -1612,7 +2153,7 @@ namespace Oxide.Plugins
             if (args.Length == 0)
             {
                 if (Configuration.UseUI)
-                    OpenKitGrid(player);
+                    OpenKitGrid(player, 0);
                 else ReplyHelp(player);
 
                 return;
@@ -2847,7 +3388,8 @@ namespace Oxide.Plugins
                 Dictionary<string, string> loadOrder = new Dictionary<string, string>
                 {
                     [DEFAULT_ICON] = Configuration.Menu.DefaultKitURL,
-                    [MAGNIFY_ICON] = Configuration.Menu.MagnifyIconURL
+                    [MAGNIFY_ICON] = Configuration.Menu.MagnifyIconURL,
+                    ["logo"] = "https://www.rustwipeday.com/img/logo.png",
                 };
 
                 foreach (Kit kit in _kits.Values)
@@ -3556,9 +4098,9 @@ namespace Oxide.Plugins
             ["UI.OnCooldown"] = "On Cooldown",
             ["UI.Cooldown"] = "Cooldown : {0}",
             ["UI.MaximumUses"] = "At Redeem Limit",
-            ["UI.Purchase"] = "Purchase",
+            ["UI.Purchase"] = "Buy",
             ["UI.HonorRankRequirement"] = "Honor Rank Requirement",
-            ["UI.Cost"] = "Cost : {0} {1}",
+            ["UI.Cost"] = "{0} Bounty",
             ["UI.Redeem"] = "Redeem",
             ["UI.Details"] = "Kit Details",
             ["UI.Name"] = "Name",
@@ -3569,7 +4111,7 @@ namespace Oxide.Plugins
             ["UI.CooldownTime"] = "Cooldown Time",
             ["UI.CooldownRemaining"] = "Remaining Cooldown",
             ["UI.None"] = "None",
-            ["UI.PurchaseCost"] = "Purchase Cost",
+            ["UI.PurchaseCost"] = " Cost",
             ["UI.CopyPaste"] = "CopyPaste Support",
             ["UI.FileName"] = "File Name",
             ["UI.KitItems"] = "Kit Items",

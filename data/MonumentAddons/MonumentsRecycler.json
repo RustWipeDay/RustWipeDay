@@ -4,48 +4,7 @@
   "SchemaVersion": 2.0,
   "Url": "https://github.com/WheteThunger/MonumentAddons/blob/master/Profiles/MonumentsRecycler.json?raw=true",
   "MonumentData": {
-    "cargoshiptest": {
-      "Entities": [
-        {
-          "Id": "1d7b19de-09ea-434f-9fa1-acbb9ca856d2",
-          "PrefabName": "assets/bundled/prefabs/static/recycler_static.prefab",
-          "Position": {
-            "x": 0.2172264,
-            "y": 9.574753,
-            "z": 79.05922
-          },
-          "RotationAngles": {
-            "x": 0.0,
-            "y": 180.0,
-            "z": 0.0
-          }
-        },
-        {
-          "Id": "25835147-e054-4e99-a445-d36b520c2032",
-          "PrefabName": "assets/bundled/prefabs/static/recycler_static.prefab",
-          "Position": {
-            "x": 0.2407,
-            "y": 9.5,
-            "z": -36.87305
-          }
-        },
-        {
-          "Id": "efdc0102-305d-44a6-a12d-945870eadca2",
-          "PrefabName": "assets/bundled/prefabs/static/recycler_static.prefab",
-          "Position": {
-            "x": 0.0,
-            "y": 0.57767,
-            "z": 10.0
-          },
-          "RotationAngles": {
-            "x": 0.0,
-            "y": 180.0,
-            "z": 0.0
-          }
-        }
-      ]
-    },
-    "OilrigAI": {
+    "oilrig_2": {
       "Entities": [
         {
           "Id": "e8bd948f-1878-452b-8bcb-321577fa64ed",
@@ -77,7 +36,7 @@
         }
       ]
     },
-    "OilrigAI2": {
+    "oilrig_1": {
       "Entities": [
         {
           "Id": "2e176f27-44d1-4c22-9434-03cd1aac884a",
@@ -171,6 +130,47 @@
           "RotationAngles": {
             "x": 0.0,
             "y": 90.0,
+            "z": 0.0
+          }
+        }
+      ]
+    },
+    "assets/content/vehicles/boats/cargoship/cargoshiptest.prefab": {
+      "Entities": [
+        {
+          "Id": "1d7b19de-09ea-434f-9fa1-acbb9ca856d2",
+          "PrefabName": "assets/bundled/prefabs/static/recycler_static.prefab",
+          "Position": {
+            "x": 0.2172264,
+            "y": 9.574753,
+            "z": 79.05922
+          },
+          "RotationAngles": {
+            "x": 0.0,
+            "y": 180.0,
+            "z": 0.0
+          }
+        },
+        {
+          "Id": "25835147-e054-4e99-a445-d36b520c2032",
+          "PrefabName": "assets/bundled/prefabs/static/recycler_static.prefab",
+          "Position": {
+            "x": 0.2407,
+            "y": 9.5,
+            "z": -36.87305
+          }
+        },
+        {
+          "Id": "efdc0102-305d-44a6-a12d-945870eadca2",
+          "PrefabName": "assets/bundled/prefabs/static/recycler_static.prefab",
+          "Position": {
+            "x": 0.0,
+            "y": 0.57767,
+            "z": 10.0
+          },
+          "RotationAngles": {
+            "x": 0.0,
+            "y": 180.0,
             "z": 0.0
           }
         }

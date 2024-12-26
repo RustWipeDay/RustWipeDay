@@ -10,11 +10,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
+using static Carbon.Components.MonoProfiler;
 
 namespace Oxide.Plugins
 {
-    [Info("Vehicle Decay Protection", "WhiteThunder", "2.5.0")]
+    [Info("Vehicle Decay Protection", "WhiteThunder", "2.6.1")]
     [Description("Protects vehicles from decay based on ownership and other factors.")]
     internal class VehicleDecayProtection : CovalencePlugin
     {
@@ -227,7 +229,7 @@ namespace Oxide.Plugins
             if (protectionMinutesAfterUse != -1 && timeSinceLastUsed >= 60 * protectionMinutesAfterUse)
                 return false;
 
-            #if DEBUG_SHOW
+#if DEBUG_SHOW
             foreach (var player in BasePlayer.activePlayerList)
             {
                 if (IsPlayerDrawEligible(player, entity))
@@ -235,11 +237,11 @@ namespace Oxide.Plugins
                     DrawVehicleText(player, entity, vehicleInfo, Color.green, $"{(int)timeSinceLastUsed}s < {60 * protectionMinutesAfterUse}s");
                 }
             }
-            #endif
+#endif
 
-            #if DEBUG_LOG
+#if DEBUG_LOG
             LogWarning($"{entity.ShortPrefabName} :: Recently used :: {(int)timeSinceLastUsed}s < {60 * protectionMinutesAfterUse}s");
-            #endif
+#endif
 
             return true;
         }
@@ -255,7 +257,7 @@ namespace Oxide.Plugins
 
             if (ownerHasPermission)
             {
-                #if DEBUG_SHOW
+#if DEBUG_SHOW
                 foreach (var player in BasePlayer.activePlayerList)
                 {
                     if (IsPlayerDrawEligible(player, entity))
@@ -263,11 +265,11 @@ namespace Oxide.Plugins
                         DrawVehicleText(player, entity, vehicleInfo, Color.green, "Owner permission");
                     }
                 }
-                #endif
+#endif
 
-                #if DEBUG_LOG
+#if DEBUG_LOG
                 LogWarning($"{entity.ShortPrefabName} :: Owner has permission :: {entity.OwnerID}");
-                #endif
+#endif
 
                 return true;
             }
@@ -279,7 +281,7 @@ namespace Oxide.Plugins
 
             if (lockOwnerHasPermission)
             {
-                #if DEBUG_SHOW
+#if DEBUG_SHOW
                 foreach (var player in BasePlayer.activePlayerList)
                 {
                     if (IsPlayerDrawEligible(player, entity))
@@ -287,11 +289,11 @@ namespace Oxide.Plugins
                         DrawVehicleText(player, entity, vehicleInfo, Color.green, "Lock owner permission");
                     }
                 }
-                #endif
+#endif
 
-                #if DEBUG_LOG
+#if DEBUG_LOG
                 LogWarning($"{entity.ShortPrefabName} :: Lock owner has permission :: {lockOwnerId}");
-                #endif
+#endif
 
                 return true;
             }
@@ -302,7 +304,7 @@ namespace Oxide.Plugins
 
             if (privilegeHasPermission)
             {
-                #if DEBUG_SHOW
+#if DEBUG_SHOW
                 foreach (var player in BasePlayer.activePlayerList)
                 {
                     if (IsPlayerDrawEligible(player, entity))
@@ -310,7 +312,7 @@ namespace Oxide.Plugins
                         DrawVehicleText(player, entity, vehicleInfo, Color.green, "Vehicle privilege permission");
                     }
                 }
-                #endif
+#endif
 
                 return true;
             }
@@ -331,7 +333,7 @@ namespace Oxide.Plugins
             if (vehicleConfig.DecayMultiplierInside == 1f || isOutside)
                 return 1f;
 
-            #if DEBUG_SHOW
+#if DEBUG_SHOW
             if (vehicleConfig.DecayMultiplierInside == 0f)
             {
                 foreach (var player in BasePlayer.activePlayerList)
@@ -342,11 +344,11 @@ namespace Oxide.Plugins
                     }
                 }
             }
-            #endif
+#endif
 
-            #if DEBUG_LOG
+#if DEBUG_LOG
             LogWarning($"{entity.ShortPrefabName} :: Inside :: x{vehicleConfig.DecayMultiplierInside}");
-            #endif
+#endif
 
             return vehicleConfig.DecayMultiplierInside;
         }
@@ -364,7 +366,7 @@ namespace Oxide.Plugins
             if (!hasBuildingPrivilege)
                 return 1f;
 
-            #if DEBUG_SHOW
+#if DEBUG_SHOW
             if (vehicleConfig.DecayMultiplierNearTC == 0f)
             {
                 foreach (var player in BasePlayer.activePlayerList)
@@ -375,11 +377,11 @@ namespace Oxide.Plugins
                     }
                 }
             }
-            #endif
+#endif
 
-            #if DEBUG_LOG
+#if DEBUG_LOG
             LogWarning($"{entity.ShortPrefabName} :: Near TC :: x{vehicleConfig.DecayMultiplierNearTC}");
-            #endif
+#endif
 
             return vehicleConfig.DecayMultiplierNearTC;
         }
@@ -413,7 +415,7 @@ namespace Oxide.Plugins
                 amount *= (1 - entity.baseProtection.amounts[(int)damageType]);
             }
 
-            #if DEBUG_SHOW
+#if DEBUG_SHOW
             foreach (var player in BasePlayer.activePlayerList)
             {
                 if (IsPlayerDrawEligible(player, entity))
@@ -421,7 +423,7 @@ namespace Oxide.Plugins
                     DrawVehicleText(player, entity, vehicleInfo, Color.red, $"-{amount:f2}");
                 }
             }
-            #endif
+#endif
 
             if (amount == 0)
                 return;
@@ -431,7 +433,7 @@ namespace Oxide.Plugins
 
         private static void DoCarDecayDamage(ModularCar car, IVehicleInfo vehicleInfo, float amount)
         {
-            #if DEBUG_SHOW
+#if DEBUG_SHOW
             foreach (var player in BasePlayer.activePlayerList)
             {
                 if (IsPlayerDrawEligible(player, car))
@@ -439,7 +441,7 @@ namespace Oxide.Plugins
                     DrawVehicleText(player, car, vehicleInfo, Color.red, $"-{amount:f2}");
                 }
             }
-            #endif
+#endif
 
             car.DoDecayDamage(amount);
         }
@@ -509,6 +511,21 @@ namespace Oxide.Plugins
                 return;
 
             DoDecayDamage(sled, vehicleInfo, multiplier * sled.DecayAmount / sled.MaxHealth(), DamageType.Generic, useProtection: true);
+        }
+
+        private static void BikeDecay(VehicleDecayProtection pluginInstance, Bike bike, IVehicleInfo vehicleInfo)
+        {
+            if (bike.IsDead()
+                || WasRecentlyUsed(bike, vehicleInfo)
+                || VehicleHasPermission(pluginInstance, bike, vehicleInfo))
+                return;
+
+            bool isOutside;
+            var multiplier = GetLocationMultiplier(pluginInstance, bike, vehicleInfo, out isOutside, forceOutsideCheck: true);
+            if (multiplier == 0f)
+                return;
+
+            DoDecayDamage(bike, vehicleInfo, multiplier / Bike.outsideDecayMinutes);
         }
 
         #endregion
@@ -581,17 +598,17 @@ namespace Oxide.Plugins
 
             public Func<T, float> TimeSinceLastUsed = (entity) =>
             {
-                throw new NotImplementedException();
+                throw new NotImplementedException($"TimeSinceLastUsed: {entity.ShortPrefabName}");
             };
 
             public Func<T, Action> VanillaDecayMethod = (entity) =>
             {
-                throw new NotImplementedException();
+                throw new NotImplementedException($"VanillaDecayMethod: {entity.ShortPrefabName}");
             };
 
             public Action<T, IVehicleInfo> Decay = (entity, vehicleInfo) =>
             {
-                throw new NotImplementedException();
+                throw new NotImplementedException($"Decay: {entity.ShortPrefabName}");
             };
 
             public void OnServerInitialized(VehicleDecayProtection pluginInstance)
@@ -645,6 +662,9 @@ namespace Oxide.Plugins
 
         private class VehicleInfoManager
         {
+            private static readonly FieldInfo BikeTimeSinceLastUsedField = typeof(Bike).GetField("timeSinceLastUsed",
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
             private VehicleDecayProtection _pluginInstance;
 
             private readonly Dictionary<uint, IVehicleInfo> _prefabIdToVehicleInfo = new Dictionary<uint, IVehicleInfo>();
@@ -667,6 +687,42 @@ namespace Oxide.Plugins
                         VanillaDecayMethod = heli => heli.DecayTick,
                         Decay = (heli, vehicleInfo) => HelicopterDecay(_pluginInstance, heli, vehicleInfo),
                     },
+                    new VehicleInfo<Bike>
+                    {
+                        VehicleType = "motorbike.sidecar",
+                        PrefabPaths = new[] { "assets/content/vehicles/bikes/motorbike_sidecar.prefab" },
+                        VehicleConfig = pluginConfig.Vehicles.MotorBikeSidecar,
+                        TimeSinceLastUsed = bike => (TimeSince)BikeTimeSinceLastUsedField.GetValue(bike),
+                        VanillaDecayMethod = bike => bike.BikeDecay,
+                        Decay = (bike, vehicleInfo) => BikeDecay(_pluginInstance, bike, vehicleInfo),
+                    },
+                    new VehicleInfo<Bike>
+                    {
+                        VehicleType = "motorbike",
+                        PrefabPaths = new[] { "assets/content/vehicles/bikes/motorbike.prefab" },
+                        VehicleConfig = pluginConfig.Vehicles.MotorBike,
+                        TimeSinceLastUsed = bike => (TimeSince)BikeTimeSinceLastUsedField.GetValue(bike),
+                        VanillaDecayMethod = bike => bike.BikeDecay,
+                        Decay = (bike, vehicleInfo) => BikeDecay(_pluginInstance, bike, vehicleInfo),
+                    },
+                    new VehicleInfo<Bike>
+                    {
+                        VehicleType = "pedalbike",
+                        PrefabPaths = new[] { "assets/content/vehicles/bikes/pedalbike.prefab" },
+                        VehicleConfig = pluginConfig.Vehicles.PedalBike,
+                        TimeSinceLastUsed = bike => (TimeSince)BikeTimeSinceLastUsedField.GetValue(bike),
+                        VanillaDecayMethod = bike => bike.BikeDecay,
+                        Decay = (bike, vehicleInfo) => BikeDecay(_pluginInstance, bike, vehicleInfo),
+                    },
+                    new VehicleInfo<Bike>
+                    {
+                        VehicleType = "pedaltrike",
+                        PrefabPaths = new[] { "assets/content/vehicles/bikes/pedaltrike.prefab" },
+                        VehicleConfig = pluginConfig.Vehicles.PedalTrike,
+                        TimeSinceLastUsed = bike => (TimeSince)BikeTimeSinceLastUsedField.GetValue(bike),
+                        VanillaDecayMethod = bike => bike.BikeDecay,
+                        Decay = (bike, vehicleInfo) => BikeDecay(_pluginInstance, bike, vehicleInfo),
+                    },
                     new VehicleInfo<SubmarineDuo>
                     {
                         VehicleType = "duosubmarine",
@@ -687,7 +743,7 @@ namespace Oxide.Plugins
                         VehicleType = "hotairballoon",
                         PrefabPaths = new[] { "assets/prefabs/deployable/hot air balloon/hotairballoon.prefab" },
                         VehicleConfig = pluginConfig.Vehicles.HotAirBalloon,
-                        TimeSinceLastUsed = hab => UnityEngine.Time.time - hab.lastBlastTime,
+                        TimeSinceLastUsed = hab => UnityEngine.Time.time - hab.sinceLastBlast,
                         VanillaDecayMethod = hab => hab.DecayTick,
                         Decay = (hab, vehicleInfo) =>
                         {
@@ -1023,6 +1079,34 @@ namespace Oxide.Plugins
 
             [JsonProperty("ModularCar")]
             private VehicleConfig DeprecatedModularCar { set { ModularCar = value; } }
+
+            [JsonProperty("Motor Bike")]
+            public VehicleConfig MotorBike = new VehicleConfig
+            {
+                DecayMultiplierInside = 0f,
+                ProtectionMinutesAfterUse = 45,
+            };
+
+            [JsonProperty("Motor Bike Sidecar")]
+            public VehicleConfig MotorBikeSidecar = new VehicleConfig
+            {
+                DecayMultiplierInside = 0f,
+                ProtectionMinutesAfterUse = 45,
+            };
+
+            [JsonProperty("Pedal Bike")]
+            public VehicleConfig PedalBike = new VehicleConfig
+            {
+                DecayMultiplierInside = 0f,
+                ProtectionMinutesAfterUse = 45,
+            };
+
+            [JsonProperty("Pedal Trike")]
+            public VehicleConfig PedalTrike = new VehicleConfig
+            {
+                DecayMultiplierInside = 0f,
+                ProtectionMinutesAfterUse = 45,
+            };
 
             [JsonProperty("RHIB")]
             public VehicleConfig RHIB = new VehicleConfig

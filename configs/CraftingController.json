@@ -4050,6 +4050,183 @@
       "craftTime": 15.0,
       "workbenchLevel": 0,
       "defaultskinid": 0
+    },
+    "prisonerhood": {
+      "canCraft": true,
+      "canResearch": true,
+      "useCrafteRateMultiplier": true,
+      "craftTime": 15.0,
+      "workbenchLevel": 1,
+      "defaultskinid": 0
+    },
+    "electric.seismicsensor": {
+      "canCraft": true,
+      "canResearch": true,
+      "useCrafteRateMultiplier": true,
+      "craftTime": 30.0,
+      "workbenchLevel": 2,
+      "defaultskinid": 0
+    },
+    "handcuffs": {
+      "canCraft": true,
+      "canResearch": true,
+      "useCrafteRateMultiplier": true,
+      "craftTime": 15.0,
+      "workbenchLevel": 2,
+      "defaultskinid": 0
+    },
+    "tincan.alarm": {
+      "canCraft": true,
+      "canResearch": true,
+      "useCrafteRateMultiplier": true,
+      "craftTime": 20.0,
+      "workbenchLevel": 1,
+      "defaultskinid": 0
+    },
+    "electric.digitalclock": {
+      "canCraft": true,
+      "canResearch": true,
+      "useCrafteRateMultiplier": true,
+      "craftTime": 30.0,
+      "workbenchLevel": 2,
+      "defaultskinid": 0
+    },
+    "wallpaper": {
+      "canCraft": true,
+      "canResearch": true,
+      "useCrafteRateMultiplier": true,
+      "craftTime": 5.0,
+      "workbenchLevel": 0,
+      "defaultskinid": 0
+    },
+    "weapon.mod.gascompressionovedrive": {
+      "canCraft": true,
+      "canResearch": true,
+      "useCrafteRateMultiplier": true,
+      "craftTime": 30.0,
+      "workbenchLevel": 2,
+      "defaultskinid": 0
+    },
+    "skidoo": {
+      "canCraft": true,
+      "canResearch": true,
+      "useCrafteRateMultiplier": false,
+      "craftTime": 30.0,
+      "workbenchLevel": 2,
+      "defaultskinid": 0
+    },
+    "frankensteinmask": {
+      "canCraft": true,
+      "canResearch": false,
+      "useCrafteRateMultiplier": false,
+      "craftTime": 30.0,
+      "workbenchLevel": 0,
+      "defaultskinid": 0
+    },
+    "mummymask": {
+      "canCraft": true,
+      "canResearch": false,
+      "useCrafteRateMultiplier": false,
+      "craftTime": 30.0,
+      "workbenchLevel": 0,
+      "defaultskinid": 0
+    },
+    "revolver.hc": {
+      "canCraft": true,
+      "canResearch": true,
+      "useCrafteRateMultiplier": false,
+      "craftTime": 30.0,
+      "workbenchLevel": 2,
+      "defaultskinid": 0
+    },
+    "draculacape": {
+      "canCraft": true,
+      "canResearch": false,
+      "useCrafteRateMultiplier": false,
+      "craftTime": 30.0,
+      "workbenchLevel": 1,
+      "defaultskinid": 0
+    },
+    "frankensteintable": {
+      "canCraft": true,
+      "canResearch": false,
+      "useCrafteRateMultiplier": false,
+      "craftTime": 15.0,
+      "workbenchLevel": 1,
+      "defaultskinid": 0
+    },
+    "hazmat.plushy": {
+      "canCraft": true,
+      "canResearch": false,
+      "useCrafteRateMultiplier": false,
+      "craftTime": 1.0,
+      "workbenchLevel": 0,
+      "defaultskinid": 0
+    },
+    "sculpture.ice": {
+      "canCraft": true,
+      "canResearch": false,
+      "useCrafteRateMultiplier": false,
+      "craftTime": 1.0,
+      "workbenchLevel": 0,
+      "defaultskinid": 0
+    },
+    "xmas.advent": {
+      "canCraft": true,
+      "canResearch": false,
+      "useCrafteRateMultiplier": false,
+      "craftTime": 10.0,
+      "workbenchLevel": 1,
+      "defaultskinid": 0
+    },
+    "wall.ice.wall": {
+      "canCraft": true,
+      "canResearch": false,
+      "useCrafteRateMultiplier": false,
+      "craftTime": 30.0,
+      "workbenchLevel": 1,
+      "defaultskinid": 0
+    },
+    "wall.external.high.ice": {
+      "canCraft": true,
+      "canResearch": false,
+      "useCrafteRateMultiplier": false,
+      "craftTime": 30.0,
+      "workbenchLevel": 2,
+      "defaultskinid": 0
+    },
+    "xmas.tree": {
+      "canCraft": true,
+      "canResearch": false,
+      "useCrafteRateMultiplier": false,
+      "craftTime": 10.0,
+      "workbenchLevel": 0,
+      "defaultskinid": 0
+    },
+    "vehicle.car_radio": {
+      "canCraft": true,
+      "canResearch": false,
+      "useCrafteRateMultiplier": false,
+      "craftTime": 15.0,
+      "workbenchLevel": 1,
+      "defaultskinid": 0
+    },
+    "rifle.sks": {
+      "canCraft": true,
+      "canResearch": true,
+      "useCrafteRateMultiplier": false,
+      "craftTime": 30.0,
+      "workbenchLevel": 3,
+      "defaultskinid": 0
+    },
+    "t1_smg": {
+      "canCraft": true,
+      "canResearch": true,
+      "useCrafteRateMultiplier": false,
+      "craftTime": 30.0,
+      "workbenchLevel": 1,
+      "defaultskinid": 0
     }
-  }
+  },
+  "Version": 332.0
 }

@@ -11,7 +11,7 @@ using Oxide.Plugins.BGradeExt;
 
 namespace Oxide.Plugins
 {
-    [Info("BGrade", "Ryan / Rustoria.co", "1.1.5")]
+    [Info("BGrade", "Ryan / Rustoria.co", "1.1.6")]
     [Description("Auto update building blocks when placed")]
     public class BGrade : RustPlugin
     {
@@ -130,25 +130,25 @@ namespace Oxide.Plugins
 
         private void RegisterPermissions()
         {
-            _registeredPermissions = new ListHashSet<string>(  );
+            _registeredPermissions = new ListHashSet<string>();
 
             for (var i = 1; i < 5; i++)
             {
-                RegisterPermission( Name.ToLower() + "." + i );
+                RegisterPermission(Name.ToLower() + "." + i);
             }
 
-            RegisterPermission( Name.ToLower() + "." + "nores" );
-            RegisterPermission( Name.ToLower() + "." + "all" );
+            RegisterPermission(Name.ToLower() + "." + "nores");
+            RegisterPermission(Name.ToLower() + "." + "all");
         }
 
-        private void RegisterPermission( string permissionName )
+        private void RegisterPermission(string permissionName)
         {
-            if ( !_registeredPermissions.Contains( permissionName ) )
+            if (!_registeredPermissions.Contains(permissionName))
             {
-                _registeredPermissions.Add( permissionName );
+                _registeredPermissions.Add(permissionName);
             }
 
-            permission.RegisterPermission( permissionName, this );
+            permission.RegisterPermission(permissionName, this);
         }
 
         private void RegisterCommands()
@@ -197,7 +197,7 @@ namespace Oxide.Plugins
             List<ItemAmount> costToBuild = null;
             foreach (var grade in buildingBlock.blockDefinition.grades)
             {
-                if (grade.gradeBase.type == (BuildingGrade.Enum) playerGrade)
+                if (grade.gradeBase.type == (BuildingGrade.Enum)playerGrade)
                 {
                     costToBuild = grade.CostToBuild();
                     break;
@@ -277,7 +277,7 @@ namespace Oxide.Plugins
             public void Awake()
             {
                 var attachedPlayer = GetComponent<BasePlayer>();
-                if ( attachedPlayer == null || !attachedPlayer.IsConnected )
+                if (attachedPlayer == null || !attachedPlayer.IsConnected)
                 {
                     return;
                 }
@@ -358,9 +358,9 @@ namespace Oxide.Plugins
 
             public void OnDestroy()
             {
-                if ( Players.ContainsKey( _player ) )
+                if (Players.ContainsKey(_player))
                 {
-                    Players.Remove( _player );
+                    Players.Remove(_player);
                 }
             }
         }
@@ -409,13 +409,13 @@ namespace Oxide.Plugins
                 return;
             }
 
-            if ( plan.isTypeDeployable )
+            if (plan.isTypeDeployable)
             {
                 return;
             }
 
             var buildingBlock = gameObject.GetComponent<BuildingBlock>();
-            if ( buildingBlock == null )
+            if (buildingBlock == null)
             {
                 return;
             }
@@ -425,13 +425,13 @@ namespace Oxide.Plugins
                 return;
             }
 
-            if ( !player.HasAnyPermission( _registeredPermissions ) )
+            if (!player.HasAnyPermission(_registeredPermissions))
             {
                 return;
             }
 
             BGradePlayer bgradePlayer;
-            if ( !BGradePlayer.Players.TryGetValue( player, out bgradePlayer ) )
+            if (!BGradePlayer.Players.TryGetValue(player, out bgradePlayer))
             {
                 return;
             }
@@ -451,11 +451,11 @@ namespace Oxide.Plugins
 
             if (hookCall is int)
             {
-                DealWithHookResult(player, buildingBlock, (int) hookCall, gameObject);
+                DealWithHookResult(player, buildingBlock, (int)hookCall, gameObject);
                 return;
             }
 
-            if (playerGrade < (int) buildingBlock.grade || buildingBlock.blockDefinition.grades[playerGrade] == null)
+            if (playerGrade < (int)buildingBlock.grade || buildingBlock.blockDefinition.grades[playerGrade] == null)
             {
                 return;
             }
@@ -465,7 +465,7 @@ namespace Oxide.Plugins
                 return;
             }
 
-            if (Interface.Call("OnStructureUpgrade", buildingBlock, player, (BuildingGrade.Enum) playerGrade) != null)
+            if (Interface.Call("OnStructureUpgrade", buildingBlock, player, (BuildingGrade.Enum)playerGrade) != null)
             {
                 return;
             }
@@ -500,25 +500,25 @@ namespace Oxide.Plugins
             buildingBlock.GetBuilding()?.Dirty();
         }
 
-        private object OnPayForPlacement( BasePlayer player, Planner planner, Construction component )
+        private object OnPayForPlacement(BasePlayer player, Planner planner, Construction component)
         {
-            if ( planner.isTypeDeployable )
+            if (planner.isTypeDeployable)
             {
                 return null;
             }
 
-            if ( !BGradePlayer.Players.ContainsKey( player ) )
+            if (!BGradePlayer.Players.ContainsKey(player))
             {
                 return null;
             }
 
-            if ( !player.HasPluginPerm( "nores" ) )
+            if (!player.HasPluginPerm("nores"))
             {
                 return null;
             }
 
             var bgradePlayer = BGradePlayer.Players[player];
-            if ( bgradePlayer.GetGrade() == 0 )
+            if (bgradePlayer.GetGrade() == 0)
             {
                 return null;
             }
@@ -543,7 +543,7 @@ namespace Oxide.Plugins
         private void OnPlayerDisconnected(BasePlayer player)
         {
             BGradePlayer bgradePlayer;
-            if ( !BGradePlayer.Players.TryGetValue( player, out bgradePlayer ) )
+            if (!BGradePlayer.Players.TryGetValue(player, out bgradePlayer))
             {
                 return;
             }
@@ -577,10 +577,10 @@ namespace Oxide.Plugins
                     {
                         player.ChatMessage("Notice.Disabled".Lang(player.UserIDString));
                         BGradePlayer bgradePlayer;
-                        if ( BGradePlayer.Players.TryGetValue( player, out bgradePlayer ) )
+                        if (BGradePlayer.Players.TryGetValue(player, out bgradePlayer))
                         {
                             bgradePlayer.DestroyTimer();
-                            bgradePlayer.SetGrade( 0 );
+                            bgradePlayer.SetGrade(0);
                         }
                         return;
                     }
@@ -599,7 +599,7 @@ namespace Oxide.Plugins
                         var grade = Convert.ToInt32(args[0]);
 
                         BGradePlayer bgradePlayer;
-                        if ( !BGradePlayer.Players.TryGetValue( player, out bgradePlayer ) )
+                        if (!BGradePlayer.Players.TryGetValue(player, out bgradePlayer))
                         {
                             bgradePlayer = player.gameObject.AddComponent<BGradePlayer>();
                         }
@@ -619,12 +619,12 @@ namespace Oxide.Plugins
 
                 case "t":
                     {
-                        if ( !AllowTimer )
+                        if (!AllowTimer)
                         {
                             return;
                         }
 
-                        if ( args.Length == 1 )
+                        if (args.Length == 1)
                         {
                             goto default;
                         }
@@ -643,7 +643,7 @@ namespace Oxide.Plugins
                         }
 
                         BGradePlayer bgradePlayer;
-                        if ( !BGradePlayer.Players.TryGetValue( player, out bgradePlayer ) )
+                        if (!BGradePlayer.Players.TryGetValue(player, out bgradePlayer))
                         {
                             bgradePlayer = player.gameObject.AddComponent<BGradePlayer>();
                         }
@@ -675,16 +675,16 @@ namespace Oxide.Plugins
                         }
 
                         BGradePlayer bgradePlayer;
-                        if ( BGradePlayer.Players.TryGetValue( player, out bgradePlayer ) )
+                        if (BGradePlayer.Players.TryGetValue(player, out bgradePlayer))
                         {
-                            chatMsgs.Add( "Command.Settings".Lang( player.UserIDString ) );
-                            if ( AllowTimer )
+                            chatMsgs.Add("Command.Settings".Lang(player.UserIDString));
+                            if (AllowTimer)
                             {
-                                chatMsgs.Add( "Command.Settings.Timer".Lang( player.UserIDString, bgradePlayer.GetTime( false ) ) );
+                                chatMsgs.Add("Command.Settings.Timer".Lang(player.UserIDString, bgradePlayer.GetTime(false)));
                             }
 
                             var fetchedGrade = bgradePlayer.GetGrade();
-                            chatMsgs.Add( "Command.Settings.Grade".Lang( player.UserIDString, fetchedGrade == 0 ? "Words.Disabled".Lang( player.UserIDString ) : fetchedGrade.ToString() ) );
+                            chatMsgs.Add("Command.Settings.Grade".Lang(player.UserIDString, fetchedGrade == 0 ? "Words.Disabled".Lang(player.UserIDString) : fetchedGrade.ToString()));
                         }
 
                         player.ChatMessage(string.Join("\n", chatMsgs.ToArray()));
@@ -714,7 +714,7 @@ namespace Oxide.Plugins
             }
 
             BGradePlayer bgradePlayer;
-            if ( !BGradePlayer.Players.TryGetValue( player, out bgradePlayer ) )
+            if (!BGradePlayer.Players.TryGetValue(player, out bgradePlayer))
             {
                 bgradePlayer = player.gameObject.AddComponent<BGradePlayer>();
             }
@@ -797,7 +797,24 @@ namespace Oxide.Plugins.BGradeExt
         public static bool HasItemAmount(this BasePlayer player, int itemId, int itemAmount)
         {
             var count = 0;
-            foreach (var item in player.inventory.AllItems())
+
+            foreach (var item in player.inventory.containerMain.itemList)
+            {
+                if (item.info.itemid == itemId)
+                {
+                    count += item.amount;
+                }
+            }
+
+            foreach (var item in player.inventory.containerBelt.itemList)
+            {
+                if (item.info.itemid == itemId)
+                {
+                    count += item.amount;
+                }
+            }
+
+            foreach (var item in player.inventory.containerWear.itemList)
             {
                 if (item.info.itemid == itemId)
                 {
@@ -808,10 +825,28 @@ namespace Oxide.Plugins.BGradeExt
             return count >= itemAmount;
         }
 
+
         public static bool HasItemAmount(this BasePlayer player, int itemId, int itemAmount, out int amountGot)
         {
             var count = 0;
-            foreach (var item in player.inventory.AllItems())
+
+            foreach (var item in player.inventory.containerMain.itemList)
+            {
+                if (item.info.itemid == itemId)
+                {
+                    count += item.amount;
+                }
+            }
+
+            foreach (var item in player.inventory.containerBelt.itemList)
+            {
+                if (item.info.itemid == itemId)
+                {
+                    count += item.amount;
+                }
+            }
+
+            foreach (var item in player.inventory.containerWear.itemList)
             {
                 if (item.info.itemid == itemId)
                 {
@@ -822,6 +857,7 @@ namespace Oxide.Plugins.BGradeExt
             amountGot = count;
             return count >= itemAmount;
         }
+
 
         public static void TakeItem(this BasePlayer player, int itemId, int itemAmount)
         {

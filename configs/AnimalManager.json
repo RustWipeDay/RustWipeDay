@@ -1,0 +1,216 @@
+{
+  "Animals": {
+    "assets/rust.ai/agents/bear/bear.corpse.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/bear/bear.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/bear/bear_tutorial.corpse.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/bear/bear_tutorial.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/bear/polarbear.corpse.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/bear/polarbear.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/boar/boar.corpse.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/boar/boar.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/bottest/bottest.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 1.0
+    },
+    "assets/rust.ai/agents/chicken/chicken.corpse.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/chicken/chicken.corpse.tutorial.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/chicken/chicken.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/chicken/chicken.tutorial.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/fish/shark.corpse.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/fish/shark_unused.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/fish/simpleshark.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/horse/horse.corpse.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/horse/horse.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/banditguard/npc_bandit_guard.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_arena.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_bradley.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_bradley_heavy.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_cargo.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_cargo_turret_any.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_cargo_turret_lr300.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_ch47_gunner.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_excavator.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_full_any.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_full_lr300.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_full_mp5.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_full_pistol.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_full_shotgun.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_heavy.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_junkpile_pistol.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_oilrig.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_patrol.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_peacekeeper.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_roam.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_roam_nvg_variant.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_roamtethered.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.75
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/tunneldweller/npc_tunneldweller.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 1.0
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/tunneldweller/npc_tunneldwellerspawned.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 1.0
+    },
+    "assets/rust.ai/agents/npcplayer/humannpc/underwaterdweller/npc_underwaterdweller.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 1.0
+    },
+    "assets/rust.ai/agents/npcplayer/npcplayertest.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 1.0
+    },
+    "assets/rust.ai/agents/npcplayer/pet/frankensteinpet.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 1.0
+    },
+    "assets/rust.ai/agents/npcplayer/pet/frankensteinpet_corpse.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 1.0
+    },
+    "assets/rust.ai/agents/stag/stag.corpse.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/stag/stag.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/wolf/wolf.corpse.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/wolf/wolf.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 0.5
+    },
+    "assets/rust.ai/agents/zombie/zombie.corpse.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 1.0
+    },
+    "assets/rust.ai/agents/zombie/zombie.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 1.0
+    },
+    "assets/rust.ai/agents/wolf/wolf2.prefab": {
+      "HealthScale": 1.0,
+      "DamageScale": 1.0
+    }
+  }
+}

@@ -2,11 +2,11 @@ using Newtonsoft.Json;
 using Oxide.Core;
 using Oxide.Core.Libraries.Covalence;
 using System.Collections.Generic;
-
+using Facepunch;
 
 namespace Oxide.Plugins
 {
-    [Info("Crafting Controller", "Whispers88", "3.3.0")]
+    [Info("Crafting Controller", "Whispers88", "3.3.2")]
     [Description("Allows you to modify the time spend crafting and which items can be crafted")]
 
     //Credits to previous authors Nivex & Mughisi
@@ -15,7 +15,7 @@ namespace Oxide.Plugins
         #region Config
         private Configuration config;
         private static Dictionary<string, CraftingData> defaultsetup = new Dictionary<string, CraftingData>();
-        public class CraftingData
+        public struct CraftingData
         {
             public bool canCraft;
             public bool canResearch;
@@ -23,16 +23,6 @@ namespace Oxide.Plugins
             public float craftTime;
             public int workbenchLevel;
             public ulong defaultskinid;
-
-            public CraftingData()
-            {
-                canCraft = true;
-                canResearch = true;
-                useCrafteRateMultiplier = true;
-                craftTime = 0;
-                workbenchLevel = -1;
-                defaultskinid = 0;
-            }
         }
 
         public class Configuration
@@ -59,11 +49,14 @@ namespace Oxide.Plugins
             [JsonProperty("Show Crafting Notes")]
             public bool ShowCraftNotes = false;
 
-            [JsonProperty("Crafting rate bonus mulitplier (apply oxide perms for additional mulitpliers")]
+            [JsonProperty("Crafting rate bonus mulitplier (apply oxide perms for additional mulitpliers", ObjectCreationHandling = ObjectCreationHandling.Replace)]
             public Dictionary<string, float> BonusMultiplier = new Dictionary<string, float>() { { "vip1", 90 }, { "vip2", 80 } };
 
-            [JsonProperty("Advanced Crafting Options")]
+            [JsonProperty("Advanced Crafting Options", ObjectCreationHandling = ObjectCreationHandling.Replace)]
             public Dictionary<string, CraftingData> CraftingOptions = new Dictionary<string, CraftingData>();
+
+            [JsonProperty("Version")]
+            public float Version = 331;
 
             public string ToJson() => JsonConvert.SerializeObject(this);
 
@@ -112,7 +105,7 @@ namespace Oxide.Plugins
         private void OnServerInitialized()
         {
             //Set default stats for unload
-            ItemManager.bpList.ForEach(bp => defaultsetup[bp.name] = new CraftingData() { canCraft = bp.userCraftable, canResearch = bp.isResearchable, craftTime = bp.time, workbenchLevel = bp.workbenchLevelRequired});
+            ItemManager.bpList.ForEach(bp => defaultsetup[bp.name] = new CraftingData() { canCraft = bp.userCraftable, canResearch = bp.isResearchable, craftTime = bp.time, workbenchLevel = bp.workbenchLevelRequired });
 
             foreach (var key in config.BonusMultiplier.Keys)
             {
@@ -132,9 +125,14 @@ namespace Oxide.Plugins
             }
             ItemManager.bpList.ForEach(item => {
                 if (!config.CraftingOptions.ContainsKey(item.targetItem.shortname))
-                    config.CraftingOptions.Add(item.targetItem.shortname, new CraftingData() { craftTime = item.time, workbenchLevel = item.workbenchLevelRequired });
+                    config.CraftingOptions.Add(item.targetItem.shortname, new CraftingData() { craftTime = item.time, workbenchLevel = item.workbenchLevelRequired, canCraft = item.userCraftable, canResearch = item.isResearchable });
             });
 
+            if (config.Version < 332)
+            {
+                config.CraftingOptions["revolver.hc"] = new CraftingData() { craftTime = 30, workbenchLevel = 2, canCraft = true, canResearch = true };
+                config.Version = 332;
+            }
 
             SaveConfig();
             UpdateCraftingRate();
@@ -146,13 +144,13 @@ namespace Oxide.Plugins
             foreach (var bp in ItemManager.bpList)
             {
                 CraftingData craftingData;
-                if (defaultsetup.TryGetValue(bp.name, out craftingData))
-                {
-                    bp.time = craftingData.craftTime;
-                    bp.workbenchLevelRequired = craftingData.workbenchLevel;
-                    bp.userCraftable = craftingData.canCraft;
-                    bp.isResearchable = craftingData.canResearch;
-                }
+                if (!defaultsetup.TryGetValue(bp.name, out craftingData))
+                    continue;
+
+                bp.time = craftingData.craftTime;
+                bp.workbenchLevelRequired = craftingData.workbenchLevel;
+                bp.userCraftable = craftingData.canCraft;
+                bp.isResearchable = craftingData.canResearch;
             }
         }
 
@@ -251,8 +249,12 @@ namespace Oxide.Plugins
             }
             if (args[1].ToLower() == "default")
             {
-                config.CraftingOptions[setitem.shortname].useCrafteRateMultiplier = true;
-                config.CraftingOptions[setitem.shortname].craftTime = (defaultsetup[setitem.Blueprint.name].craftTime * (config.CraftingRate / 100));
+                if (!config.CraftingOptions.TryGetValue(setitem.shortname, out CraftingData craftingdata))
+                    return;
+
+                craftingdata.useCrafteRateMultiplier = true; ;
+                craftingdata.craftTime = defaultsetup[setitem.Blueprint.name].craftTime * (config.CraftingRate / 100);
+
                 Message(iplayer, "ItemCraftTimeSet", setitem.shortname, (setitem.Blueprint.time).ToString());
                 if (config.SaveCommands) SaveConfig();
                 return;
@@ -263,8 +265,12 @@ namespace Oxide.Plugins
                 Message(iplayer, "WrongNumberInput");
                 return;
             }
-            config.CraftingOptions[setitem.shortname].craftTime = crafttime;
-            config.CraftingOptions[setitem.shortname].useCrafteRateMultiplier = false;
+            if (!config.CraftingOptions.TryGetValue(setitem.shortname, out CraftingData craftingdata1))
+                return;
+
+            craftingdata1.craftTime = crafttime;
+            craftingdata1.useCrafteRateMultiplier = false;
+
             ItemBlueprint bp = ItemManager.itemDictionaryByName[setitem.shortname].Blueprint;
             bp.time = crafttime;
             Message(iplayer, "ItemCraftTimeSet", setitem.shortname, crafttime.ToString());
@@ -289,8 +295,11 @@ namespace Oxide.Plugins
                 Message(iplayer, "CannotFindItem", args[0]);
                 return;
             }
-            config.CraftingOptions[blockitem.shortname].canCraft = false;
-            config.CraftingOptions[blockitem.shortname].canResearch = false;
+            if (config.CraftingOptions.TryGetValue(blockitem.shortname, out CraftingData craftingdata))
+            {
+                craftingdata.canCraft = false;
+                craftingdata.canResearch = false;
+            }
             ItemBlueprint bp = ItemManager.itemDictionaryByName[blockitem.shortname].Blueprint;
             bp.userCraftable = false;
             bp.isResearchable = false;
@@ -316,8 +325,10 @@ namespace Oxide.Plugins
                 Message(iplayer, "CannotFindItem", args[0]);
                 return;
             }
-            config.CraftingOptions[blockitem.shortname].canCraft = true;
-            config.CraftingOptions[blockitem.shortname].canResearch = true;
+            if (!config.CraftingOptions.TryGetValue(blockitem.shortname, out CraftingData craftingdata))
+                return;
+            craftingdata.canCraft = true;
+            craftingdata.canResearch = true;
             ItemBlueprint bp = ItemManager.itemDictionaryByName[blockitem.shortname].Blueprint;
             bp.userCraftable = true;
             bp.isResearchable = true;
@@ -353,7 +364,9 @@ namespace Oxide.Plugins
                 Message(iplayer, "BenchLevelInput");
                 return;
             }
-            config.CraftingOptions[item.shortname].workbenchLevel = benchlvl;
+            if (!config.CraftingOptions.TryGetValue(item.shortname, out CraftingData craftingdata))
+                return;
+            craftingdata.workbenchLevel = benchlvl;
             ItemBlueprint bp = ItemManager.itemDictionaryByName[item.shortname].Blueprint;
             bp.workbenchLevelRequired = benchlvl;
             Message(iplayer, "WorkbenchLevelSet", item.shortname, benchlvl.ToString());
@@ -383,7 +396,9 @@ namespace Oxide.Plugins
                 Message(iplayer, "WrongNumberInput", args);
                 return;
             }
-            config.CraftingOptions[setitem.shortname].defaultskinid = skinid;
+            if (!config.CraftingOptions.TryGetValue(setitem.shortname, out CraftingData craftingdata))
+                return;
+            craftingdata.defaultskinid = skinid;
             Message(iplayer, "SkinSet", setitem.shortname, skinid.ToString());
             if (config.SaveCommands) SaveConfig();
         }
@@ -406,14 +421,14 @@ namespace Oxide.Plugins
                     bp.time *= (float)(config.CraftingRate / 100);
 
                 if (data.workbenchLevel > 4) data.workbenchLevel = 3;
-                if (data.workbenchLevel > 0)
+                if (data.workbenchLevel >= 0)
                     bp.workbenchLevelRequired = data.workbenchLevel;
             }
         }
 
         private void InstantBulkCraft(BasePlayer player, ItemCraftTask task, ItemDefinition item, List<int> stacks, int craftSkin, ulong skin)
         {
-            if (skin == 0uL)
+            if (skin == 0uL && craftSkin != 0)
             {
                 skin = ItemDefinition.FindSkin(item.itemid, craftSkin);
             }
@@ -427,7 +442,7 @@ namespace Oxide.Plugins
                     held.SendNetworkUpdate();
                 }
                 player.GiveItem(itemtogive);
-                if (config.ShowCraftNotes) player.Command(string.Concat(new object[] { "note.inv ", item.itemid, " ", stack }), new object[0]);
+                //if (config.ShowCraftNotes) player.Command(string.Concat(new object[] { "note.inv ", item.itemid, " ", stack }), new object[0]);
                 Interface.CallHook("OnItemCraftFinished", task, itemtogive, player.inventory.crafting);
             }
         }
@@ -441,17 +456,17 @@ namespace Oxide.Plugins
         private static void CancelAllCrafting(BasePlayer player)
         {
             ItemCrafter crafter = player.inventory.crafting;
-            crafter.CancelAll(true);
+            crafter.CancelAll();
         }
 
         #endregion Methods
 
         #region Hooks
         private Dictionary<ItemCraftTask, ulong> skinupdate = new Dictionary<ItemCraftTask, ulong>();
-        private object OnItemCraft(ItemCraftTask task, BasePlayer player)
+        private object OnItemCraft(ItemCraftTask task, BasePlayer player, Item fromTempBlueprint)
         {
             var target = task.blueprint.targetItem;
-            if (task == null || task?.instanceData?.dataInt != null || task?.amount == 0) return null;
+            if (task == null || target == null || task?.instanceData?.dataInt != null || task?.amount == 0) return null;
             var stacks = GetStacks(target, task.amount * task.blueprint.amountToCreate);
             ulong defaultskin = 0uL;
             int freeslots = FreeSlots(player);
@@ -463,7 +478,7 @@ namespace Oxide.Plugins
                 if (space < 1)
                 {
                     ReturnCraft(task, player);
-                    return false;
+                    return true;
                 }
                 int taskamt = task.amount * task.blueprint.amountToCreate;
                 for (int i = 0; i < 20 && taskamt > space; i++)
@@ -478,7 +493,7 @@ namespace Oxide.Plugins
                         if (amttogive <= 1)
                         {
                             ReturnCraft(task, player);
-                            return false;
+                            return true;
                         }
                         itemtogive = ItemManager.Create(item.info, amttogive, 0uL);
                         item.amount -= amttogive;
@@ -489,7 +504,7 @@ namespace Oxide.Plugins
                     if (space < 1 || taskamt < 1)
                     {
                         ReturnCraft(task, player);
-                        return false;
+                        return true;
                     }
                     if (taskamt <= space) break;
 
@@ -525,7 +540,7 @@ namespace Oxide.Plugins
                 if (bonusperm_time < (float)config.BonusMultiplier[bonusperm.Split('.')[1]]) continue;
                 bonusperm_time = (float)config.BonusMultiplier[bonusperm.Split('.')[1]];
             }
-            if(bonusperm_time != float.MaxValue)
+            if (bonusperm_time != float.MaxValue)
             {
                 task.blueprint = UnityEngine.Object.Instantiate(task.blueprint);
                 task.blueprint.time *= bonusperm_time / 100;
@@ -538,7 +553,7 @@ namespace Oxide.Plugins
                     stacks = GetStacks(target, task.amount * task.blueprint.amountToCreate);
                 InstantBulkCraft(player, task, target, stacks, task.skinID, defaultskin);
                 task.cancelled = true;
-                return false;
+                return true;
             }
             return null;
         }
@@ -594,21 +609,20 @@ namespace Oxide.Plugins
 
         private ItemDefinition FindItem(string itemNameOrId)
         {
-            ItemDefinition itemDef = ItemManager.FindItemDefinition(itemNameOrId.ToLower());
-            if (itemDef == null)
+            ItemDefinition itemDef;
+            if (int.TryParse(itemNameOrId, out int itemId))
             {
-                int itemId;
-                if (int.TryParse(itemNameOrId, out itemId))
-                {
-                    itemDef = ItemManager.FindItemDefinition(itemId);
-                }
+                itemDef = ItemManager.FindItemDefinition(itemId);
+                return itemDef;
             }
+            itemDef = ItemManager.FindItemDefinition(itemNameOrId.ToLower());
             return itemDef;
         }
+
         private int FreeSpace(BasePlayer player, ItemDefinition item)
         {
             var slots = player.inventory.containerMain.capacity + player.inventory.containerBelt.capacity;
-            List<Item> containeritems = new List<Item>();
+            List<Item> containeritems = Pool.Get<List<Item>>();
             Dictionary<ItemDefinition, int> queueamts = new Dictionary<ItemDefinition, int>();
             containeritems.AddRange(player.inventory.containerMain.itemList);
             containeritems.AddRange(player.inventory.containerBelt.itemList);
@@ -623,7 +637,7 @@ namespace Oxide.Plugins
                     queueamts[queueitem.blueprint.targetItem] += queueitem.amount * queueitem.blueprint.amountToCreate;
                     continue;
                 }
-                queueamts[queueitem.blueprint.targetItem] = (queueitem.amount * queueitem.blueprint.amountToCreate);
+                queueamts[queueitem.blueprint.targetItem] = queueitem.amount * queueitem.blueprint.amountToCreate;
             }
             //Take into account room of other stacks
             int queuestacks = 0;
@@ -642,6 +656,7 @@ namespace Oxide.Plugins
                     invstackroom -= x.amount * x.blueprint.amountToCreate;
                 }
             }
+            Pool.FreeUnmanaged(ref containeritems);
             return invstackroom;
         }
         private int FreeSlots(BasePlayer player)
@@ -724,4 +739,4 @@ namespace Oxide.Plugins
         }
         #endregion Helpers
     }
-} 
+}

@@ -31,13 +31,41 @@ namespace Oxide.Plugins
             _pluginConfig.Init(this);
         }
 
+        void OnEntitySpawned(Minicopter entity)
+        {
+
+            NextTick(() =>
+            {
+                if (entity == null || entity.IsDestroyed)
+                    return;
+
+                MaybeAddFuel(entity.GetFuelSystem());
+            });
+
+        }
+
+
+        void OnEntitySpawned(Bike entity)
+        {
+
+            NextTick(() =>
+            {
+                if (entity == null || entity.IsDestroyed)
+                    return;
+
+                MaybeAddFuel(entity.GetFuelSystem());
+            });
+
+        }
+
+
         private object OnVehicleModulesAssign(ModularCar car)
         {
             var vanillaPresets = car.spawnSettings.configurationOptions;
             if (vanillaPresets.Length == 1)
             {
                 // Ignore the car if there's only 1 preset because it's probably a spawnable preset.
-                return null;
+                // return null;
             }
 
             var presetConfiguration = _pluginConfig.ModulePresetMap.GetPresetConfigurationForSockets(car.TotalSockets);
@@ -150,23 +178,20 @@ namespace Oxide.Plugins
 
         private void BootstrapAfterModules(ModularCar car)
         {
-            MaybeAddFuel(car);
+            MaybeAddFuel(car.GetFuelSystem());
             MaybeAddEngineParts(car);
         }
 
-        private void MaybeAddFuel(ModularCar car)
+        private void MaybeAddFuel(IFuelSystem fs)
         {
             var fuelAmount = _pluginConfig.RandomizeFuelAmount();
             if (fuelAmount == 0)
                 return;
 
-            var fuelContainer = car.GetFuelSystem().GetFuelContainer();
             if (fuelAmount < 0)
-                fuelAmount = fuelContainer.allowedItem.stackable;
+                fuelAmount = fs.GetFuelAmount();
 
-            var fuelItem = fuelContainer.inventory.FindItemByItemID(fuelContainer.allowedItem.itemid);
-            if (fuelItem == null)
-                fuelContainer.inventory.AddItem(fuelContainer.allowedItem, fuelAmount);
+            fs.AddFuel(fuelAmount);
         }
 
         private void MaybeAddEngineParts(ModularCar car)

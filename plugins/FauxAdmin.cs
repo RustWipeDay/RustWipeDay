@@ -218,6 +218,10 @@ namespace Oxide.Plugins
                     return false;
                 }
             }
+            else if (command.Contains("spectate"))
+            {
+               player.StartSpectating();
+            }
             else if (command.Contains("env.time"))
             {
                 if (config.fauxAdminSettings.EnableEnvTime || player.IPlayer.HasPermission(permAllowTime))

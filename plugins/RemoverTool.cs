@@ -11,7 +11,6 @@ using Oxide.Core;
 using Oxide.Core.Plugins;
 using Oxide.Game.Rust;
 using Oxide.Game.Rust.Cui;
-using ProtoBuf;
 using Rust;
 using UnityEngine;
 using VLB;
@@ -19,7 +18,7 @@ using Random = UnityEngine.Random;
 
 namespace Oxide.Plugins
 {
-    [Info("Remover Tool", "Reneb/Fuji/Arainrr/Tryhard", "4.3.41", ResourceId = 651)]
+    [Info("Remover Tool", "Reneb/Fuji/Arainrr/Tryhard", "4.3.43", ResourceId = 651)]
     [Description("Building and entity removal tool")]
     public class RemoverTool : RustPlugin
     {
@@ -1162,7 +1161,7 @@ namespace Oxide.Plugins
                         }
                     }
                 }
-                Pool.FreeList(ref hitInfos);
+                Pool.FreeUnmanaged(ref hitInfos);
                 return target;
                 // RaycastHit hitInfo;
                 // if (Physics.Raycast(Player.eyes.HeadRay(), out hitInfo, _distance, LAYER_TARGET))
@@ -1618,7 +1617,7 @@ namespace Oxide.Plugins
                     }
                 }
             }
-            Pool.FreeList(ref decayEntities);
+            Pool.FreeUnmanaged(ref decayEntities);
             return true;
         }
 
@@ -1684,6 +1683,12 @@ namespace Oxide.Plugins
             if (entity.net == null)
             {
                 return true;
+            }
+            DateTime wipeTime = SaveRestore.SaveCreatedTime;
+            TimeSpan timeSinceWipe = DateTime.UtcNow - wipeTime;
+            if (timeSinceWipe.TotalHours < 4)
+            {
+                return false;
             }
             float spawnedTime;
             if (_instance._entitySpawnedTimes.TryGetValue(entity.net.ID.Value, out spawnedTime))
@@ -1919,7 +1924,7 @@ namespace Oxide.Plugins
                 {
                     item.Remove();
                 }
-                Pool.FreeList(ref collect);
+                Pool.FreeUnmanaged(ref collect);
             }
             return true;
         }
@@ -2037,18 +2042,16 @@ namespace Oxide.Plugins
             {
                 return count;
             }
-            var list = Pool.GetList<Item>();
-            if (player.inventory.AllItemsNoAlloc(ref list) > 0)
+            var list = Pool.Get<List<Item>>();
+            player.inventory.GetAllItems(list);
+            foreach (var item in list)
             {
-                foreach (var item in list)
+                if (item.info.itemid == itemId && !item.IsBusy() && (currencyInfo.SkinId < 0 || item.skin == (ulong)currencyInfo.SkinId))
                 {
-                    if (item.info.itemid == itemId && !item.IsBusy() && (currencyInfo.SkinId < 0 || item.skin == (ulong)currencyInfo.SkinId))
-                    {
-                        count += item.amount;
-                    }
+                    count += item.amount;
                 }
             }
-            Pool.FreeList(ref list);
+            Pool.FreeUnmanaged(ref list);
             return count;
         }
 
@@ -2060,43 +2063,40 @@ namespace Oxide.Plugins
                 return take;
             }
             var amount = currencyInfo.Amount;
-            var list = Pool.GetList<Item>();
-            var count = player.inventory.AllItemsNoAlloc(ref list);
-            if (count > 0)
+            var list = Pool.Get<List<Item>>();
+            player.inventory.GetAllItems(list);
+            foreach (var item in list)
             {
-                foreach (var item in list)
+                if (item.info.itemid == itemId && !item.IsBusy() && (currencyInfo.SkinId < 0 || item.skin == (ulong)currencyInfo.SkinId))
                 {
-                    if (item.info.itemid == itemId && !item.IsBusy() && (currencyInfo.SkinId < 0 || item.skin == (ulong)currencyInfo.SkinId))
+                    var need = amount - take;
+                    if (need > 0)
                     {
-                        var need = amount - take;
-                        if (need > 0)
+                        if (item.amount > need)
                         {
-                            if (item.amount > need)
-                            {
-                                item.MarkDirty();
-                                item.amount -= need;
-                                take += need;
-                                var newItem = ItemManager.CreateByItemID(itemId, 1, item.skin);
-                                newItem.amount = need;
-                                newItem.CollectedForCrafting(player);
-                                collect?.Add(newItem);
-                                break;
-                            }
-                            if (item.amount <= need)
-                            {
-                                take += item.amount;
-                                item.RemoveFromContainer();
-                                collect?.Add(item);
-                            }
-                            if (take == amount)
-                            {
-                                break;
-                            }
+                            item.MarkDirty();
+                            item.amount -= need;
+                            take += need;
+                            var newItem = ItemManager.CreateByItemID(itemId, 1, item.skin);
+                            newItem.amount = need;
+                            newItem.CollectedForCrafting(player);
+                            collect?.Add(newItem);
+                            break;
+                        }
+                        if (item.amount <= need)
+                        {
+                            take += item.amount;
+                            item.RemoveFromContainer();
+                            collect?.Add(item);
+                        }
+                        if (take == amount)
+                        {
+                            break;
                         }
                     }
                 }
             }
-            Pool.FreeList(ref list);
+            Pool.FreeUnmanaged(ref list);
             return take;
         }
 
@@ -2293,7 +2293,7 @@ namespace Oxide.Plugins
             yield return ProcessContainers(removeList);
             yield return DelayRemove(removeList, player, RemoveType.All);
             removeList.Clear();
-            Pool.Free(ref removeList);
+            Pool.FreeUnmanaged(ref removeList);
             _removeAllCoroutine = null;
         }
 
@@ -2303,7 +2303,7 @@ namespace Oxide.Plugins
             yield return GetNearbyEntities(sourceEntity, removeList, Layers.Mask.Construction, IsExternalWall);
             yield return DelayRemove(removeList, player, RemoveType.External);
             removeList.Clear();
-            Pool.Free(ref removeList);
+            Pool.FreeUnmanaged(ref removeList);
             _removeExternalCoroutine = null;
         }
 
@@ -2313,7 +2313,7 @@ namespace Oxide.Plugins
             yield return ProcessBuilding(sourceEntity, removeList);
             yield return DelayRemove(removeList, player, RemoveType.Structure);
             removeList.Clear();
-            Pool.Free(ref removeList);
+            Pool.FreeUnmanaged(ref removeList);
             _removeStructureCoroutine = null;
         }
 
@@ -2375,7 +2375,7 @@ namespace Oxide.Plugins
             var removed = removeList.Count(x => x != null && !x.IsDestroyed);
             yield return DelayRemove(removeList);
             removeList.Clear();
-            Pool.Free(ref removeList);
+            Pool.FreeUnmanaged(ref removeList);
             Print(arg, $"You have successfully removed {removed} entities of player {targetID}.");
             _removePlayerEntityCoroutine = null;
         }
@@ -2440,8 +2440,8 @@ namespace Oxide.Plugins
                 }
             }
             checkFrom.Clear();
-            Pool.Free(ref checkFrom);
-            Pool.FreeList(ref nearbyEntities);
+            Pool.FreeUnmanaged(ref checkFrom);
+            Pool.FreeUnmanaged(ref nearbyEntities);
         }
 
         private static IEnumerator ProcessContainers(HashSet<BaseEntity> removeList)
@@ -2802,7 +2802,7 @@ namespace Oxide.Plugins
                         stringBuilder.AppendLine(Lang("Syntax4", player.UserIDString, _configData.chat.command, GetRemoveTypeName(RemoveType.External)));
                         Print(player, stringBuilder.ToString());
                         stringBuilder.Clear();
-                        Pool.Free(ref stringBuilder);
+                        Pool.FreeUnmanaged(ref stringBuilder);
                         return;
 
                     default:
@@ -2937,7 +2937,7 @@ namespace Oxide.Plugins
                 stringBuilder.AppendLine("remove.target <external | e> <player (name or id)> [time (seconds)] - Enable remover tool for player (External)");
                 Print(arg, stringBuilder.ToString());
                 stringBuilder.Clear();
-                Pool.Free(ref stringBuilder);
+                Pool.FreeUnmanaged(ref stringBuilder);
                 return;
             }
             var player = arg.Player();
@@ -3004,7 +3004,7 @@ namespace Oxide.Plugins
                     stringBuilder.AppendLine("remove.target <external | e> <player (name or id)> [time (seconds)] - Enable remover tool for player (External)");
                     Print(arg, stringBuilder.ToString());
                     stringBuilder.Clear();
-                    Pool.Free(ref stringBuilder);
+                    Pool.FreeUnmanaged(ref stringBuilder);
                     return;
             }
             var maxRemovable = 0;
@@ -3182,7 +3182,7 @@ namespace Oxide.Plugins
                 stringBuilder.AppendLine("remove.playerentity <cupboard | c> <player id> - Remove buildings of the player owned cupboard");
                 Print(arg, stringBuilder.ToString());
                 stringBuilder.Clear();
-                Pool.Free(ref stringBuilder);
+                Pool.FreeUnmanaged(ref stringBuilder);
                 return;
             }
             if (_removePlayerEntityCoroutine != null)
@@ -3351,7 +3351,7 @@ namespace Oxide.Plugins
                         }
 
                         var costToBuild = grade.CostToBuild();
-                       
+
                         buildingGrade.Add(value, new BuildingGradeSettings
                         {
                             refund = costToBuild.ToDictionary(x => x.itemDef.shortname, y => new CurrencyInfo(Mathf.RoundToInt(y.amount * 0.4f))),

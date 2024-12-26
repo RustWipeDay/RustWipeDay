@@ -1,0 +1,2522 @@
+using Newtonsoft.Json;
+using System.Text;
+using Oxide.Core.Libraries.Covalence;
+using System;
+using System.Linq;
+using Oxide.Game.Rust.Cui;
+using Oxide.Core.Plugins;
+using Oxide.Core;
+using System.Collections.Generic;
+using UnityEngine;
+using ConVar;
+using Rust;
+using static SkinnedMultiMesh;
+using System.Xml.Linq;
+using System.ComponentModel;
+using Carbon.Plugins;
+using HarmonyLib;
+using static BuildingManager;
+using UnityEngine.Rendering.PostProcessing;
+using Harmony;
+using System.Collections;
+using static BuildingPrivlidge;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
+using static Carbon.Modules.AdminModule.Tab;
+using static Climate;
+using ProtoBuf;
+using static BasePlayer;
+using static ProtoBuf.AppCameraRays;
+using Oxide.Plugins;
+using Oxide.Core.SQLite.Libraries;
+using System.Data.Common;
+using Oxide.Core.Database;
+using CompanionServer;
+using Oxide.Core.Libraries;
+using Rust.Registry;
+using Connection = Oxide.Core.Database.Connection;
+using Oxide.Ext.Discord.Interfaces;
+using static UnityEngine.Rendering.PostProcessing.HistogramMonitor;
+using Spatial;
+using Oxide.Ext.Discord.Libraries;
+using Carbon.Extensions;
+using static BuildingGrade;
+using Facepunch.Utility;
+using System.Security.Claims;
+
+namespace Carbon.Plugins
+{
+    [Info("Raid Protection", "mr01sam", "2.1.10")]
+    [Description("Configurable raid protection at the cost of a resource")]
+    public class RaidProtection : CarbonPlugin
+    {
+        public override bool AutoPatch => true;
+
+        [PluginReference]
+        private readonly Plugin ImageLibrary;
+
+        [PluginReference]
+        private readonly Plugin Clans;
+
+        [PluginReference]
+        private readonly Plugin SimpleStatus;
+
+        [PluginReference]
+        private readonly Plugin DogTags;
+
+        [PluginReference]
+        private readonly Plugin RaidHooks;
+
+        [PluginReference]
+        private readonly Plugin DiscordThreads;
+
+        public static RaidProtection Instance;
+
+        private readonly HashSet<ulong> onCooldown = new HashSet<ulong>();
+
+        private readonly string[] trackedBuildingBlocks = new string[] { "foundation", "foundation.triangle", "floor", "floor.triangle" };
+
+        private readonly HashSet<ulong> hasMainCupboard = new HashSet<ulong>();
+
+        private readonly Dictionary<ulong, int> playerAvailableBounty = new Dictionary<ulong, int>() { };
+
+        public static Dictionary<ulong, ToolcupboardBounty> toolcupboards = new Dictionary<ulong, ToolcupboardBounty>();
+
+        public ToolcupboardTracker ToolcupboardTracker;
+
+        SQLite SQLite = Interface.GetMod().GetLibrary<SQLite>();
+        Connection dbConnection;
+
+        #region Harmony Patches
+
+        // BuildingPrivlidge.CalculateBuildingTaxRate()
+        [HarmonyPatch(typeof(BuildingPrivlidge), "CalculateBuildingTaxRate", new Type[] { })]
+        public class BuildingPrivlidge_CalculateBuildingTaxRate
+        {
+            private static bool Prefix(BuildingPrivlidge __instance, ref float __result)
+            {
+                BuildingManager.Building building = __instance.GetBuilding();
+                if (building == null)
+                {
+                    __result = Instance.GetBuildingPriviledgeUpkeepRate(__instance, ConVar.Decay.bracket_0_costfraction);
+                    return false;
+                }
+                if (!building.HasBuildingBlocks())
+                {
+                    __result = Instance.GetBuildingPriviledgeUpkeepRate(__instance, ConVar.Decay.bracket_0_costfraction);
+                    return false;
+                }
+                int count = building.buildingBlocks.Count;
+                int num = count;
+                for (int i = 0; i < upkeepBrackets.Length; i++)
+                {
+                    UpkeepBracket upkeepBracket = upkeepBrackets[i];
+                    upkeepBracket.blocksTaxPaid = 0f;
+                    if (num > 0)
+                    {
+                        int num2 = 0;
+                        num2 = ((i != upkeepBrackets.Length - 1) ? Mathf.Min(num, upkeepBrackets[i].objectsUpTo) : num);
+                        num -= num2;
+                        upkeepBracket.blocksTaxPaid = (float)num2 * upkeepBracket.fraction;
+                    }
+                }
+                float num3 = 0f;
+                for (int j = 0; j < upkeepBrackets.Length; j++)
+                {
+                    UpkeepBracket upkeepBracket2 = upkeepBrackets[j];
+                    if (!(upkeepBracket2.blocksTaxPaid > 0f))
+                    {
+                        break;
+                    }
+                    num3 += upkeepBracket2.blocksTaxPaid;
+                }
+                __result = Instance.GetBuildingPriviledgeUpkeepRate(__instance, num3 / (float)count);
+
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(BasePlayer), "SendMarkersToClient", new Type[] { })]
+        public class BasePlayer_SendMarkersToClient
+        {
+            private static bool Prefix(BasePlayer __instance)
+            {
+                MapNoteList mapNoteList = Facepunch.Pool.Get<MapNoteList>();
+                mapNoteList.notes = Facepunch.Pool.GetList<MapNote>();
+                if (__instance.ServerCurrentDeathNote != null)
+                {
+                    mapNoteList.notes.Add(__instance.ServerCurrentDeathNote);
+                }
+                if (__instance.State.pointsOfInterest != null)
+                {
+                    mapNoteList.notes.AddRange(__instance.State.pointsOfInterest);
+                }
+
+                mapNoteList.notes.AddRange(ToolcupboardBounty.toolcupboards.Values.Where(tc => tc.MapNote != null).OrderByDescending(tc => tc.BaseBounty).Select(tc => tc.MapNote).Take(3));
+                __instance.ClientRPCPlayer(null, __instance, "Client_ReceiveMarkers", mapNoteList);
+                mapNoteList.notes.Clear();
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(AutoTurret), "UpdateInterference", new Type[] { })]
+        public class AutoTurret_UpdateInterference
+        {
+            private static bool Prefix(AutoTurret __instance)
+            {
+                if (!__instance.IsOn())
+                {
+                    return false;
+                }
+                float num = 0f;
+                foreach (AutoTurret nearbyTurret in __instance.nearbyTurrets)
+                {
+                    if (!nearbyTurret.isClient && nearbyTurret.IsValid() && nearbyTurret.gameObject.activeSelf && !nearbyTurret.EqualNetID(__instance.net.ID) && nearbyTurret.IsOn() && !nearbyTurret.HasInterference())
+                    {
+                        num += 1f;
+                    }
+                }
+                __instance.SetFlag(BaseEntity.Flags.OnFire, num >= Instance.GetSentryInterference(__instance));
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(ItemCrafter), "ServerUpdate")]
+        public class ItemCrafter_ServerUpdate
+        {
+            private static bool Prefix(ItemCrafter __instance, float delta)
+            {
+                var player = __instance.owner;
+
+                if (player == null || !Instance.playerCupboards.ContainsKey(player.userID))
+                {
+                    return true;
+                }
+
+                var highestCraftingLevel = Instance.playerCupboards[player.userID].Select(pc => pc.BaseBountyPerkLevel[(int)BaseBountyPerkEnum.Crafting]).OrderByDescending(i => i).FirstOrDefault();
+
+                if (highestCraftingLevel == 0)
+                {
+                    return true;
+                }
+
+                if (__instance.queue.Count == 0)
+                {
+                    return false;
+                }
+
+                ItemCraftTask value = __instance.queue.First.Value;
+                if (value.cancelled)
+                {
+                    __instance.owner.Command("note.craft_done", value.taskUID, 0);
+                    __instance.queue.RemoveFirst();
+                    return false;
+                }
+                float currentCraftLevel = __instance.owner.currentCraftLevel;
+                if (value.endTime > UnityEngine.Time.realtimeSinceStartup)
+                {
+                    return false;
+                }
+                if (value.endTime == 0f)
+                {
+                    float scaledDuration = Math.Max(ItemCrafter.GetScaledDuration(value.blueprint, currentCraftLevel, __instance.owner.IsInTutorial) * (float)(1 - (0.02 * highestCraftingLevel)), 0f);
+                    value.endTime = UnityEngine.Time.realtimeSinceStartup + scaledDuration;
+                    value.workbenchEntity = __instance.owner.GetCachedCraftLevelWorkbench();
+                    if (__instance.owner != null)
+                    {
+                        __instance.owner.Command("note.craft_start", value.taskUID, scaledDuration, value.amount);
+                        if (__instance.owner.IsAdmin && Craft.instant)
+                        {
+                            value.endTime = UnityEngine.Time.realtimeSinceStartup + 1f;
+                        }
+                    }
+                }
+                else
+                {
+                    __instance.FinishCrafting(value);
+                    if (value.amount <= 0)
+                    {
+                        __instance.queue.RemoveFirst();
+                    }
+                    else
+                    {
+                        value.endTime = 0f;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        private float GetBuildingPriviledgeUpkeepRate(BuildingPrivlidge buildingPrivlidge, float cost)
+        {
+
+            if (buildingPrivlidge == null || !ToolcupboardBounty.toolcupboards.ContainsKey(buildingPrivlidge.net.ID.Value))
+            {
+                return cost;
+            }
+
+            var protectedCupboard = ToolcupboardBounty.toolcupboards[buildingPrivlidge.net.ID.Value];
+
+            return cost * (float)(1 - protectedCupboard.BaseBountyPerkLevel[(int)BaseBountyPerkEnum.Upkeep] * 0.02);
+        }
+
+        private float GetSentryInterference(AutoTurret autoTurret)
+        {
+
+            var buildingPrivlidge = autoTurret.GetNearestBuildingPrivledge();
+            var sentryInterference = Sentry.maxinterference;
+            if (buildingPrivlidge == null || !ToolcupboardBounty.toolcupboards.ContainsKey(buildingPrivlidge.net.ID.Value))
+            {
+                return sentryInterference;
+            }
+
+            var protectedCupboard = ToolcupboardBounty.toolcupboards[buildingPrivlidge.net.ID.Value];
+
+            return protectedCupboard.BaseBountyPerkLevel[(int)BaseBountyPerkEnum.TurretLimit] + sentryInterference;
+        }
+        #endregion
+
+        enum BaseBountyPerkEnum
+        {
+            Gathering = 0,
+            Honor = 1,
+            TurretLimit = 2,
+            Upkeep = 3,
+            Crafting = 4,
+            Fuel = 5,
+            Alerts = 6,
+        }
+
+        #region Oxide Hooks
+
+        private void Init()
+        {
+            Instance = this;
+            ToolcupboardTracker = new ToolcupboardTracker();
+        }
+
+        private void OnServerInitialized()
+        {
+            LoadAssets();
+            LoadAllTcs();
+            ResetUI();
+
+            Subscribe(nameof(OnClanMemberJoined));
+            Subscribe(nameof(OnClanMemberGone));
+            Subscribe(nameof(OnClanDisbanded));
+            Subscribe(nameof(OnHonorPointsAwarded));
+            Subscribe(nameof(OnBuildingPrivilegeRaid));
+            Subscribe(nameof(OnConsumedDogTag));
+            Subscribe(nameof(OnAddBountyPoints));
+            Subscribe(nameof(OnTakeBountyPoints));
+        }
+
+        private void Unload()
+        {
+            SaveTcData();
+            ToolcupboardBounty.Unload();
+            Instance = null;
+        }
+
+        void OnPlayerSleepEnded(BasePlayer player)
+        {
+            IndicatorLoop(player);
+        }
+
+        private void OnEntitySpawned(BuildingPrivlidge priv) => ToolcupboardBounty.FindOrCreate(priv);
+
+        void OnConsumedDogTag(BasePlayer player, Item activeItem) => AddBaseBountyPoint(player, 1);
+
+        void OnAddBountyPoints(ulong playerId, int points)
+        {
+            if (points <= 0)
+            {
+                return;
+            }
+
+            var player = FindByID(playerId);
+
+            if (player == null)
+            {
+                return;
+            }
+
+            AddBaseBountyPoint(player, points);
+        }
+
+        void OnTakeBountyPoints(ulong playerId, int points)
+        {
+            var player = FindByID(playerId);
+
+            if (player == null)
+            {
+                return;
+            }
+
+            AddBaseBountyPoint(player, points);
+        }
+
+        void OnBuildingPrivilegeRaid(BuildingPrivlidge buildingPrivlidge, HitInfo info)
+        {
+            if (buildingPrivlidge == null || !ToolcupboardBounty.toolcupboards.ContainsKey(buildingPrivlidge.net.ID.Value))
+            {
+                return;
+            }
+
+            var protectedCupboard = ToolcupboardBounty.toolcupboards[buildingPrivlidge.net.ID.Value];
+
+            var hasAlert = protectedCupboard.BaseBountyPerkLevel[(int)BaseBountyPerkEnum.Alerts] >= 1;
+
+
+            if (!hasAlert)
+            {
+                return;
+            }
+
+            // raidblock
+            String grid = GetGrid(buildingPrivlidge.transform.position);
+            var victims = new List<ulong>(buildingPrivlidge.authorizedPlayers.Count);
+
+            foreach (PlayerNameID victim in buildingPrivlidge.authorizedPlayers)
+            {
+                if (victim == null) continue;
+                if (victim.userid == info.InitiatorPlayer.userID) return;
+                victims.Add(victim.userid);
+            }
+
+            NotificationList.SendNotificationTo(victims, NotificationChannel.SmartAlarm, "You're getting raided!",
+                $"Base at {grid} is being raided", Util.GetServerPairingData());
+
+
+            if (protectedCupboard.RaidAlertChannelId == null)
+            {
+                DiscordThreads.Call<IPromise<string>>("CreateThreadForUsers", $"{grid} Base Alerts", victims).Then(channelId =>
+                {
+                    protectedCupboard.RaidAlertChannelId = channelId;
+                    DiscordThreads.Call<IPromise<string>>("MessageThread", channelId, $"@everyone - Base at {grid} is being raided");
+                });
+            }
+            else
+            {
+                DiscordThreads.Call<IPromise<string>>("MessageThread", protectedCupboard.RaidAlertChannelId, $"@everyone - Base at {grid} is being raided");
+            }
+        }
+
+        private static string GetGrid(Vector3 pos)
+        {
+            const float scale = 150f;
+            float x = pos.x + World.Size / 2f;
+            float z = pos.z + World.Size / 2f;
+            int lat = (int)(x / scale);
+            char latChar = (char)('A' + lat);
+            int lon = (int)(World.Size / scale - z / scale);
+            return latChar + lon.ToString();
+        }
+
+        Dictionary<DroppedItemContainer, ToolcupboardBounty> tcClaimDrops = new Dictionary<DroppedItemContainer, ToolcupboardBounty>();
+
+        private void OnEntityKill(BuildingPrivlidge priv, HitInfo hitInfo)
+        {
+            var killer = hitInfo?.InitiatorPlayer;
+
+            if (priv == null)
+            {
+                return;
+            }
+
+            ToolcupboardBounty tc = ToolcupboardBounty.FindOrCreate(priv);
+
+            var payout = (int)Math.Floor(tc.PlayerBountyPayout);
+
+
+            if (killer != null && !tc.PlayerRelations.Contains(killer.userID) && tc.BaseBounty > 0)
+            {
+                AddBaseBountyPoint(killer, tc.BaseBounty);
+                tc.BaseBounty = 0;
+            }
+
+
+            if (payout <= 0)
+            {
+                priv.inventory.capacity = 36;
+                priv.panelName = "generic_resizable";
+                priv.inventory.AddItem(ItemManager.FindItemDefinition("bluedogtags"), payout);
+                tc.PlayerBountyPayout = 0;
+            }
+
+            if (tc.BaseBounty > 0)
+            {
+                Puts("Creating Claim");
+                string prefab = "assets/prefabs/misc/item drop/item_drop.prefab";
+                var tcClaim = GameManager.server.CreateEntity(prefab, priv.GetDropPosition(), priv.Transform.rotation) as DroppedItemContainer;
+                tcClaim.inventory = new ItemContainer();
+                tcClaim.inventory.ServerInitialize(null, 1);
+                tcClaim.inventory.GiveUID();
+                tcClaim.inventory.entityOwner = tcClaim;
+                tcClaim.inventory.SetFlag(ItemContainer.Flag.NoItemInput, b: true);
+                tcClaim.inventory.AddItem(ItemManager.FindItemDefinition("bleach"), 1);
+                tcClaim.Spawn();
+
+                tcClaimDrops.Add(tcClaim, tc);
+            }
+            /* else if (priv.inventory.itemList.Count >= 2)
+            {
+                Puts("DROPPING ITEMS");
+                string prefab = (priv.DropFloats ? "assets/prefabs/misc/item drop/item_drop_buoyant.prefab" : "assets/prefabs/misc/item drop/item_drop.prefab");
+                BaseEntity baseEntity = GameManager.server.CreateEntity(prefab, priv.GetDropPosition(), priv.Transform.rotation);
+                if (baseEntity == null)
+                {
+                    return;
+                }
+                Puts("DROPPING ITEMS 2");
+                DroppedItemContainer droppedItemContainer = baseEntity as DroppedItemContainer;
+                if (droppedItemContainer != null)
+                {
+                    droppedItemContainer.TakeFrom(new ItemContainer[1] { priv.inventory }, priv.DestroyLootPercent);
+                }
+                droppedItemContainer.Spawn();
+                tcClaimDrops.Add(droppedItemContainer, tc);
+            } */
+
+            ToolcupboardBounty.RemoveCupboard(priv);
+
+        }
+
+
+        object CanLootEntity(BasePlayer player, DroppedItemContainer entity)
+        {
+            if (tcClaimDrops.ContainsKey(entity) && tcClaimDrops[entity].BaseBounty > 0 && !tcClaimDrops[entity].PlayerRelations.Contains(player.userID))
+            {
+                AddBaseBountyPoint(player, tcClaimDrops[entity].BaseBounty);
+                tcClaimDrops[entity].BaseBounty = 0;
+                tcClaimDrops.Remove(entity);
+                if (entity.inventory.itemList.Count == 1 && entity.inventory.GetSlot(0).info.shortname == "bleach")
+                {
+                    entity.Kill();
+                }
+                return null;
+            }
+            else if (tcClaimDrops.ContainsKey(entity) && entity.inventory.itemList.Count == 1 && entity.inventory.GetSlot(0).info.shortname == "bleach")
+            {
+                player.ChatMessage($"<color=#c45508>[RustWipeDay]</color>: You can not claim your own base bounty.");
+                return true;
+            }
+            return null;
+        }
+
+
+        void OnLootEntityEnd(BasePlayer player, DroppedItemContainer droppedItemContainer)
+        {
+            if (!tcClaimDrops.ContainsKey(droppedItemContainer))
+            {
+                return;
+            }
+
+            if (droppedItemContainer.inventory.itemList.Count == 0)
+            {
+                droppedItemContainer.inventory.AddItem(ItemManager.FindItemDefinition("bleach"), 1);
+            }
+        }
+
+        //private void OnEntityDeath(BuildingPrivlidge priv, HitInfo hitInfo) => OnEntityKill(priv, hitInfo);
+
+        private object OnCupboardAuthorize(BuildingPrivlidge priv, BasePlayer player) => ToolcupboardBounty.AuthorizePlayer(priv, player);
+
+
+        private object OnCupboardDeauthorize(BuildingPrivlidge priv, BasePlayer player) => ToolcupboardBounty.DeauthorizePlayer(priv, player);
+
+        private object OnCupboardClearList(BuildingPrivlidge priv, BasePlayer player) => ToolcupboardBounty.ClearAuthorization(priv);
+
+        private object OnEntityTakeDamage(DecayEntity entity, HitInfo info)
+        {
+            return config.Protection.ProtectBuildings ? ProtectFromDamage(entity, info) : null;
+        }
+
+        private object OnEntityTakeDamage(LootContainer entity, HitInfo info)
+        {
+            return null;
+        }
+
+        private object OnEntityTakeDamage(BaseMountable entity, HitInfo info)
+        {
+            return config.Protection.ProtectVehicles ? ProtectFromDamage(entity, info) : null;
+        }
+
+        private object OnEntityTakeDamage(BasePlayer entity, HitInfo info)
+        {
+            return config.Protection.ProtectPlayers ? ProtectFromDamage(entity, info) : null;
+        }
+
+        private object OnEntityTakeDamage(NPCPlayer entity, HitInfo info)
+        {
+            return null;
+        }
+
+        private object OnEntityTakeDamage(IOEntity entity, HitInfo info)
+        {
+            return config.Protection.ProtectTraps ? ProtectFromDamage(entity, info) : null;
+        }
+
+        private object OnEntityTakeDamage(BaseResourceExtractor entity, HitInfo info)
+        {
+            return config.Protection.ProtectBuildings ? ProtectFromDamage(entity, info) : null;
+        }
+
+        private void OnEntityBuilt(Planner plan, GameObject go)
+        {
+            if (plan == null || go?.name == "assets/prefabs/deployable/tool cupboard/cupboard.tool.deployed.prefab") return;
+            DebugTimeStart("OnEntityBuilt");
+            BuildingPrivlidge priv = plan.GetBuildingPrivilege();
+            if (priv != null)
+            {
+                ToolcupboardBounty tc = ToolcupboardBounty.FindOrCreate(priv);
+            }
+            DebugTimeEnd("OnEntityBuilt");
+        }
+
+        /*private void OnEntityKill(BuildingBlock block)
+		{
+			BuildingPrivlidge priv = block.GetBuildingPrivilege();
+			if (priv != null)
+			{
+				ProtectedCupboard tc = ProtectedCupboard.InitCupboard(priv);
+			}
+		}
+
+		private void OnEntityDeath(BuildingBlock block, HitInfo hitInfo) => OnEntityKill(block);
+
+		private object OnStructureUpgrade(BuildingBlock block, BasePlayer player, BuildingGrade.Enum grade)
+		{
+			BuildingPrivlidge priv = block.GetBuildingPrivilege();
+			if (priv != null)
+			{
+				ProtectedCupboard tc = ProtectedCupboard.InitCupboard(priv);
+			}
+			return null;
+		} */
+
+        private void OnClanMemberJoined(string userID, List<string> memberUserIDs)
+        {
+            foreach (ToolcupboardBounty pc in ToolcupboardBounty.toolcupboards.Values)
+            {
+                pc.UpdateStatus();
+            }
+        }
+
+        private void OnClanMemberGone(string userID, List<string> memberUserIDs)
+        {
+            foreach (ToolcupboardBounty pc in ToolcupboardBounty.toolcupboards.Values)
+            {
+                pc.UpdateStatus();
+            }
+        }
+
+        private void OnClanDisbanded(string tag, List<string> memberUserIDs)
+        {
+            foreach (ToolcupboardBounty pc in ToolcupboardBounty.toolcupboards.Values)
+            {
+                pc.UpdateStatus();
+            }
+        }
+
+        object OnTeamLeave(RelationshipManager.PlayerTeam team, BasePlayer player)
+        {
+            timer.In(1f, () =>
+            {
+                foreach (ToolcupboardBounty pc in ToolcupboardBounty.toolcupboards.Values)
+                {
+                    pc.UpdateStatus();
+                }
+            });
+            return null;
+        }
+
+        object OnTeamAcceptInvite(RelationshipManager.PlayerTeam team, BasePlayer player)
+        {
+            timer.In(1f, () =>
+            {
+                foreach (ToolcupboardBounty pc in ToolcupboardBounty.toolcupboards.Values)
+                {
+                    pc.UpdateStatus();
+                }
+            });
+            return null;
+        }
+
+        object OnTeamKick(RelationshipManager.PlayerTeam team, BasePlayer player, ulong target)
+        {
+            foreach (ToolcupboardBounty pc in ToolcupboardBounty.toolcupboards.Values)
+            {
+                pc.UpdateStatus();
+            }
+            return null;
+        }
+
+
+        object OnTeamDisband(RelationshipManager.PlayerTeam team)
+        {
+            foreach (ToolcupboardBounty pc in ToolcupboardBounty.toolcupboards.Values)
+            {
+                pc.UpdateStatus();
+            }
+            return null;
+        }
+
+        void OnLootEntity(BasePlayer player, BuildingPrivlidge priv)
+        {
+            if (player != null && priv != null)
+            {
+                ToolcupboardBounty tc = ToolcupboardBounty.FindOrCreate(priv);
+                if (tc != null)
+                {
+                    tc.PlayersViewing.Add(player);G
+                    OpenUi(player, priv);
+                }
+            }
+        }
+        FG
+        private void OnLootEntityEnd(BasePlayer player, BuildingPrivlidge priv)
+        {
+            ToolcupboardBounty tc = ToolcupboardBounty.FindOrCreate(priv);
+            if (tc != null)
+            {
+                tc.PlayersViewing.Remove(player);
+            }
+            CloseUi(player);
+        }
+
+        int OnHonorPointsAwarded(BasePlayer player, string victimName, bool isNpc, string victimRank, int points)
+        {
+            if (player == null || !Instance.playerCupboards.ContainsKey(player.userID))
+            {
+                return points;
+            }
+            var highestHonorPerk = Instance.playerCupboards[player.userID].Select(pc => pc.BaseBountyPerkLevel[(int)BaseBountyPerkEnum.Honor]).OrderByDescending(i => i).FirstOrDefault();
+            return (int)(points * (1 + 0.01 * highestHonorPerk));
+        }
+
+        #endregion Oxide Hooks
+
+        #region Helper Functions
+
+        private object ProtectFromDamage(BaseCombatEntity entity, HitInfo info)
+        {
+            if (entity?.net == null) return null;
+            if (info == null) return null;
+
+            BuildingPrivlidge priv = entity.GetBuildingPrivilege();
+            if (priv == null) { return null; };
+
+            Rust.DamageType majorityDamage = info.damageTypes.GetMajorityDamageType();
+            if (majorityDamage == Rust.DamageType.Decay || majorityDamage == Rust.DamageType.ElectricShock) { return null; };
+
+            ToolcupboardBounty tc = ToolcupboardBounty.FindOrCreate(priv);
+            if (tc == null) { return null; };
+
+            DebugTimeStart("ProtectFromDamage");
+
+            /* if (info.InitiatorPlayer && entity.net.ID.Value == priv.net.ID.Value && tc.BaseBounty > 0 && tc.PlayerRelations.Contains(info.InitiatorPlayer.userID))
+			{
+				info.InitiatorPlayer.ChatMessage($"<color=#c45508>[RustWipeDay]</color>: You can not damage your TC while you have a bounty.");
+                return true;
+			} */
+            if (tc.Status == ProtectionStatus.Protected)
+            {
+
+                if (tc.ProtectionPercentage >= 100)
+                {
+                    DebugTimeEnd("ProtectFromDamage");
+                    return true;
+                }
+                else
+                {
+                    info.damageTypes.ScaleAll((float)(1 - (tc.ProtectionPercentage / 100)));
+                }
+            }
+            else
+            {
+                tc.MostRecentAttack = DateTime.Now;
+            }
+            DebugTimeEnd("ProtectFromDamage");
+            return null;
+        }
+
+        private string GetStatusMessage(BasePlayer player, ToolcupboardBounty tc)
+        {
+            if (!tc.HasAnyProtection)
+            {
+                return Lang("NoProtection", player.UserIDString);
+            }
+            switch (tc.Status)
+            {
+                case ProtectionStatus.Protected:
+                    return Lang("StatusProtected", player.UserIDString, tc.ProtectionPercentage);
+
+                default:
+                    return Lang("NoProtection", player.UserIDString);
+            }
+        }
+
+        private void LoadAssets()
+        {
+            if (ImageLibrary != null && ImageLibrary.IsLoaded)
+            {
+                ImageLibrary.Call<bool>("AddImage", config.Indicator.ImageUrl, "SrpIndicatorIcon", 0UL);
+                ImageLibrary.Call<bool>("AddImage", "https://rustwipeday.com/img/kits/dogtagneutral.png", "DogTagIcon", 0UL);
+            }
+
+            SimpleStatus.CallHook("CreateStatus", this, "raidprotection.status", COLOR_GREEN_DARK_LESS, "RAID PROTECTION", COLOR_GREEN, "0%", COLOR_GREEN, "SrpIndicatorIcon", COLOR_GREEN);
+            SimpleStatus.CallHook("CreateStatus", this, "raidprotection.bounty", COLOR_GREY, "BASE BOUNTY", COLOR_BLACK, "0 Points", COLOR_BLACK, "itemid:1223900335", null);
+        }
+
+        private void LoadAllTcs()
+        {
+            timer.In(1f, () =>
+            {
+                ToolcupboardBounty.toolcupboards = new Dictionary<ulong, ToolcupboardBounty>();
+                List<BuildingPrivlidge> allCupboards = GameObject.FindObjectsOfType<BuildingPrivlidge>().OrderBy(priv => priv.net.ID.Value).ToList();
+                int i = 0;
+                foreach (BuildingPrivlidge priv in allCupboards)
+                {
+                    if (ToolcupboardBounty.FindOrCreate(priv) != null)
+                    {
+                        i++;
+                    }
+                }
+
+                LoadPlayerData(() =>
+                {
+                    LoadTcData(() =>
+                    {
+                        foreach (ToolcupboardBounty pc in ToolcupboardBounty.toolcupboards.Values)
+                        {
+                            pc.UpdateStatus();
+                        }
+                        Puts($"Initialized {i} cupboards");
+                        StartIndicatorLoops();
+                        StartPlayerBountyGenerator();
+                    });
+                });
+            });
+        }
+
+        private void OnServerSave() => Interface.Oxide.DataFileSystem.WriteObject<BaseBountyData>("BaseBounty", BaseBountyData);
+
+        private void SqlSaveTcData()
+        {
+            DateTime wipeDateTime = SaveRestore.SaveCreatedTime;
+            foreach (var tc in ToolcupboardBounty.toolcupboards.Values)
+            {
+                /* if (tc.Priv == null)
+				{
+					continue;
+                } */
+
+                var toolCupboardId = tc.NetId.ToString();
+                var teamLeaderUserId = tc.OwnerId.ToString(); // @TODO: Check this out
+                var baseBountyPerkLevel = JsonConvert.SerializeObject(tc.BaseBountyPerkLevel);
+                var baseBounty = tc.BaseBounty.ToString();
+                var isMainCupboard = tc.IsMainCupboard;
+                var playerRelations = JsonConvert.SerializeObject(tc.PlayerRelations);
+
+                SQLite.Insert(
+                    Sql.Builder.Append(
+                        "UPDATE BaseBounty SET teamLeaderUserId = @0, isMainCupboard = @4, baseBounty = @1, baseBountyPerks = @2, playerRelations = @5 WHERE toolCupboardId = @3",
+                        teamLeaderUserId,
+                        baseBounty,
+                        baseBountyPerkLevel,
+                        toolCupboardId,
+                        isMainCupboard,
+                        playerRelations
+
+                    ),
+                    dbConnection,
+                    rowsAffected =>
+                    {
+                        if (rowsAffected == 0)
+                        {
+                            SQLite.Insert(
+                                Sql.Builder.Append(
+                                    "INSERT OR REPLACE INTO BaseBounty (toolCupboardId, wipeDateTime, teamLeaderUserId, baseBounty, baseBountyPerks, isMainCupboard, playerRelations) VALUES (@0, @4, @1, @2, @3, @5, @6)",
+                                    toolCupboardId,
+                                    teamLeaderUserId,
+                                    baseBounty,
+                                    baseBountyPerkLevel,
+                                    wipeDateTime,
+                                    isMainCupboard,
+                                    playerRelations
+                                ),
+                                dbConnection
+                            );
+                        }
+                    }
+                );
+            }
+
+            foreach (var kvp in playerAvailableBounty)
+            {
+                SQLite.Insert(
+                    Sql.Builder.Append(
+                        "UPDATE BaseBountyPoints SET userId = @0, baseBounty = @1 WHERE userId = @0",
+                        kvp.Key.ToString(),
+                        kvp.Value.ToString()
+                    ),
+                    dbConnection,
+                    rowsAffected =>
+                    {
+                        if (rowsAffected == 0)
+                        {
+                            SQLite.Insert(
+                                Sql.Builder.Append(
+                                    "INSERT OR REPLACE INTO BaseBountyPoints (userId, baseBounty) VALUES (@0, @1)",
+                                    kvp.Key.ToString(),
+                                    kvp.Value.ToString()
+                                ),
+                                dbConnection
+                            );
+                        }
+                    }
+                );
+            }
+        }
+
+        private void LoadTcData(Action callback = null)
+        {
+            /*DateTime wipeDateTime = SaveRestore.SaveCreatedTime.Date;
+
+            dbConnection = SQLite.OpenDb("BaseBounty.db", this);
+            SQLite.Insert(
+                Sql.Builder.Append(
+                    "CREATE TABLE IF NOT EXISTS BaseBounty (toolCupboardId TEXT PRIMARY KEY, wipeDateTime DATETIME, teamLeaderUserId TEXT, baseBounty TEXT, unspentBounty TEXT, baseBountyPerks TEXT, isMainCupboard BOOL, playerRelations TEXT)"
+                ),
+                dbConnection
+            );
+
+            SQLite.Query(
+                Sql.Builder.Append("SELECT * FROM BaseBounty"),
+                dbConnection,
+                query =>
+                {
+                    foreach (var data in query)
+                    {
+                        var toolCupboardId = ulong.Parse(data["toolCupboardId"].ToString());
+                        var teamLeaderUserId = ulong.Parse(data["teamLeaderUserId"].ToString());
+                        var baseBountyPerkLevel = JsonConvert.DeserializeObject<int[]>(data["baseBountyPerks"].ToString());
+                        var tcWipeDateTime = DateTime.Parse(data["wipeDateTime"].ToString()).Date;
+                        var isMainCupboard = bool.Parse(data["isMainCupboard"].ToString());
+                        var baseBounty = int.Parse(data["baseBounty"].ToString());
+                        var playerRelations = JsonConvert.DeserializeObject<ulong[]>(data["playerRelations"].ToString());
+
+
+                        if (wipeDateTime.CompareTo(tcWipeDateTime) != 0 && teamLeaderUserId != 0)
+                        {
+                            Puts($"{wipeDateTime.Ticks} is not {tcWipeDateTime.Ticks} : {wipeDateTime.CompareTo(tcWipeDateTime)}");
+                            AddBaseBountyPoint(teamLeaderUserId, baseBounty);
+                            Puts($"Found a TC from last wipe, lets refund the {baseBounty} base bounty points to the owner {teamLeaderUserId}");
+                            continue;
+                        }
+
+                        if (wipeDateTime.CompareTo(tcWipeDateTime) == 0 && isMainCupboard)
+                        {
+                            // ProtectedCupboard.InitCupboard(
+                            Puts($"Tool cupboard Id: {toolCupboardId} was a main cupboard this wipe.");
+                            foreach (var relation in playerRelations)
+                            {
+                                hasMainCupboard.Add(relation);
+                            }
+                        }
+
+                        if (!ToolcupboardBounty.toolcupboards.ContainsKey(toolCupboardId))
+                        {
+                            continue;
+                        }
+
+                        ToolcupboardBounty protectedCupboard = ToolcupboardBounty.toolcupboards[toolCupboardId];
+
+                        protectedCupboard.BaseBounty = baseBounty;
+                        protectedCupboard.BaseBountyPerkLevel = new int[Instance.BaseBountyPerks.Count];
+                        protectedCupboard.IsMainCupboard = isMainCupboard;
+                        for (var i = 0; i < baseBountyPerkLevel.Length; i++)
+                        {
+                            protectedCupboard.BaseBountyPerkLevel[i] = baseBountyPerkLevel[i];
+                        }
+                    }
+
+                    if (callback != null)
+                    {
+                        callback();
+                    }
+                }
+            );*/
+        }
+
+        private void LoadPlayerData(Action callback = null)
+        {
+            dbConnection = SQLite.OpenDb("BaseBounty.db", this);
+            SQLite.Insert(
+                Sql.Builder.Append(
+                    "CREATE TABLE IF NOT EXISTS BaseBountyPoints (userId TEXT PRIMARY KEY, baseBounty TEXT)"
+                ),
+                dbConnection
+            );
+
+            SQLite.Query(
+                Sql.Builder.Append("SELECT * FROM BaseBountyPoints"),
+                dbConnection,
+                query =>
+                {
+                    foreach (var data in query)
+                    {
+                        var userId = ulong.Parse(data["userId"].ToString());
+                        var baseBounty = int.Parse(data["baseBounty"].ToString());
+
+                        playerAvailableBounty.Add(userId, baseBounty);
+                    }
+
+                    if (callback != null)
+                    {
+                        callback();
+                    }
+                }
+            );
+        }
+
+        private void StartIndicatorLoops()
+        {
+            Instance.Debug($"Starting indicator loop");
+            foreach (BasePlayer basePlayer in BasePlayer.activePlayerList)
+            {
+                IndicatorLoop(basePlayer);
+            }
+
+        }
+
+        private void StartPlayerBountyGenerator()
+        {
+            Instance.Debug($"Starting player bounty point generator loop");
+
+            var TICK_INTERVAL = 3600f;
+            var TARGET_INTEREST_PER_INTERVAL = 0.01;
+            var TICK_RATE = 1f;
+            var INTEREST_RATE = (TARGET_INTEREST_PER_INTERVAL / TICK_INTERVAL) * TICK_RATE;
+
+            Instance.Debug(INTEREST_RATE.ToString());
+
+            timer.Every(TICK_RATE, () =>
+            {
+                foreach (ToolcupboardBounty pc in ToolcupboardBounty.toolcupboards.Values)
+                {
+                    if (pc.BaseBounty <= 0)
+                    {
+                        continue;
+                    }
+
+                    pc.PlayerBountyPayout += pc.BaseBounty * INTEREST_RATE;
+
+                    var payout = (int)Math.Floor(pc.PlayerBountyPayout);
+
+                    Instance.Debug(pc.PlayerBountyPayout + " " + payout.ToString());
+
+                    if (payout <= 0 || pc.Priv.inventory.itemList.Count >= 24)
+                    {
+                        continue;
+                    }
+
+                    var bluedogtags = ItemManager.CreateByItemID(
+                        ItemManager.FindItemDefinition("bluedogtags").itemid,
+                        payout
+                    );
+                    pc.PlayerBountyPayout -= payout;
+                    bluedogtags.MoveToContainer(pc.Priv.inventory);
+                    pc.Priv.SendNetworkUpdate();
+
+                }
+            });
+        }
+
+        private void ResetUI()
+        {
+            foreach (BasePlayer basePlayer in BasePlayer.activePlayerList)
+            {
+                if (basePlayer.IsValid())
+                {
+                    CloseUi(basePlayer);
+                    CloseIndicator(basePlayer);
+                }
+            }
+        }
+
+        private void IndicatorLoop(BasePlayer player)
+        {
+            timer.In(0.2f, () =>
+            {
+                if (player != null && player.IsConnected && !player.IsSleeping())
+                {
+                    BuildingPrivlidge priv = player.GetBuildingPrivilege();
+                    if (priv != null)
+                    {
+                        ToolcupboardBounty tc = ToolcupboardBounty.FindOrCreate(priv);
+                        if (tc != null)
+                        {
+                            ShowIndicator(player, priv, true, true, true);
+                        }
+                    }
+                    else
+                    {
+                        CloseIndicator(player);
+                    }
+                    IndicatorLoop(player);
+                }
+            });
+
+        }
+
+        Dictionary<ulong, (ulong, int)> FuelStorageEnginePerks = new Dictionary<ulong, (ulong, int)>();
+
+        object OnEngineStart(BaseVehicle vehicle, BasePlayer driver)
+        {
+            var fuelSystem = vehicle.GetFuelSystem();
+            if (fuelSystem == null)
+            {
+                return null;
+            }
+
+            if (driver == null)
+            {
+                return null;
+            }
+
+            if (!Instance.playerCupboards.ContainsKey(driver.userID))
+            {
+                return null;
+            }
+
+            var highestFuelLevel = Instance.playerCupboards[driver.userID].Select(pc => pc.BaseBountyPerkLevel[(int)BaseBountyPerkEnum.Fuel]).OrderByDescending(i => i).FirstOrDefault();
+
+            var fuelStorageId = fuelSystem.fuelStorageInstance.uid.Value;
+
+            if (FuelStorageEnginePerks.ContainsKey(fuelStorageId))
+            {
+                FuelStorageEnginePerks.Remove(fuelStorageId);
+            }
+
+            FuelStorageEnginePerks.Add(fuelStorageId, (driver.userID, highestFuelLevel));
+
+            return null;
+        }
+
+        object OnEngineStop(BaseVehicle vehicle, BasePlayer driver)
+        {
+            var fuelSystem = vehicle.GetFuelSystem();
+            if (fuelSystem == null)
+            {
+                return null;
+            }
+
+            if (driver == null)
+            {
+                return null;
+            }
+
+            var fuelStorageId = fuelSystem.fuelStorageInstance.uid.Value;
+
+            if (FuelStorageEnginePerks.ContainsKey(fuelStorageId))
+            {
+                FuelStorageEnginePerks.Remove(fuelStorageId);
+            }
+
+            return null;
+        }
+
+        object CanUseFuel(EntityFuelSystem self, StorageContainer local0, float seconds, float fuelUsedPerSecond)
+        {
+            StorageContainer fuelContainer = self.GetFuelContainer();
+            if (fuelContainer == null)
+            {
+                return 0;
+            }
+            Item slot = fuelContainer.inventory.GetSlot(0);
+            if (slot == null || slot.amount < 1)
+            {
+                return 0;
+            }
+
+
+            var fuelStorageId = self.fuelStorageInstance.uid.Value;
+
+            if (!FuelStorageEnginePerks.ContainsKey(fuelStorageId))
+            {
+                return null;
+            }
+            var (driverId, fuelPerk) = FuelStorageEnginePerks[fuelStorageId];
+            var fuelPendingBonus = (float)(seconds * fuelUsedPerSecond);
+
+            fuelPendingBonus *= (float)(0.01 * fuelPerk);
+            self.pendingFuel -= fuelPendingBonus;
+
+            return null;
+        }
+
+        object OnDispenserGather(ResourceDispenser dispenser, BaseEntity entity, Item item)
+        {
+            if (entity.ToPlayer() == null || !Instance.playerCupboards.ContainsKey(entity.ToPlayer().userID))
+            {
+                return null;
+            }
+
+            var highestGatherLevel = Instance.playerCupboards[entity.ToPlayer().userID].Select(pc => pc.BaseBountyPerkLevel[(int)BaseBountyPerkEnum.Gathering]).OrderByDescending(i => i).FirstOrDefault();
+
+            item.amount = (int)(item.amount * (1 + (0.01 * highestGatherLevel)));
+
+            return null;
+        }
+
+        Timer MapNoteTimer;
+
+        public void SendMapNotes()
+        {
+            if (MapNoteTimer != null)
+            {
+                return;
+            }
+
+            MapNoteTimer = timer.Once(10f, () =>
+            {
+                foreach (var player in activePlayerList)
+                {
+                    // Perform your action for each player here
+                    player.SendMarkersToClient();
+                }
+                MapNoteTimer = null; // Reset the timer allowing it to be started again
+            });
+        }
+
+
+        #endregion Helper Functions
+
+        #region Configuration
+        private Configuration config;
+
+        private class Configuration
+        {
+            [JsonProperty(PropertyName = "Protection settings")]
+            public ProtectionConfig Protection = new ProtectionConfig();
+
+            [JsonProperty(PropertyName = "Indicator settings")]
+            public IndicatorConfig Indicator = new IndicatorConfig();
+
+            public class ProtectionConfig
+            {
+                [JsonProperty(PropertyName = "Delay after taking damage (seconds)")]
+                public int ProtectedDelayAfterTakingDamage { get; set; } = 10;
+
+                [JsonProperty(PropertyName = "Delay for offline protection (seconds)")]
+                public int OfflineProtectionDelay { get; set; } = 600;
+
+                [JsonProperty(PropertyName = "Protect buildings and deployables (true/false)")]
+                public bool ProtectBuildings { get; set; } = true;
+
+                [JsonProperty(PropertyName = "Protect players (true/false)")]
+                public bool ProtectPlayers { get; set; } = true;
+
+                [JsonProperty(PropertyName = "Protect vehicles and horses (true/false)")]
+                public bool ProtectVehicles { get; set; } = true;
+
+                [JsonProperty(PropertyName = "Protect traps and electronics (true/false)")]
+                public bool ProtectTraps { get; set; } = true;
+            }
+
+
+            public class IndicatorConfig
+            {
+                [JsonProperty(PropertyName = "Enabldced")]
+                public bool Enabled { get; set; } = true;
+
+                [JsonProperty(PropertyName = "Persistent")]
+                public bool Persistent { get; set; } = false;
+
+                [JsonProperty(PropertyName = "Image url")]
+                public string ImageUrl { get; set; } = "https://rustwipeday.com/img/raidprotectionindicator.png";
+            }
+        }
+
+        protected override void LoadConfig()
+        {
+            LoadDefaultConfig();
+            base.LoadConfig();
+
+            try
+            {
+                config = Config.ReadObject<Configuration>();
+                if (config == null) throw new Exception();
+            }
+            catch
+            {
+                PrintError("Your configuration file contains an error. Default configuration values will be used. It is recommended to backup your current configuration file and remove it to generate a fresh one.");
+                LoadDefaultConfig();
+            }
+        }
+
+        protected override void SaveConfig() => Config.WriteObject(config);
+
+        protected override void LoadDefaultConfig() => config = new Configuration();
+
+        #endregion Configuration
+
+        #region Localization
+
+        private string Label(string message, string color)
+        {
+            return $"<color={color}>{message}: </color>";
+        }
+
+        private string Color(string message, string color)
+        {
+            return $"<color={color}>{message}</color>";
+        }
+
+        protected override void LoadDefaultMessages()
+        {
+            lang.RegisterMessages(new Dictionary<string, string>
+            {
+                ["Title"] = "RAID PROTECTION",
+                ["Cost"] = "Cost",
+                ["Balance"] = "Balance",
+                ["Level"] = "Level",
+                ["Protected"] = "PROTECTED",
+                ["Unprotected"] = "UNPROTECTED",
+
+                ["StatusProtected"] = "Your base is {0}% protected.",
+                ["StatusUnprotected"] = "Balance of {0} is required to receive protection",
+                ["StatusPendingDamage"] = "Recently damaged, protection starts soon",
+                ["StatusPendingOffline"] = "Resuming {0}% protection when owners are offline",
+                ["StatusNoPermission"] = "You do not have permission to receive protection",
+                ["NoProtection"] = "Your base is not protected.",
+                ["StatusNoBalance"] = "Low remaining balance, protection ends soon",
+
+                ["Days"] = "days",
+                ["Hour"] = "hr",
+                ["Hours"] = "hrs",
+                ["Minutes"] = "min",
+                ["Usage"] = "Usage",
+                ["NoPriv"] = "There is no protected area at the current location",
+                ["NoPerm"] = "You do not have permission to use that command",
+                ["ForceLevel"] = "The protection level for this protected area will be forced to level {0}. It will remain at this level until reset with the {1} command.",
+                ["ResetLevel"] = "The protection level for this protected area will default to the highest protection level among authorized players.",
+                ["NoLevel"] = "No protection level defined in the config for level {0}",
+                ["Activate"] = "Activating protection for protected area",
+                ["Deactive"] = "Deactivating protection for protected area",
+
+                ["LabelStatus"] = "Status",
+                ["LabelLevel"] = "Level",
+                ["LabelProtection"] = "Protection",
+                ["LabelDelay"] = "Offline Protection Delay",
+                ["LabelBalance"] = "Balance",
+                ["LabelCost"] = "Cost Per Hour",
+                ["LabelCostPerDamage"] = "Cost Per Damage Taken",
+                ["LabelTime"] = "Hours Left",
+                ["LabelOnline"] = "Online Players",
+                ["LabelId"] = "Toolcupboard ID",
+
+                ["ValueStatusProtected"] = "{0}% Protected",
+                ["ValueStatusUnprotected"] = "Unprotected",
+                ["ValueProtection"] = "{0}% Online | {1}% Offline",
+                ["ValueCost"] = "{0} Base + {1} Building = {2} Total",
+
+                ["Deposit"] = "Deposit",
+                ["Wallet"] = "Wallet",
+                ["Wallet"] = "Wallet",
+
+                ["IndicatorProtected"] = "{0}% PROTECTED",
+                ["IndicatorUnprotected"] = "UNPROTECTED",
+                ["IndicatorWarning"] = "Damage dealt deducts from the protection balance",
+            }, this);
+        }
+
+        private string Lang(string key, string id = null, params object[] args)
+        {
+            return string.Format(lang.GetMessage(key, this, id), args);
+        }
+        #endregion Localization
+
+        #region UI
+
+        private readonly string COLOR_TRANSPARENT = "0 0 0 0";
+        private readonly string COLOR_GREEN = "0.749 0.9059 0.4783 1";
+        private readonly string COLOR_RED = "1 0.529 0.180 1";
+
+        private readonly string COLOR_BLACK = "0 0 0 1";
+        private readonly string COLOR_WHITE = "1 1 1 1";
+        private readonly string COLOR_GREY = "0.75 0.75 0.75 1";
+
+        private readonly string COLOR_GREEN_DARK = "0.5992 0.72472 0.38264 1";
+        private readonly string COLOR_GREEN_DARK_LESS = "0.25 0.4 0.1 1";
+        private readonly string COLOR_RED_DARK = "0.8 0.4232 0.144 1";
+        private readonly string COLOR_RED_DARK_LESS = "0.8 0.25 0.144 1";
+
+        private readonly string COLOR_YELLOW = "1 1 0.5 1";
+
+        private void OpenUi(BasePlayer player, BuildingPrivlidge priv)
+        {
+            var hasMainCupboard = Instance.hasMainCupboard.Contains(player.userID);
+            if (!hasMainCupboard && playerCupboards.ContainsKey(player.userID))
+            {
+                var mainTc = playerCupboards[player.userID].Where(tc => tc.IsMainCupboard).FirstOrDefault();
+                hasMainCupboard = mainTc?.IsMainCupboard ?? false;
+            }
+            if (!hasMainCupboard)
+            {
+                CreateRaidProtectionButton(player, priv.net.ID.Value);
+            }
+            else
+            {
+                CreateDogtagButton(player, priv.net.ID.Value);
+            }
+        }
+
+        private void CreateRaidProtectionButton(BasePlayer player, ulong privId)
+        {
+            var cuiElements = new CuiElementContainer
+            {
+                new CuiElement
+                {
+                    Name = "RaidProtectionControl",
+                    Parent = "Overlay",
+                    Components = {
+                        new CuiRectTransformComponent {
+                            AnchorMin="1 1",
+                            AnchorMax="1 1",
+                            OffsetMin = "-250 -60",
+                            OffsetMax = "-65 -5"
+                        }
+                    }
+                }
+            };
+            var button = new CuiButton
+            {
+                Button = { Color = "0.3786 0.3686 0.3686 0.5", Command = $"basebounty.setmain {privId}" }, // Set button command and image type if needed
+                RectTransform = { AnchorMin = "0 0", AnchorMax = "1 1" }, // Position top-right and set size
+                Text =
+                {
+                    Align = TextAnchor.MiddleCenter,
+                    Text = "ENABLE RAID BOUNTY AND PROTECTION"
+                } // No text, using an icon
+            };
+
+            cuiElements.Add(button, "RaidProtectionControl", "RaidProtectionControlButton");
+
+            CuiHelper.AddUi(player, cuiElements);
+        }
+
+
+        private void CreateDogtagButton(BasePlayer player, ulong privId)
+        {
+            var cuiElements = new CuiElementContainer
+            {
+                new CuiElement
+                {
+                    Name = "BaseBountyControl",
+                    Parent = "Overlay",
+                    Components = {
+                        new CuiRectTransformComponent {
+                            AnchorMin="1 1",
+                            AnchorMax="1 1",
+                            OffsetMin = "-60 -60",
+                            OffsetMax = "-5 -5"
+                        }
+                    }
+                }
+            };
+            var button = new CuiButton
+            {
+                Button = { Color = "0.3786 0.3686 0.3686 0.5", Command = $"basebounty.panel {privId}" }, // Set button command and image type if needed
+                RectTransform = { AnchorMin = "0 0", AnchorMax = "1 1" }, // Position top-right and set size
+                Text = { Text = "" } // No text, using an icon
+            };
+            cuiElements.Add(button, "BaseBountyControl", "BaseBountyControlButton");
+
+            // Assuming you have an icon ready and accessible. For CUI, you often reference an in-game or server-side resource.
+            var icon = new CuiElement
+            {
+                Parent = "BaseBountyControlButton",
+
+                Components =
+                {
+                    new CuiImageComponent { ItemId = 1223900335 },
+
+                }
+            };
+
+            cuiElements.Add(icon);
+
+            CuiHelper.AddUi(player, cuiElements);
+        }
+
+        private class BaseBountyPerk
+        {
+            public string Title { get; set; }
+            public int Cost { get; set; }
+            public int MaxLevel { get; set; }
+
+            public string Description { get; set; }
+
+            // Constructor to initialize the BaseBountyPerk object
+            public BaseBountyPerk(string title, int cost, int maxLevel, string description)
+            {
+                Title = title;
+                Cost = cost;
+                MaxLevel = maxLevel;
+                Description = description;
+            }
+        }
+
+        List<BaseBountyPerk> BaseBountyPerks = new List<BaseBountyPerk>
+        {
+            // Explicitly create and add each BaseBountyPerk to the list
+            new BaseBountyPerk("gathering rates", 10, 25, "Increases the gathering rates by up to 25%."),
+            new BaseBountyPerk("honor gains", 1, 25, "Increases the honor gained by up to 25%."),
+            new BaseBountyPerk("turret limit", 25, 12, "Increases the turret limit by up to 12."),
+            new BaseBountyPerk("upkeep costs", 15, 25, "Decreases the base upkeep costs by up to 50%."),
+            new BaseBountyPerk("crafting time", 15, 50, "Decrease the crafting time of items by up to 100%."),
+            new BaseBountyPerk("fuel consumption", 5, 25, "Decreases the low-grade fuel consumption by up to 25%."),
+            new BaseBountyPerk("raid alarm", 50, 1, "Add Rust+ and Discord raid alerts.")
+        };
+
+        private void OpenBaseBountyPanel(BasePlayer player, ulong privId)
+        {
+            if (!ToolcupboardBounty.toolcupboards.ContainsKey(privId) || !hasMainCupboard.Contains(player.userID))
+            {
+                return;
+            }
+
+            ToolcupboardBounty protectedCupboard = ToolcupboardBounty.toolcupboards[privId];
+
+            var cuiContainer = new CuiElementContainer();
+
+            // Full-screen black background with 10 pixel padding
+            cuiContainer.Add(new CuiPanel
+            {
+                Image = { Color = "0.33 0.33 0.33 0.85" }, // Black and fully opaque
+                RectTransform = { AnchorMin = "0.000 0.000", AnchorMax = "1 1" }, // 10 pixels padding assuming 1920x1080 resolution, adjust if needed
+                CursorEnabled = true,
+
+            }, "Overlay", "BaseBountyPanel");
+
+            cuiContainer.Add(
+                new CuiLabel
+                {
+                    Text =
+                    {
+                        Text = "<b>BASE BOUNTY CONTROL PANEL</b>",
+                        Align = TextAnchor.MiddleCenter,
+                        Color = "1 1 1 1",
+                        FontSize = 24,
+                        Font = "robotocondensed-regular.ttf"
+                    },
+                    RectTransform =
+                    {
+                        AnchorMin = "0.2 0.85",
+                        AnchorMax = "0.8 1",
+                        OffsetMin = "0 -5",
+                        OffsetMax = "0 -5"
+                    }
+                },
+                "BaseBountyPanel",
+                "BaseBountyPanel.TitleText"
+            );
+
+
+            cuiContainer.Add(
+                new CuiLabel
+                {
+                    Text =
+                    {
+                        Text = "The base bounty system works by granting your team and clan perks and bonuses to various mechanics. By increasing your base bounty, you will be decreasing the raid protection granted by the grace system. The top 3 base bounties will be displayed to all players on the map as a cash symbol with the current base bounty as the label. Destroying a tool cupboard with a base bounty will reward 50% of the base bounty tags as extra loot in the broken tool cupboard container. These blue dog tags must be turned into the bounty hunter to redeem into points. If your base is left standing at the end of a wipe, the first person on the tool cupboard authorization list will hold the points. If the holder of the base bounty is in a team or a clan that places down a tool cupboard, the saved base bounty will be transfered immediately to the new tool cupboard and your base bounty will resume. To redeem a perk, ensure that you have enough bounty points and click on the bounty icon for the perk that you want.",
+                        Align = TextAnchor.MiddleLeft,
+                        Color = "1 1 1 1",
+                        FontSize = 12,
+                        Font = "robotocondensed-regular.ttf"
+                    },
+                    RectTransform =
+                    {
+                        AnchorMin = "0.2 0.65",
+                        AnchorMax = "0.8 1",
+                        OffsetMin = "0 -5",
+                        OffsetMax = "0 -5"
+                    }
+                },
+                "BaseBountyPanel",
+                "BaseBountyPanel.TitleText"
+            );
+            var row = 0d;
+            var column = 0d;
+            for (var i = 0; i < BaseBountyPerks.Count(); i++)
+            {
+                var perk = BaseBountyPerks[i];
+
+                cuiContainer.Add(new CuiPanel
+                {
+                    Image = { Color = "0.33 0.33 0.33 0.85" }, // Black and fully opaque
+                    RectTransform =
+                        {
+                            AnchorMin = $"{0.12+column} {0.5-row}",
+                            AnchorMax = $"{0.35+column} {0.55-row}",
+                            OffsetMin = $"0 {0}",
+                            OffsetMax = $"0 {0}"
+                        },
+                    CursorEnabled = true
+                }, "BaseBountyPanel", $"BaseBountyPanel.PerkHeader.{i}");
+                cuiContainer.Add(new CuiPanel
+                {
+                    Image = { Color = "0.33 0.33 0.33 0.85" }, // Black and fully opaque
+                    RectTransform =
+                        {
+                            AnchorMin = $"{0.12+column} {0.40-row}",
+                            AnchorMax = $"{0.35+column} {0.495-row}",
+                            OffsetMin = $"0 {0}",
+                            OffsetMax = $"0 {0}"
+                        },
+                    CursorEnabled = true
+                }, "BaseBountyPanel", $"BaseBountyPanel.PerkPanel.{i}");
+                cuiContainer.Add(
+                    new CuiLabel
+                    {
+                        Text =
+                        {
+                            Text = $"<b>{perk.Title.ToUpper()}</b>",
+                            Align = TextAnchor.MiddleCenter,
+                            Color = "1 1 1 1",
+                            FontSize = 18,
+                            Font = "robotocondensed-regular.ttf"
+                        },
+                        RectTransform =
+                        {
+                            AnchorMin = "0 0",
+                            AnchorMax = "1 1",
+                            OffsetMin = $"0 0",
+                            OffsetMax = $"0 0"
+                        }
+                    },
+                    $"BaseBountyPanel.PerkHeader.{i}",
+                    $"BaseBountyPanel.PerkHeaderText.{i}"
+                );
+
+                cuiContainer.Add(
+                new CuiLabel
+                {
+                    Text =
+                    {
+                        Text = $"<b>Cost per level:</b> {perk.Cost} Bounty Points\n<b>Level:</b> {protectedCupboard.BaseBountyPerkLevel[i]} / {perk.MaxLevel}\n\n{perk.Description}",
+                        Align = TextAnchor.UpperLeft,
+                        Color = "1 1 1 1",
+                        FontSize = 10,
+                        Font = "robotocondensed-regular.ttf"
+                    },
+                    RectTransform =
+                    {
+                        AnchorMin = "0.22 0.05",
+                        AnchorMax = "1 1",
+                        OffsetMin = $"0 -10",
+                        OffsetMax = $"0 0"
+                    }
+                },
+                $"BaseBountyPanel.PerkPanel.{i}",
+                $"BaseBountyPanel.PerkCostText.{i}"
+            );
+
+                cuiContainer.Add(new CuiButton
+                {
+                    Button = { Color = "0.44 0.44 0.44 1", Command = $"basebounty.claim {privId} {i}", }, // Set button command and image type if needed
+                    RectTransform = { AnchorMin = "0.01 0.05", AnchorMax = "0.20 0.95" }, // Position top-right and set size
+                    Text = { Text = "" } // No text, using an icon
+                }, $"BaseBountyPanel.PerkPanel.{i}", $"BaseBountyPanel.PerkButton.{i}");
+
+                // Assuming you have an icon ready and accessible. For CUI, you often reference an in-game or server-side resource.
+                cuiContainer.Add(new CuiElement
+                {
+                    Parent = $"BaseBountyPanel.PerkButton.{i}",
+
+                    Components =
+                    {
+                        new CuiImageComponent { ItemId = 1223900335 },
+                    }
+                });
+
+                column += 0.25;
+                if (i % 3 == 2)
+                {
+                    row += 0.2d;
+                    column = 0;
+                }
+
+            }
+
+
+            // Close button (X)
+            cuiContainer.Add(new CuiButton
+            {
+                Button =
+                    {
+                        Command = "basebounty.panel.close",
+                        Color = "0.8 0.1 0.1 1",
+                        FadeIn = 0.5f
+                    },
+                RectTransform = { AnchorMin = "0.9 0.9", AnchorMax = "0.95 0.95" },
+                Text = { Text = "X", Align = TextAnchor.MiddleCenter }
+            }, "BaseBountyPanel", "BaseBountyPanel.CloseButton");
+
+            CuiHelper.DestroyUi(player, "BaseBountyPanel");
+            CuiHelper.AddUi(player, cuiContainer);
+        }
+
+        private void CloseUi(BasePlayer player)
+        {
+            CuiHelper.DestroyUi(player, "BaseBountyControl");
+            CuiHelper.DestroyUi(player, "RaidProtectionControl");
+        }
+
+        private void CloseIndicator(BasePlayer player)
+        {
+            if (player == null)
+            {
+                return;
+            }
+
+            SimpleStatus.CallHook("SetStatus", player.userID, "raidprotection.status", 0);
+            SimpleStatus.CallHook("SetStatus", player.userID, "raidprotection.bounty", 0);
+        }
+
+
+        private void ShowIndicator(BasePlayer player, BuildingPrivlidge priv, bool fromDamage = false, bool ignoreCooldown = false, bool isPersistent = false)
+        {
+            if (priv != null && player != null)
+            {
+                ToolcupboardBounty tc = ToolcupboardBounty.FindOrCreate(priv);
+                var protection = tc.IsMainCupboard ? tc.ProtectionPercentage : 0;
+                SimpleStatus.CallHook("SetStatusText", player.userID, "raidprotection.status", $"{protection}%");
+                SimpleStatus.CallHook("SetStatusText", player.userID, "raidprotection.bounty", $"{tc.BaseBounty} Points");
+                if (tc.BaseBounty > 0) SimpleStatus.CallHook("SetStatus", player.userID, "raidprotection.bounty", int.MaxValue);
+                if (protection > 0) SimpleStatus.CallHook("SetStatus", player.userID, "raidprotection.status", int.MaxValue);
+            }
+        }
+
+        #endregion UI
+
+        #region BaseBounty
+        bool SpendBountyPoints(BasePlayer player, int bountyPoints)
+        {
+            var userId = player.userID;
+
+            if (bountyPoints <= 0)
+            {
+                return true;
+            }
+
+            if (!playerAvailableBounty.ContainsKey(userId))
+            {
+                return false;
+            }
+
+            var availableBounty = playerAvailableBounty[userId];
+
+            if (availableBounty < bountyPoints)
+            {
+                return false;
+            }
+
+            playerAvailableBounty[userId] -= bountyPoints;
+
+            return true;
+        }
+
+        void AddBaseBountyPoint(BasePlayer player, int bountyPoints)
+        {
+            var userId = player.userID;
+            AddBaseBountyPoint(userId, bountyPoints);
+
+            Interface.CallHook("OnAddBaseBountyPoints", player, bountyPoints);
+            player.ChatMessage($"<color=#c45508>[RustWipeDay]</color>: You have gained {bountyPoints} base bounty points. You currently have {GetBountyPoints(player.userID)} base bounty points to spend.");
+        }
+
+        void AddBaseBountyPoint(ulong userId, int amount)
+        {
+            if (playerAvailableBounty.ContainsKey(userId))
+            {
+                playerAvailableBounty[userId] += amount;
+            }
+            else
+            {
+                playerAvailableBounty.Add(userId, amount);
+            }
+        }
+
+        int GetBountyPoints(ulong userId)
+        {
+            if (playerAvailableBounty.ContainsKey(userId))
+            {
+                return playerAvailableBounty[userId];
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        [ChatCommand("basebounty")]
+        private void BaseBountyCommand(BasePlayer player, string command, string[] args)
+        {
+            SendReply(
+                player,
+                $"<color=#c45508>[RustWipeDay]</color>: You are currently have {GetBountyPoints(player.userID)} base bounty points to spend."
+            );
+        }
+        #endregion
+
+        #region Commands
+        [ConsoleCommand("basebounty.claim")]
+        private void Command_BaseBounty_Claim(IPlayer player, string command, string[] args)
+        {
+            var basePlayer = FindByID(ulong.Parse(player.Id));
+            if (basePlayer == null || !hasMainCupboard.Contains(ulong.Parse(player.Id)))
+            {
+                return;
+            }
+
+            ulong privId = Convert.ToUInt64(args[0]);
+            uint perkId = Convert.ToUInt32(args[1]);
+            var perk = BaseBountyPerks[(int)perkId];
+
+
+            if (!ToolcupboardBounty.toolcupboards.ContainsKey(privId))
+            {
+                return;
+            }
+
+            var protectedCupboard = ToolcupboardBounty.toolcupboards[privId];
+
+            if (protectedCupboard.BaseBountyPerkLevel[perkId] + 1 > perk.MaxLevel)
+            {
+                return;
+            }
+
+            var cost = perk.Cost;
+
+
+            if (!SpendBountyPoints(basePlayer, cost))
+            {
+                basePlayer.ChatMessage($"<color=#c45508>[RustWipeDay]</color>: Not enough base bounty points to claim the {perk.Title} base perk.");
+                return;
+            }
+
+            protectedCupboard.BaseBountyPerkLevel[perkId]++;
+            protectedCupboard.BaseBounty += cost;
+
+            if (perkId == (int)BaseBountyPerkEnum.TurretLimit)
+            {
+                protectedCupboard.UpdateSentryInterference();
+            }
+
+            protectedCupboard.UpdateMapMarker();
+
+
+            basePlayer.ChatMessage($"<color=#c45508>[RustWipeDay]</color>: You have claimed the {perk.Title} base perk for {cost} bounty points. Your base bounty has increased to {protectedCupboard.BaseBounty}.");
+
+            Command_BaseBounty_Panel(player, command, new string[] { args[0] });
+        }
+
+        // Example command method to destroy the UI
+        [ConsoleCommand("basebounty.panel.close")]
+        private void Command_BaseBounty_Panel_Close(IPlayer player, string command, string[] args)
+        {
+            var basePlayer = BasePlayer.FindByID(ulong.Parse(player.Id));
+            if (basePlayer == null)
+            {
+                return;
+            }
+
+            CuiHelper.DestroyUi(basePlayer, "BaseBountyPanel");
+        }
+
+        [Command("basebounty.panel")]
+        private void Command_BaseBounty_Panel(IPlayer player, string command, string[] args)
+        {
+            var basePlayer = BasePlayer.FindByID(ulong.Parse(player.Id));
+            if (basePlayer == null)
+            {
+                return;
+            }
+            basePlayer.EndLooting();
+            basePlayer.ClientRPCPlayer(null, basePlayer, "OnDied");
+            OpenBaseBountyPanel(basePlayer, Convert.ToUInt64(args[0]));
+        }
+
+        [Command("basebounty.setmain")]
+        private void Command_BaseBounty_SetMain(IPlayer player, string command, string[] args)
+        {
+
+            var playerId = ulong.Parse(player.Id);
+            var basePlayer = BasePlayer.FindByID(ulong.Parse(player.Id));
+            ulong privId = Convert.ToUInt64(args[0]);
+            if (!ToolcupboardBounty.toolcupboards.ContainsKey(privId))
+            {
+                return;
+            }
+
+            var hasMainCupboard = Instance.hasMainCupboard.Contains(playerId);
+
+            if (!hasMainCupboard && playerCupboards.ContainsKey(playerId))
+            {
+                var mainTc = playerCupboards[playerId].Where(tc => tc.IsMainCupboard).FirstOrDefault();
+                hasMainCupboard = mainTc?.IsMainCupboard ?? false;
+            }
+
+            if (hasMainCupboard)
+            {
+                return;
+            }
+
+            var protectedCupboard = ToolcupboardBounty.toolcupboards[privId];
+
+            // DISTANCE CHECK??
+
+            if (protectedCupboard.IsRemoved)
+            {
+                return;
+            }
+
+
+            if (protectedCupboard.AllOwnerIds.Contains(playerId))
+            {
+                protectedCupboard.IsMainCupboard = true;
+                protectedCupboard.PlayerRelations.ForEach((relationId) =>
+                {
+                    var relationPlayer = FindByID(relationId);
+                    Instance.hasMainCupboard.Add(relationId);
+
+                    if (relationPlayer == null)
+                    {
+                        return;
+                    }
+                    relationPlayer.ChatMessage($"<color=#c45508>[RustWipeDay]</color>: Your main cupboard has been set and raid protection has been enabled for this wipe.");
+                });
+                CuiHelper.DestroyUi(basePlayer, "RaidProtectionControl");
+                return;
+            }
+
+            basePlayer.EndLooting();
+            basePlayer.ClientRPCPlayer(null, basePlayer, "OnDied");
+            //OpenBaseBountyPanel(basePlayer, Convert.ToUInt64(args[0]));
+        }
+
+        #endregion Commands
+
+        #region Debugging
+
+        private const bool _debugging = true;
+
+        private HashSet<BasePlayer> _onlinePlayers = new HashSet<BasePlayer>();
+
+        private Dictionary<string, long> _startTimes = new Dictionary<string, long>();
+
+        private HashSet<string> _trackedHooks = new HashSet<string>() {
+            "ProtectFromDamage",
+            "OnLootNetworkUpdate",
+            "HandleUserDisconnected",
+            "HandleUserConnected",
+            "PurchaseProtection",
+            "UpdateTotalBuildingCost"
+        };
+
+        private void Debug(string stmt)
+        {
+            if (_debugging)
+            {
+                Puts(stmt);
+            }
+        }
+
+        private void DebugTimeStart(string function)
+        {
+            if (_debugging && _trackedHooks.Contains(function))
+            {
+                if (_startTimes.ContainsKey(function))
+                {
+                    _startTimes[function] = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                }
+                else
+                {
+                    _startTimes.Add(function, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+                }
+            }
+        }
+
+        private void DebugTimeEnd(string function)
+        {
+            if (_debugging && _trackedHooks.Contains(function))
+            {
+                if (_startTimes.ContainsKey(function))
+                {
+                    Puts($"{function} took {DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - _startTimes[function]}ms");
+                }
+            }
+        }
+
+        #endregion Debugging
+    }
+
+
+    public class ToolcupboardBounty
+    {
+        public enum ProtectionStatus
+        {
+            Unprotected = 0,
+            PendingOfflineOnly = 1, /* Not currently protected, but will be when offline */
+            PendingOnlineOnly = 2, /* Not currently protected, but will be when online */
+            PendingRecentlyDamage = 3,
+            Protected = 4
+        }
+
+        [PluginReference]
+        private readonly Plugin NightTime;
+
+        public static object AuthorizePlayer(BuildingPrivlidge buildingPrivlidge, BasePlayer player)
+        {
+            var protectedCupboard = FindOrCreate(buildingPrivlidge);
+
+            RaidProtection.Instance.ToolcupboardTracker.Add(buildingPrivlidge, player);
+
+            /*if (priv.IsValid())
+            {
+
+                if ((tc != null) && (!permission.UserHasPermission(player.userID.ToString(), PermissionAdmin)))
+                {
+
+                    tc.AllOwnerIds.Add(player.userID);
+                    tc.OnlineOwners.Add(player);
+
+                    if (tc.RaidAlertChannelId != null)
+                    {
+                        DiscordThreads.Call<IPromise<string>>("AddUsersToThread", tc.RaidAlertChannelId, new List<ulong>() { player.userID });
+                    }
+
+                    foreach (ToolcupboardBounty pc in ToolcupboardBounty.toolcupboards.Values)
+                    {
+                        pc.UpdateStatus();
+                    }
+                }
+            }*/
+            return null;
+        }
+
+        public static object DeauthorizePlayer(BuildingPrivlidge buildingPrivlidge, BasePlayer player)
+        {
+            Instance.ToolcupboardTracker.Remove(buildingPrivlidge, player);
+            /*{
+                timer.In(0.1f, () =>
+                {
+                    if (priv.IsValid())
+                    {
+                        ProtectedCupboard tc = ProtectedCupboard.FindOrCreate(priv);
+                        if ((tc != null) && (!permission.UserHasPermission(player.userID.ToString(), PermissionAdmin)))
+                        {
+                            if (Instance.playerCupboards.ContainsKey(player.userID))
+                            {
+                                Instance.playerCupboards[player.userID].Remove(tc);
+                                Instance.Debug($"Removed authorization for {player.userID} on ID={priv.net.ID}");
+                            }
+                            else
+                            {
+                                Instance.Debug($"Didn't find any authorization for {player.userID} on ID={priv.net.ID}");
+                            }
+                            if (tc.RaidAlertChannelId != null)
+                            {
+                                DiscordThreads.Call<IPromise<string>>("RemoveUsersFromThread", tc.RaidAlertChannelId, new List<ulong>() { player.userID });
+                            }
+                            tc.AllOwnerIds.Remove(player.userID);
+                            tc.OnlineOwners.Remove(player);
+
+                            foreach (ProtectedCupboard pc in ProtectedCupboard.toolcupboards.Values)
+                            {
+                                pc.UpdateStatus();
+                            }
+                        }
+                    }
+                });
+                return null;
+            } */
+            return null;
+        }
+
+        public static object ClearAuthorization(BuildingPrivlidge buildingPrivlidge)
+        {
+            /*{
+                timer.In(0.1f, () =>
+                {
+                    if (priv.IsValid())
+                    {
+                        ToolcupboardBounty tc = ToolcupboardBounty.FindOrCreate(priv);
+                        if (tc != null)
+                        {
+                            foreach (var ownerId in tc.AllOwnerIds)
+                            {
+                                if (Instance.playerCupboards.ContainsKey(ownerId))
+                                {
+                                    Instance.playerCupboards[ownerId].Remove(tc);
+                                }
+                                else
+                                {
+                                    Instance.Debug($"Didn't find any authorization for {ownerId} on ID={priv.net.ID}");
+                                }
+                            }
+                            if (tc.RaidAlertChannelId != null)
+                            {
+                                DiscordThreads.Call<IPromise<string>>("RemoveUsersFromThread", tc.RaidAlertChannelId, tc.AllOwnerIds.ToList());
+                            }
+                            tc.AllOwnerIds = new HashSet<ulong>();
+                            foreach (ToolcupboardBounty pc in ToolcupboardBounty.toolcupboards.Values)
+                            {
+                                pc.UpdateStatus();
+                            }
+                        }
+                    }
+                });
+                return null;
+            }*/
+            return null;
+        }
+
+        public static ToolcupboardBounty FindOrCreate(BuildingPrivlidge priv)
+        {
+            if (priv != null && priv.IsValid() && toolcupboards != null && !toolcupboards.ContainsKey(priv.net.ID.Value))
+            {
+                toolcupboards.Add(priv.net.ID.Value, new ToolcupboardBounty(priv));
+                Instance.Debug($"Added TC with ID={priv.net.ID}");
+                Instance.Debug($"There are {toolcupboards.Count} TCs added");
+                return toolcupboards[priv.net.ID.Value];
+            }
+            else if (priv != null && priv.IsValid() && toolcupboards != null)
+            {
+                return toolcupboards[priv.net.ID.Value];
+            }
+            return null;
+        }
+
+        public static void RemoveCupboard(BuildingPrivlidge priv)
+        {
+            // We don't want to remove cupboards anymore, just track them forever.
+
+            if (priv != null && toolcupboards.ContainsKey(priv.net.ID.Value))
+            {
+                var tc = toolcupboards[priv.net.ID.Value];
+                tc.IsRemoved = true;
+                /* foreach(var ownerId in tc.PlayerRelations) {
+                    if (PLUGIN.playerCupboards.ContainsKey(ownerId)) {
+                        PLUGIN.playerCupboards[ownerId].Remove(tc);
+                    } else {
+                        PLUGIN.Debug($"Didn't find any authorization for {ownerId} on ID={priv.net.ID}");
+                    }
+                }
+                toolcupboards.Remove(priv.net.ID.Value);
+                foreach (ProtectedCupboard pc in ProtectedCupboard.toolcupboards.Values)
+                {
+                    pc.UpdateStatus();
+                } */
+                // PLUGIN.Debug($"Removed TC with ID={priv.net.ID}");
+                // PLUGIN.Debug($"There are {toolcupboards.Count} TCs added");
+            }
+        }
+
+        public MapNote MapNote;
+
+        public bool IsRemoved { get; set; }
+
+        public BuildingPrivlidge Priv { get; set; }
+
+        public DateTime MostRecentAttack { get; set; }
+
+        public bool RecentlyDamaged
+        {
+            get { return MostRecentAttack == null ? false : (DateTime.Now - MostRecentAttack).TotalSeconds < Instance.config.Protection.ProtectedDelayAfterTakingDamage; }
+        }
+
+        public int BaseBounty { get; set; }
+
+        public int[] BaseBountyPerkLevel { get; set; }
+
+        public bool ContentsLocked { get; set; }
+
+        public HashSet<BasePlayer> PlayersViewing { get; set; }
+
+        public HashSet<ulong> AllOwnerIds { get; set; }
+
+        public HashSet<BasePlayer> OnlineOwners
+        {
+            get
+            {
+                return _debugging ? Instance._onlinePlayers : (from id in AllOwnerIds select BasePlayer.FindByID(id)).Where(x => x != null && x.IsConnected).ToHashSet();
+            }
+        }
+
+        public bool IsMainCupboard { get; set; }
+
+        public bool IsActive { get; set; }
+
+        public bool HasPermission { get; set; }
+
+        public bool HasOnlineProtection { get { return ProtectionPercentage > 0; } }
+
+        public bool HasOfflineProtection { get { return ProtectionPercentage > 0; } }
+
+        public bool HasAnyProtection { get { return HasOnlineProtection || HasOfflineProtection; } }
+
+        public bool HasOwnersOnline { get { return OnlineOwners.Count > 0; } }
+
+        public ProtectionStatus Status { get; private set; }
+
+        public string RaidAlertChannelId { get; set; }
+
+        public double PlayerBountyPayout { get; set; }
+
+        public ulong NetId { get; set; }
+
+        public ulong OwnerId { get; set; }
+
+
+        bool IsNightTime()
+        {
+            return TOD_Sky.Instance.Cycle.Hour < 7 || TOD_Sky.Instance.Cycle.Hour > 18.5;
+        }
+
+        public void UpdateSentryInterference()
+        {
+            List<BaseEntity> nearby = new List<BaseEntity>();
+            Vis.Entities(Priv.transform.position, Sentry.interferenceradius, nearby, LayerMask.GetMask("Deployed"), QueryTriggerInteraction.Ignore);
+            var i = 0;
+
+            foreach (var ent in nearby.Distinct().ToList())
+            {
+                if (!(ent is AutoTurret))
+                {
+                    continue;
+                }
+
+                (ent as AutoTurret).TryRegisterForInterferenceUpdate();
+            }
+
+            // AutoTurret.ProcessInterferenceQueue();
+        }
+
+        public int CalculateBounty()
+        {
+            var familyBounty = 0;
+
+            var family = FindPlayerRelationships();
+
+            foreach (var familyMember in family)
+            {
+                familyBounty = Instance.GetBountyPoints(familyMember);
+            }
+
+            return familyBounty + BaseBounty;
+        }
+
+        public float ProtectionPercentage
+        {
+            get
+            {
+                var daysOfProtection = 2d;
+                DateTime wipeTime = SaveRestore.SaveCreatedTime; // Get the DateTime of the last wipe.
+                TimeSpan timeSinceWipe = DateTime.UtcNow - wipeTime; // Calculate the time since the last wipe.
+                                                                     // Calculate the time since the wipe in days as a double for the decay calculation
+                double daysSinceWipe = timeSinceWipe.TotalDays;
+                double hoursSinceWipe = timeSinceWipe.TotalHours;
+                bool isNightTime = IsNightTime();
+                double maxPenalty = 0.5; // Maximum penalty of 50%
+
+                // Ensure the penalty calculation only applies during the first 24 hours
+                double effectiveHours = Math.Min(hoursSinceWipe, 24);
+
+                // Logarithmic growth calculation
+                // We adjust the formula to fit our requirements, ensuring a smooth growth towards the 50% cap
+                double nightPenalty = 0;
+                if (isNightTime)
+                {
+                    // Coefficients are chosen to normalize the log function's output to our desired range [0, 0.5] over [0, 24] hours
+                    nightPenalty = 100 * (Math.Log(effectiveHours + 1) / Math.Log(25)) * maxPenalty;
+                }
+
+
+                // Use a logarithmic function to scale daysOfProtection as BaseBounty increases
+                // Adjust the scaling factor and base of the logarithm to control how quickly daysOfProtection decreases
+                double scalingFactor = 3; // Adjust this factor to control the sensitivity of the scaling
+                                          // PLUGIN.Puts(daysOfProtection);
+
+                double minDaysOfProtection = 0.125; // Ensure daysOfProtection doesn't fall below 25% of the original.
+
+                var bounty = CalculateBounty();
+
+                // Calculate the scaling factor based on BaseBounty, aiming to reach a minimum at 250 bounty.
+                if (bounty >= 500)
+                {
+                    daysOfProtection = minDaysOfProtection;
+                }
+                else
+                {
+
+                    double scale = (1 - Math.Log(1 + bounty / 500.0 * scalingFactor, scalingFactor));
+                    daysOfProtection *= scale;
+                }
+
+                // Ensure that daysOfProtection does not fall below the minimum.
+                daysOfProtection = Math.Max(daysOfProtection, minDaysOfProtection);
+                // PLUGIN.Puts($"{daysSinceWipe}, {daysOfProtection} {Math.Log(1 + daysSinceWipe) / Math.Log(1 + daysOfProtection)}");
+                // Calculate the decay percentage
+                double decayPercent = 100 * (1 - Math.Log(1 + daysSinceWipe) / Math.Log(1 + daysOfProtection));
+
+                // Ensure the decay percent cannot go below 0
+                decayPercent = Math.Max(decayPercent - nightPenalty, 0);
+
+                // PLUGIN.Puts(decayPercent);
+
+
+                return (float)Math.Round(decayPercent, 2);
+            }
+
+        }
+
+        public ToolcupboardBounty(BuildingPrivlidge priv)
+        {
+            HashSet<ulong> allOwnerIdsTemp = (from id in priv.authorizedPlayers select id.userid).ToHashSet();
+            HashSet<ulong> allOwnerIds = new HashSet<ulong>();
+
+            if (allOwnerIdsTemp.Count >= 1)
+            {
+                foreach (ulong OwnerId in allOwnerIdsTemp)
+                {
+                    if (Instance.permission.UserHasPermission(OwnerId.ToString(), PermissionAdmin))
+                        continue;
+
+                    allOwnerIds.Add(OwnerId);
+                }
+            }
+            else
+            {
+                allOwnerIds = allOwnerIdsTemp;
+            }
+
+            foreach (var ownerId in allOwnerIds)
+            {
+                if (!Instance.playerCupboards.ContainsKey(ownerId))
+                {
+                    Instance.playerCupboards.Add(ownerId, new HashSet<ToolcupboardBounty>());
+                }
+                Instance.playerCupboards[ownerId].Add(this);
+            }
+
+            Priv = priv;
+            PlayersViewing = new HashSet<BasePlayer>();
+            ContentsLocked = false;
+            AllOwnerIds = allOwnerIds;
+            IsActive = false;
+            IsRemoved = false;
+            OwnerId = priv.OwnerID;
+            NetId = priv.net.ID.Value;
+            PlayerRelations = FindPlayerRelationships();
+
+            BaseBounty = 0;
+            BaseBountyPerkLevel = new int[Instance.BaseBountyPerks.Count()];
+        }
+
+        public List<ulong> PlayerRelations = new List<ulong> { };
+        public bool CachedPlayerRelations = false;
+
+        void InvalidatePlayerRelationsCache()
+        {
+            CachedPlayerRelations = false;
+            PlayerRelations = FindPlayerRelationships();
+        }
+
+        List<ulong> FindPlayerRelationships()
+        {
+            if (CachedPlayerRelations)
+            {
+                return PlayerRelations;
+            }
+            List<ulong> relatedPlayers = AllOwnerIds.ToList();
+            foreach (var owner in AllOwnerIds)
+            {
+                List<ulong> clanMembers = Instance.Clans.Call<List<string>>("GetClanMembers", owner).Select(clanMember => Convert.ToUInt64(clanMember)).ToList();
+                foreach (var clanMember in clanMembers)
+                {
+                    if (!relatedPlayers.Contains(clanMember))
+                    {
+                        relatedPlayers.Add(clanMember);
+                    }
+                }
+                BasePlayer ownerPlayer = BasePlayer.FindByID(owner);
+                if (ownerPlayer)
+                {
+                    var team = ownerPlayer.Team;
+                    if (team != null && team.members != null)
+                    {
+                        foreach (var teamMember in team.members)
+                        {
+                            if (!relatedPlayers.Contains(teamMember))
+                            {
+                                relatedPlayers.Add(teamMember);
+                            }
+                        }
+                    }
+                }
+            }
+
+            CachedPlayerRelations = true;
+            PlayerRelations = PlayerRelations.Union(relatedPlayers).ToList();
+
+            return relatedPlayers;
+        }
+
+        public void UpdateStatus()
+        {
+            if (Priv == null)
+            {
+                return;
+            }
+
+            var hasOtherTC = false;
+
+            List<ulong> ownerRelations = FindPlayerRelationships();
+
+            foreach (var relatedPlayer in ownerRelations)
+            {
+                if (!Instance.playerCupboards.ContainsKey(relatedPlayer))
+                {
+                    continue;
+                }
+                var mainTc = Instance.playerCupboards[relatedPlayer].Where(tc => tc.IsMainCupboard && Priv.net.ID.Equals(tc.Priv.net.ID)).FirstOrDefault();
+                if (mainTc != null)
+                {
+                    Instance.Debug($"PlayerId: {relatedPlayer} TC={this.Priv.net.ID} MainTC={mainTc.Priv.net.ID}");
+                    hasOtherTC = true;
+                    break;
+                }
+            }
+
+            // IsActive = !hasOtherTC && AllOwnerIds.Count > 0;
+
+            if (IsMainCupboard && !hasOtherTC)
+            {
+                Status = ProtectionStatus.Protected;
+            }
+            else
+            {
+                Status = ProtectionStatus.Unprotected;
+            }
+            UpdateSentryInterference();
+            UpdateMapMarker();
+            UpdateRaidAlarm();
+            Instance.Debug($"TC with ID={Priv.net.ID} Active={IsMainCupboard} Status={Status}");
+        }
+
+        public static void Unload()
+        {
+
+            toolcupboards = null;
+        }
+
+        public void UpdateRaidAlarm()
+        {
+            if (Priv == null || RaidAlertChannelId != null)
+            {
+                return;
+            }
+
+            var hasAlert = BaseBountyPerkLevel[(int)BaseBountyPerkEnum.Alerts] >= 1;
+
+            if (!hasAlert)
+            {
+                return;
+            }
+
+            var owners = new List<ulong>(Priv.authorizedPlayers.Count);
+
+            foreach (PlayerNameID owner in Priv.authorizedPlayers)
+            {
+                if (owner == null) continue;
+                owners.Add(owner.userid);
+            }
+
+            var grid = GetGrid(Priv.transform.position);
+
+            Instance.DiscordThreads.Call<IPromise<string>>("CreateThreadForUsers", $"{grid} Base Alerts", owners).Then(channelId =>
+            {
+                RaidAlertChannelId = channelId;
+            });
+        }
+
+        public void UpdateMapMarker()
+        {
+            if (BaseBounty <= 0)
+            {
+                if (MapNote != null)
+                {
+                    MapNote.Dispose();
+                    MapNote = null;
+                }
+                return;
+            }
+
+            if (MapNote != null)
+            {
+                MapNote.label = $"{BaseBounty}";
+            }
+            else
+            {
+                MapNote = new MapNote()
+                {
+                    noteType = 1,
+                    label = $"{BaseBounty}",
+                    worldPosition = Priv.transform.position,
+                    isPing = true,
+                    associatedId = Priv.net.ID
+                };
+                PingStyle pingStyle = GetPingStyle(PingType.Dollar);
+                MapNote.colourIndex = 3;
+                MapNote.icon = pingStyle.IconIndex;
+            }
+
+            RaidProtection.Instance.SendMapNotes();
+
+        }
+
+    }
+
+    #region ToolcupboardTracker
+
+    public class ToolcupboardTracker
+    {
+        private readonly Dictionary<ulong, HashSet<BuildingPrivlidge>> buildingPrivlidges = new Dictionary<ulong, HashSet<BuildingPrivlidge>>() { };
+
+        public void Add(BuildingPrivlidge buildingPrivlidge, BasePlayer player)
+        {
+            if (!buildingPrivlidges.ContainsKey(player.userID))
+            {
+                buildingPrivlidges.Add(player.userID, new HashSet<BuildingPrivlidge>());
+            }
+
+            buildingPrivlidges[player.userID].Add(buildingPrivlidge);
+        }
+
+        public void Remove(BuildingPrivlidge buildingPrivlidge, BasePlayer player)
+        {
+            if (!buildingPrivlidges.ContainsKey(player.userID))
+            {
+                // Why wasn't this key present?
+                return;
+            }
+            buildingPrivlidges[player.userID].Remove(buildingPrivlidge);
+        }
+    }
+
+    #endregion
+}

@@ -139,6 +139,7 @@
     "Color On": "0.69 0.49 0.29 0.5",
     "Color Off": "0.29 0.49 0.69 0.5",
     "Show Button - All": true,
+    "Show Button - Airdrops": true,
     "Show Button - Bags": true,
     "Show Button - Boats": false,
     "Show Button - Bradley": false,
@@ -166,6 +167,18 @@
     "Show Button - Traps": true
   },
   "Options": {
+    "Additional Boxes": [
+      "storage_barrel",
+      "vendingmachine.deployed",
+      "woodbox_deployed",
+      "box.wooden.large",
+      "dropbox.deployed",
+      "coffinstorage",
+      "small_stash_deployed",
+      "mailbox.deployed",
+      "missionstash",
+      "heli_crate"
+    ],
     "Additional Traps": [
       "barricade.metal",
       "barricade.stone",
@@ -186,6 +199,7 @@
     "Show X Items From Backpacks": 3,
     "Show X Items From Corpses": 3,
     "Show NPC At World View": true,
+    "Show NPC Name As Prefab Name": false,
     "Show Authed Count On Cupboards": true,
     "Show Bag Count On Cupboards": true,
     "Show Npc Player Target": false,

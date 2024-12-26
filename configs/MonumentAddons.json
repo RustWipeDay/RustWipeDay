@@ -1,6 +1,52 @@
 {
-  "Debug display distance": 150.0,
-  "Persist entities while the plugin is unloaded": false,
+  "Debug display settings": {
+    "Default display duration (seconds)": 60.0,
+    "Display distance": 150.0,
+    "Display distance abbreviated": 300.0,
+    "Max addons to show unabbreviated": 1,
+    "Entity color": "#FF00FF",
+    "Spawn point color": "#FF8000",
+    "Paste color": "#00FFFF",
+    "Custom addon color": "#00FF00",
+    "Custom monument color": "#00FF00",
+    "Inactive profile color": "#808080"
+  },
+  "Save entities between restarts/reloads to preserve their state throughout a wipe": {
+    "Enable saving for storage entities": false,
+    "Enable saving for non-storage entities": false,
+    "Override saving enabled by prefab": {}
+  },
+  "Dynamic monuments": {
+    "Entity prefabs to consider as monuments": [
+      "assets/content/vehicles/boats/cargoship/cargoshiptest.prefab"
+    ]
+  },
+  "Addon defaults": {
+    "Spawn group defaults": {
+      "MaxPopulation": 1,
+      "SpawnPerTickMin": 1,
+      "SpawnPerTickMax": 2,
+      "RespawnDelayMin": 1500.0,
+      "RespawnDelayMax": 2100.0,
+      "InitialSpawn": true,
+      "PreventDuplicates": false,
+      "PauseScheduleWhileFull": false,
+      "RespawnWhenNearestPuzzleResets": false
+    },
+    "Spawn point defaults": {
+      "Exclusive": true,
+      "SnapToGround": true,
+      "CheckSpace": false,
+      "RandomRotation": false,
+      "RandomRadius": 0.0,
+      "PlayerDetectionRadius": 0.0
+    },
+    "Puzzle defaults": {
+      "PlayersBlockReset": true,
+      "PlayerDetectionRadius": 30.0,
+      "SecondsBetweenResets": 1800.0
+    }
+  },
   "Deployable overrides": {
     "arcade.machine.chippy": "assets/bundled/prefabs/static/chippyarcademachine.static.prefab",
     "autoturret": "assets/content/props/sentry_scientists/sentry.bandit.static.prefab",

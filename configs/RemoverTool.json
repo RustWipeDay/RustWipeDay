@@ -2,7 +2,7 @@
   "Settings": {
     "Enable Debug Mode": false,
     "Log Debug To File": false,
-    "Use Teams": false,
+    "Use Teams": true,
     "Use Clans": true,
     "Use Friends": true,
     "Use Entity Owners": true,
@@ -15,9 +15,9 @@
     "RemoveType - All/Structure - Remove per frame": 15,
     "RemoveType - All/Structure - No item container dropped": true,
     "RemoveType - Normal - Max Removable Objects - Exclude admins": true,
-    "RemoveType - Normal - Cooldown - Exclude admins": true,
-    "RemoveType - Normal - Entity Spawned Time Limit - Enabled": false,
-    "RemoveType - Normal - Entity Spawned Time Limit - Cannot be removed when entity spawned time more than it": 300.0,
+    "RemoveType - Normal - Cooldown - Exclude admins": false,
+    "RemoveType - Normal - Entity Spawned Time Limit - Enabled": true,
+    "RemoveType - Normal - Entity Spawned Time Limit - Cannot be removed when entity spawned time more than it": 600.0,
     "Default Entity Settings (When automatically adding new entities to 'Other Entity Settings')": {
       "Default Remove Allowed": true
     }
@@ -31,14 +31,14 @@
     "IOEntity Container - Drop a item container from container": true
   },
   "Remove Damaged Entities": {
-    "Enabled": false,
-    "Exclude Quarries": true,
-    "Exclude Building Blocks": true,
+    "Enabled": true,
+    "Exclude Quarries": false,
+    "Exclude Building Blocks": false,
     "Percentage (Can be removed when (health / max health * 100) is not less than it)": 90.0
   },
   "Chat Settings": {
     "Chat Command": "remove",
-    "Chat Prefix": "<color=#00FFFF>[RemoverTool]</color>: ",
+    "Chat Prefix": "<color=#c45508>[RustWipeDay]</color>: ",
     "Chat SteamID Icon": 0,
     "Show Message When Enabled/Disabled": true
   },
@@ -46,12 +46,12 @@
     "removertool.normal": {
       "Priority": 0,
       "Distance": 3.0,
-      "Cooldown": 60.0,
-      "Max Time": 300,
+      "Cooldown": -1.0,
+      "Max Time": 600,
       "Remove Interval (Min = 0.2)": 0.8,
-      "Max Removable Objects (0 = Unlimited)": 50,
-      "Pay": true,
-      "Refund": true,
+      "Max Removable Objects (0 = Unlimited)": 0,
+      "Pay": false,
+      "Refund": false,
       "Reset the time after removing an entity": false
     }
   },
@@ -59,53 +59,53 @@
     "Normal": {
       "Display Name": "Normal",
       "Distance": 3.0,
-      "Default Time": 60,
-      "Max Time": 300,
+      "Default Time": 600,
+      "Max Time": 600,
       "Gibs": true,
       "Reset the time after removing an entity": false
     },
     "Structure": {
       "Display Name": "Structure",
-      "Distance": 100.0,
-      "Default Time": 300,
-      "Max Time": 600,
+      "Distance": 3.0,
+      "Default Time": 600,
+      "Max Time": -1,
       "Gibs": false,
       "Reset the time after removing an entity": true
     },
     "All": {
       "Display Name": "All",
-      "Distance": 50.0,
-      "Default Time": 300,
-      "Max Time": 600,
+      "Distance": 3.0,
+      "Default Time": 600,
+      "Max Time": -1,
       "Gibs": false,
       "Reset the time after removing an entity": true
     },
     "Admin": {
       "Display Name": "Admin",
-      "Distance": 20.0,
-      "Default Time": 300,
+      "Distance": 300.0,
+      "Default Time": 600,
       "Max Time": 600,
       "Gibs": true,
       "Reset the time after removing an entity": true
     },
     "External": {
       "Display Name": "External",
-      "Distance": 20.0,
-      "Default Time": 300,
+      "Distance": 3.0,
+      "Default Time": 600,
       "Max Time": 600,
       "Gibs": true,
       "Reset the time after removing an entity": true
     }
   },
   "Remove Mode Settings (Only one model works)": {
-    "No Held Item Mode": true,
+    "No Held Item Mode": false,
     "No Held Item Mode - Disable remover tool when you have any item in hand": true,
-    "Melee Tool Hit Mode": false,
+    "Melee Tool Hit Mode": true,
     "Melee Tool Hit Mode - Item shortname": "hammer",
     "Melee Tool Hit Mode - Item skin (-1 = All skins)": -1,
     "Melee Tool Hit Mode - Auto enable remover tool when you hold a melee tool": false,
-    "Melee Tool Hit Mode - Requires a melee tool in your hand when remover tool is enabled": false,
-    "Melee Tool Hit Mode - Disable remover tool when you are not holding a melee tool": false,
+    "Melee Tool Hit Mode - Requires a melee tool in your hand when remover tool is enabled": true,
+    "Melee Tool Hit Mode - Disable remover tool when you are not holding a melee tool": true,
     "Specific Tool Mode": false,
     "Specific Tool Mode - Item shortname": "hammer",
     "Specific Tool Mode - Item skin (-1 = All skins)": -1,
@@ -197,8 +197,8 @@
     "Crosshair - Box - Image Color": "1 0 0 1"
   },
   "Remove Info (Refund & Price)": {
-    "Price Enabled": true,
-    "Refund Enabled": true,
+    "Price Enabled": false,
+    "Refund Enabled": false,
     "Refund Items In Entity Slot": true,
     "Allowed Building Grade": {
       "Twigs": true,
@@ -5718,12 +5718,144 @@
             "skinId": -1
           }
         }
+      },
+      "barricade.cover.wood_double": {
+        "Remove Allowed": true,
+        "Display Name": "Wooden Barricade Cover",
+        "Price": {},
+        "Refund": {
+          "barricade.wood.cover": {
+            "amount": 1,
+            "skinId": -1
+          }
+        }
+      },
+      "romancandleblue": {
+        "Remove Allowed": true,
+        "Display Name": "Blue Roman Candle",
+        "Price": {},
+        "Refund": {
+          "firework.romancandle.blue": {
+            "amount": 1,
+            "skinId": -1
+          }
+        }
+      },
+      "romancandlegreen": {
+        "Remove Allowed": true,
+        "Display Name": "Green Roman Candle",
+        "Price": {},
+        "Refund": {
+          "firework.romancandle.green": {
+            "amount": 1,
+            "skinId": -1
+          }
+        }
+      },
+      "romancandleviolet": {
+        "Remove Allowed": true,
+        "Display Name": "Violet Roman Candle",
+        "Price": {},
+        "Refund": {
+          "firework.romancandle.violet": {
+            "amount": 1,
+            "skinId": -1
+          }
+        }
+      },
+      "electric.seismicsensor.deployed": {
+        "Remove Allowed": true,
+        "Display Name": "Seismic Sensor",
+        "Price": {},
+        "Refund": {
+          "electric.seismicsensor": {
+            "amount": 1,
+            "skinId": -1
+          }
+        }
+      },
+      "tincan.alarm.deployed": {
+        "Remove Allowed": true,
+        "Display Name": "Tin Can Alarm",
+        "Price": {},
+        "Refund": {
+          "tincan.alarm": {
+            "amount": 1,
+            "skinId": -1
+          }
+        }
+      },
+      "cupboard.tool.shockbyte.deployed": {
+        "Remove Allowed": true,
+        "Display Name": "Shockbyte Tool Cupboard",
+        "Price": {},
+        "Refund": {
+          "cupboard.tool.shockbyte": {
+            "amount": 1,
+            "skinId": -1
+          }
+        }
+      },
+      "dpv.deployed": {
+        "Remove Allowed": true,
+        "Display Name": "Diver propulsion vehicle",
+        "Price": {},
+        "Refund": {
+          "skidoo": {
+            "amount": 1,
+            "skinId": -1
+          }
+        }
+      },
+      "electric.digitalclock.deployed": {
+        "Remove Allowed": true,
+        "Display Name": "Digital Clock",
+        "Price": {},
+        "Refund": {
+          "electric.digitalclock": {
+            "amount": 1,
+            "skinId": -1
+          }
+        }
+      },
+      "hazmatplushy_deployed": {
+        "Remove Allowed": true,
+        "Display Name": "Hazmat Plushy",
+        "Price": {},
+        "Refund": {
+          "hazmat.plushy": {
+            "amount": 1,
+            "skinId": -1
+          }
+        }
+      },
+      "sculpture.ice.deployed": {
+        "Remove Allowed": true,
+        "Display Name": "Ice Sculpture",
+        "Price": {},
+        "Refund": {
+          "sculpture.ice": {
+            "amount": 1,
+            "skinId": -1
+          }
+        }
+      },
+      "modular_car_radio": {
+        "Remove Allowed": true,
+        "Display Name": "Car Radio",
+        "Price": {},
+        "Refund": {
+          "vehicle.car_radio": {
+            "amount": 1,
+            "skinId": -1
+          }
+        }
       }
     }
   },
   "Version": {
     "Major": 4,
     "Minor": 3,
-    "Patch": 41
+    "Patch": 43
   }
 }

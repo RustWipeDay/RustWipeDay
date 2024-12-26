@@ -1,15 +1,15 @@
 {
   "fauxAdminSettings": {
-    "GodMode - Disable God Mode use for all Standard FauxAdmins (except those with fauxadmin.allowgod perms) ? (users must disconnect/reconnect to take effect) ": false,
+    "GodMode - Disable God Mode use for all Standard FauxAdmins (except those with fauxadmin.allowgod perms) ? (users must disconnect/reconnect to take effect) ": true,
     "GodMode - Message player to disconect/reconnect when fauxadmin.allowgod perms are granted and they are in game ? (users must disconnect/reconnect to take effect) ": true,
     "GodMode - Force Disconnect of player when fauxadmin.allowgod perms are revoked and they are in game ? (users must disconnect/reconnect to take effect) ": true,
     "Command - Env.Time - Enable Use of Env.Time Admin command to set in game time, for all FauxAdmins ? (default false) ": false,
-    "Command - EntKill - Enable Simulated Use of Admin Command (ent kill) for all FauxAdmins ? (default true)  ": true,
+    "Command - EntKill - Enable Simulated Use of Admin Command (ent kill) for all FauxAdmins ? (default true)  ": false,
     "Command - EntKill - Only Allow FauxAdmins to entkill there OWN stuff (default true) ? ": true,
     "Noclip - Disallow FauxAdmins (unless they have the 'fauxadmin.bypass' permission) from using the Noclip (flying) feature in Tool Cupboard (TC) zones where they are not authorized, which are typically owned by other players. ": true,
     "Noclip - Allow the FauxAdmins to use the Noclip (flying) feature exclusively within Authorized Tool Cupboard (TC) Zones, thereby preventing them from flying in all other areas. ? ": false,
     "Antihack - Terrain Kill - Allow FauxAdmin to Fly underground without Antihack killing them (if disabled, FauxAdmin must have allowterrain perm or Godmode to fly underground) ?": true,
-    "Looting - Disable FauxAdmin ability to loot things (boxes, containers, corpses..etc) ?": false,
+    "Looting - Disable FauxAdmin ability to loot things (boxes, containers, corpses..etc) ?": true,
     "Contruction - Disable FauxAdmin Ability to Demolish OTHER players building parts ? ": true,
     "Contruction - Disable FauxAdmin Ability to Rotate OTHER players building parts ? ": true,
     "Contruction - Disable FauxAdmin Ability to Upgrade OTHER players building parts ? ": true,

@@ -35,6 +35,10 @@ namespace Carbon.Plugins
                     {
                         __instance._hotSpot = __instance.SpawnBonusSpot(info.HitPositionWorld);
                     }
+                    if (__instance._hotSpot == null || __instance._hotSpot.transform == null)
+                    {
+                        return true;
+                    }
                     __instance._hotSpot.transform.position = info.HitPositionWorld;
                     __instance._hotSpot.SendNetworkUpdateImmediate();
                 }

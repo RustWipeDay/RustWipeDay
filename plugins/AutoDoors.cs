@@ -430,7 +430,7 @@ namespace Oxide.Plugins
                             configData.globalS.minimumDelay, configData.globalS.maximumDelay));
                         Print(player, stringBuilder.ToString());
                         stringBuilder.Clear();
-                        Pool.Free(ref stringBuilder);
+                        Pool.FreeUnmanaged(ref stringBuilder);
                         return;
                     }
             }

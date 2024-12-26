@@ -24,7 +24,7 @@ namespace Oxide.Plugins
             if (IsNightTime() && !hasAnnouncedSunset)
             {
                 hasAnnouncedSunset = true;
-                Server.Broadcast("<color=#c45508>[RustWipeDay]</color>: The sun has set, gather rates have increased and raid protection has weakened until morning.");
+                Server.Broadcast("<color=#c45508>[RustWipeDay]</color>: The sun has set, gather rates have increased to 5x until morning.");
             }
             else if (!IsNightTime())
             {
