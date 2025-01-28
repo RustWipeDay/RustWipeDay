@@ -5,25 +5,41 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("Animal Manager", "Odell Davis Scott, ChatGPT", "1.7.4")]
-    [Description("Lists animal prefabs and adjusts or scales their starting max HP and attack damage.")]
+    [Info("Animal Manager", "Rust Wipe Day", "1.8.1")]
+    [Description("Manages animal configurations, scaling incoming and outgoing damage per entity.")]
     public class AnimalManager : RustPlugin
     {
         private ConfigData animalConfigs;
 
+        /// <summary>
+        /// Represents the plugin configuration for managing animals.
+        /// </summary>
         class ConfigData
         {
             public Dictionary<string, AnimalConfig> Animals { get; set; } = new Dictionary<string, AnimalConfig>();
         }
 
+        /// <summary>
+        /// Defines individual animal configurations, including incoming and outgoing damage scaling.
+        /// </summary>
         class AnimalConfig
         {
-            public float HealthScale { get; set; } = 1.0f;
-            public float DamageScale { get; set; } = 1.0f;
+            /// <summary>
+            /// Incoming damage scale factor for the animal.
+            /// </summary>
+            public float IncomingDamageScale { get; set; } = 1.0f;
+
+            /// <summary>
+            /// Outgoing damage scale factor for the animal.
+            /// </summary>
+            public float OutgoingDamageScale { get; set; } = 1.0f;
         }
 
         private const string adminPermission = "animalmanager.admin";
 
+        /// <summary>
+        /// Initializes the plugin, setting up permissions and loading configurations.
+        /// </summary>
         void Init()
         {
             Puts("Initializing Animal Manager Plugin...");
@@ -32,25 +48,25 @@ namespace Oxide.Plugins
             CacheAnimalPrefabs();
         }
 
+        /// <summary>
+        /// Loads the default configuration file with predefined values.
+        /// </summary>
         protected override void LoadDefaultConfig()
         {
-            Puts("Creating a new configuration file with default values...");
+            Puts("Creating default configuration...");
             animalConfigs = new ConfigData();
             CacheAnimalPrefabs();
             SaveConfigValues();
         }
 
+        /// <summary>
+        /// Loads configuration values from the configuration file.
+        /// </summary>
         private void LoadConfigValues()
         {
-            Puts("Loading configuration...");
             try
             {
-                animalConfigs = Config.ReadObject<ConfigData>();
-                if (animalConfigs == null)
-                {
-                    Puts("No existing configuration found, creating new configuration.");
-                    LoadDefaultConfig();
-                }
+                animalConfigs = Config.ReadObject<ConfigData>() ?? new ConfigData();
                 Puts("Configuration loaded successfully.");
             }
             catch (System.Exception ex)
@@ -60,9 +76,11 @@ namespace Oxide.Plugins
             }
         }
 
+        /// <summary>
+        /// Saves the current configuration values to the configuration file.
+        /// </summary>
         private void SaveConfigValues()
         {
-            Puts("Saving configuration...");
             try
             {
                 Config.WriteObject(animalConfigs, true);
@@ -74,71 +92,61 @@ namespace Oxide.Plugins
             }
         }
 
+        /// <summary>
+        /// Caches animal prefabs and initializes their default configurations.
+        /// </summary>
         private void CacheAnimalPrefabs()
         {
-            Puts("Caching animal prefabs...");
             foreach (var prefab in GameManifest.Current.entities)
             {
                 if (prefab.ToLower().Contains("assets/rust.ai/agents/"))
                 {
-                    Puts($"Found potential animal prefab: {prefab}");
                     var entity = GameManager.server.FindPrefab(prefab.ToLower())?.GetComponent<BaseCombatEntity>();
                     if (entity != null && !animalConfigs.Animals.ContainsKey(prefab.ToLower()))
                     {
                         animalConfigs.Animals[prefab.ToLower()] = new AnimalConfig();
-                        Puts($"Cached animal prefab: {prefab.ToLower()}");
                     }
                 }
             }
             SaveConfigValues();
-            Puts("Animal prefabs cached successfully.");
         }
 
-        void OnEntitySpawned(BaseNetworkable entity)
-        {
-            var baseEntity = entity as BaseEntity;
-            if (baseEntity == null) return;
-
-            var prefabName = baseEntity.PrefabName.ToLower();
-            if (animalConfigs.Animals.TryGetValue(prefabName, out var animalConfig))
-            {
-                var combatEntity = baseEntity as BaseCombatEntity;
-                if (combatEntity != null)
-                {
-                    Puts($"Applying health scale to {prefabName}: {animalConfig.HealthScale}");
-                    combatEntity._maxHealth *= animalConfig.HealthScale;
-                    combatEntity.health = combatEntity._maxHealth;
-                }
-            }
-        }
-
+        /// <summary>
+        /// Scales incoming and outgoing damage for animals.
+        /// </summary>
+        /// <param name="entity">The entity receiving damage.</param>
+        /// <param name="info">Damage information.</param>
+        /// <returns>Null to allow default behavior.</returns>
         object OnEntityTakeDamage(BaseCombatEntity entity, HitInfo info)
         {
-            // Check if the HitInfo is valid and has an attacker
-            if (info == null || info.Initiator == null) return null;
+            if (info == null) return null;
 
-            // Get the attacker entity
-            var attacker = info.Initiator as BaseEntity;
-            if (attacker == null) return null;
-
-            // Get the prefab name of the attacker to determine if it matches an animal
-            var prefabName = attacker.PrefabName?.ToLower() ?? "";
-
-            // Check if the attacker is an animal and apply outgoing damage scaling
-            if (animalConfigs.Animals.TryGetValue(prefabName, out var animalConfig))
+            // Scale incoming damage for the target entity
+            var entityPrefab = entity.PrefabName?.ToLower();
+            if (entityPrefab != null && animalConfigs.Animals.TryGetValue(entityPrefab, out var targetConfig))
             {
-                Puts($"Applying outgoing damage scale to {prefabName}: {animalConfig.DamageScale}");
-                info.damageTypes.ScaleAll(animalConfig.DamageScale);
+                //Puts($"Scaling incoming damage for {entityPrefab}: {targetConfig.IncomingDamageScale}");
+                info.damageTypes.ScaleAll(targetConfig.IncomingDamageScale);
+            }
+
+            // Scale outgoing damage for the attacker
+            var attackerPrefab = info.Initiator?.PrefabName?.ToLower();
+            if (attackerPrefab != null && animalConfigs.Animals.TryGetValue(attackerPrefab, out var attackerConfig))
+            {
+                //Puts($"Scaling outgoing damage for {attackerPrefab}: {attackerConfig.OutgoingDamageScale}");
+                info.damageTypes.ScaleAll(attackerConfig.OutgoingDamageScale);
             }
 
             return null;
         }
 
-
+        /// <summary>
+        /// Lists all cached animal prefabs via a console command.
+        /// </summary>
+        /// <param name="arg">Console arguments.</param>
         [ConsoleCommand("animalmanager.listanimals")]
         private void ListAnimalsCommand(ConsoleSystem.Arg arg)
         {
-            Puts("Executing console command 'animalmanager.listanimals'...");
             if (!arg.IsAdmin)
             {
                 arg.ReplyWith("You do not have permission to use this command.");
@@ -149,11 +157,6 @@ namespace Oxide.Plugins
             {
                 arg.ReplyWith($"Animal Prefab: {animal.Key}");
             }
-        }
-
-        private bool HasAdminPermission(BasePlayer player)
-        {
-            return permission.UserHasPermission(player.UserIDString, adminPermission);
         }
     }
 }

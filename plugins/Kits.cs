@@ -821,10 +821,18 @@ namespace Oxide.Plugins
             container.Add(barFill2, "HonorExperienceBars2_MainPanel");
 
 
+            var text = $"{(fillAmount2 * 100):0.0}%\n";
+            if (baseXp == 0 && baseXpRequired == 0) {
+                text += $"Build a base and enable bounties.";
+            } 
+            else {
+                text += $"<size=8>({baseXp} / {baseXpRequired})</size>";
+            }
+
             // Add percentage text in the middle of the experience bar
             var percentText2 = new CuiLabel
             {
-                Text = { Text = $"{(fillAmount2 * 100):0.0}%\n<size=8>({baseXp} / {baseXpRequired})</size>", FontSize = 10, Align = TextAnchor.MiddleCenter, Color = "1 1 1 1" },
+                Text = { Text = text, FontSize = 10, Align = TextAnchor.MiddleCenter, Color = "1 1 1 1" },
                 RectTransform = { AnchorMin = "0.0 0.0", AnchorMax = "1.0 1.0" }
             };
 
@@ -1595,7 +1603,17 @@ UI.Image(
 
         #region UI Commands
         #region View Commands
+        [ChatCommand("shop"),ChatCommand("s")]
+        private void ShopCommandHandler(BasePlayer player, string command, string[] args)
+        {
+            if (player == null)
+            {
+                return;
+            }
 
+            // Open the respective shop
+            OpenKitGrid(player, 0, 0UL, true);
+        }
 
         [ConsoleCommand("kits.welcome")]
         private void CommandKitsWelcome(ConsoleSystem.Arg arg)

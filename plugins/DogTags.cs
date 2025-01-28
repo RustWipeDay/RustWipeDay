@@ -485,7 +485,7 @@ namespace Oxide.Plugins
 
         [HookMethod("TakePoints")]
         public bool TakePoints(ulong playerId, int amount) {
-            var rangeCheck = true;
+            var rangeCheck = false;
             var player = BasePlayer.FindByID(playerId);
             if (player == null || (rangeCheck && !IsPlayerInRangeOfEntities(player, SpawnedEntities, 5)))
                 return false;

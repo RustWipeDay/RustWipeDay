@@ -21,6 +21,9 @@ namespace Oxide.Plugins
         public Plugin HonorSystem = null;
 
         [PluginReference]
+        public Plugin BaseBounty = null;
+
+        [PluginReference]
         public Plugin DogTags = null;
 
         private Dictionary<ulong, PlayerStats> playerStats = new Dictionary<ulong, PlayerStats>();
@@ -129,15 +132,28 @@ namespace Oxide.Plugins
                     new TableHeader(
                         "Player",
                         orderedStats.Select(statKvp => HonorSystem.Call<string>("FormatPlayerName", statKvp.Key, statKvp.Value.Names.Last(), false)).ToList(),
-                        28,
+                        18,
                         TextAnchor.MiddleLeft
                     ),
                     new TableHeader(
                         "Elo",
                         orderedStats.Select(statKvp => $"<color={StatisticsDB.Call<string>("API_GetEloColorRank", statKvp.Value.Elo)}>{statKvp.Value.Elo}</color>").ToList(),
-                        6
+                        4
                     ),
                     new TableHeader(
+                        "Honor",
+                        orderedStats.Select(statKvp => HonorSystem.Call<int>("GetPlayerHonorPoints", statKvp.Key).ToString()).ToList(),
+                        8
+                    ),
+                    new TableHeader(
+                        "Level",
+                        orderedStats.Select(statKvp => {
+                            (int baseXp, int baseXpRequired, int baseLevel) = BaseBounty.Call<(int, int, int)>("GetPlayerBaseLevel", statKvp.Key);
+                            return baseLevel.ToString();
+                        }).ToList(),
+                        8
+                    ),
+            new TableHeader(
                         "Bounty",
                         orderedStats.Select(statKvp => DogTags.Call<int>("GetPoints", statKvp.Key).ToString()).ToList(),
                         8
@@ -199,12 +215,7 @@ namespace Oxide.Plugins
         [ChatCommand("leaderboard")]
         private void LeaderboardCommand(BasePlayer player, string command, string[] args)
         {
-            if (!permission.UserHasPermission(player.UserIDString, "leaderboardgui.use"))
-            {
-                SendReply(player, "You don't have permission to use this command.");
-                return;
-            }
-            DrawLeaderboard(player);
+            player.SendConsoleCommand("kits.leaderboard");
         }
 
         public class TableHeader
@@ -360,7 +371,7 @@ namespace Oxide.Plugins
                 return;
 
             BasePlayer player = arg.Player();
-            LeaderboardCommand(player, "leaderboard", new string[0]);
+            DrawLeaderboard(player);
         }
 
         [ConsoleCommand("leaderboard.close")]

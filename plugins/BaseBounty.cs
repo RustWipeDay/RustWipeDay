@@ -19,6 +19,16 @@ using static UnityEngine.Rendering.PostProcessing.BloomRenderer;
 
 namespace Carbon.Plugins
 {
+
+    // Extension method to find the driver
+    public static class VehicleExtensions
+    {
+        public static BasePlayer GetDriver(this BaseVehicle vehicle)
+        {
+            return vehicle?.mountPoints[0]?.mountable?.GetMounted() as BasePlayer;
+        }
+    }
+
     [Info("Base Bounty", "TTV OdsScott", "1.0.0")]
     [Description("Base bounty with raid protection")]
     public class BaseBounty : CarbonPlugin
@@ -26,8 +36,7 @@ namespace Carbon.Plugins
         public override bool AutoPatch => true;
 
         [PluginReference]
-        public readonly Plugin ImageLibrary, Clans, SimpleStatus, DogTags, RaidHooks, DiscordThreads, NightTime, Kits;
-
+        public readonly Plugin ImageLibrary, Clans, SimpleStatus, DogTags, RaidHooks, DiscordThreads, NightTime, Kits, CarSpawnSettings;
         public static BaseBounty Instance;
 
         public ToolcupboardTracker ToolcupboardTracker;
@@ -35,14 +44,15 @@ namespace Carbon.Plugins
 
 
         public const float HoursOfProtection = 4f;
+        private Dictionary<ulong, BaseEntity> PlayerHorses = new Dictionary<ulong, BaseEntity>();
+        private Dictionary<ulong, BaseEntity> PlayerCars = new Dictionary<ulong, BaseEntity>();
+        private Dictionary<ulong, BaseEntity> PlayerMinis = new Dictionary<ulong, BaseEntity>();
         private bool _debugMode = true;
 
         private void Init()
         {
             Instance = this;
             BaseBountyData = BaseBountyData.Load();
-            
-            
             LoadImages();
             CreateStatus();
         }
@@ -114,11 +124,19 @@ namespace Carbon.Plugins
 
             BaseBountyData.AddBaseBountyPoint(player, points);
         }
+        private bool IsNightTime()
+        {
+            // Utilize TimeOfDay plugin's TOD_Sky instance for accurate time checks.
+            return TOD_Sky.Instance.Cycle.Hour < TOD_Sky.Instance.SunriseTime || TOD_Sky.Instance.Cycle.Hour > TOD_Sky.Instance.SunsetTime;
+        }
 
         int OnHonorPointsAwarded(BasePlayer player, string victimName, bool isNpc, string victimRank, int points)
         {
-            var highestHonorPerk = Instance.ToolcupboardTracker.GetHighestPerkLevel(player, BaseBountyPerk.BaseBountyPerkEnum.Crafting);
-            return (int)(points * (1 + CalculatePercentage(highestHonorPerk, 100, 25)/100));
+            var highestHonorPerk = Instance.ToolcupboardTracker.GetHighestPerkLevel(player, BaseBountyPerk.BaseBountyPerkEnum.Honor);
+            var newPoints = (int)(points * (1 + CalculatePercentage(highestHonorPerk, 100, 25) / 100));
+            // Fix for night time double rates.
+            if (IsNightTime()) { newPoints = newPoints * 2; }
+            return newPoints;
         }
 
         /// <summary>
@@ -169,8 +187,7 @@ namespace Carbon.Plugins
                 return null;
             }
 
-
-            item.amount = (int)(item.amount * (1 + (0.01 * highestLevel)));
+            item.amount += (int)(item.amount * (0.01 * CalculatePercentage(highestLevel, 200, 30)));
 
             return null;
         }
@@ -230,7 +247,7 @@ namespace Carbon.Plugins
             List<DroppedItemContainer> droppedItemContainers = Facepunch.Pool.GetList<DroppedItemContainer>();
 
             var obb = target.player.WorldSpaceBounds();
-            Vis.Entities(obb.position, 16f + obb.extents.magnitude, droppedItemContainers);
+            Vis.Entities(obb.position, 16f + obb.extents.magnitude, droppedItemContainers); 
             for (int i = 0; i < droppedItemContainers.Count; i++)
             {
                 DroppedItemContainer droppedItemContainer = droppedItemContainers[i];
@@ -247,10 +264,118 @@ namespace Carbon.Plugins
 
         object CanLootEntity(BasePlayer player, DroppedItemContainer droppedItemContainer) => ToolcupboardTracker.OnLootClaimContainer(player, droppedItemContainer);
 
+        #region Fuel System Perk Handling
+
+        /// <summary>
+        /// Tracks active engine perks for vehicles by storing fuel storage IDs, driver IDs, and perk levels.
+        /// </summary>
+        private Dictionary<ulong, (ulong driverId, int perkLevel)> FuelStorageEnginePerks = new Dictionary<ulong, (ulong, int)>();
+
+        #endregion
+
+        #region Engine Event Handlers
+
+        /// <summary>
+        /// Called when a vehicle engine starts. Registers the driver and their highest fuel perk level.
+        /// </summary>
+        /// <param name="vehicle">The vehicle whose engine is starting.</param>
+        /// <param name="driver">The player driving the vehicle.</param>
+        /// <returns>Null to allow normal engine start behavior.</returns>
+        private object OnEngineStart(BaseVehicle vehicle, BasePlayer driver)
+        {
+            if (vehicle == null || driver == null)
+            {
+                return null; // No valid vehicle or driver
+            }
+
+            var fuelSystem = vehicle.GetFuelSystem();
+            if (fuelSystem == null || !ToolcupboardTracker.GetPlayerBaseBountyToolcupboards(driver.userID).Any())
+            {
+                return null; // No fuel system or no eligible cupboards for the driver
+            }
+
+            // Retrieve the highest fuel perk level for the driver
+            var highestFuelLevel = ToolcupboardTracker.GetHighestPerkLevel(driver, BaseBountyPerk.BaseBountyPerkEnum.Fuel);
+            var fuelStorageId = fuelSystem.GetInstanceID().Value;
+
+            // Update the perks tracking dictionary
+            FuelStorageEnginePerks[fuelStorageId] = (driver.userID, highestFuelLevel);
+            return null;
+        }
+
+        /// <summary>
+        /// Called when a vehicle engine stops. Cleans up any associated engine perks.
+        /// </summary>
+        /// <param name="vehicle">The vehicle whose engine is stopping.</param>
+        /// <param name="driver">The player driving the vehicle.</param>
+        /// <returns>Null to allow normal engine stop behavior.</returns>
+        private object OnEngineStop(BaseVehicle vehicle, BasePlayer driver)
+        {
+            if (vehicle == null)
+            {
+                return null; // No valid vehicle
+            }
+
+            var fuelSystem = vehicle.GetFuelSystem();
+            if (fuelSystem == null)
+            {
+                return null; // No fuel system
+            }
+
+            var fuelStorageId = fuelSystem.GetInstanceID().Value;
+            FuelStorageEnginePerks.Remove(fuelStorageId); // Clean up perks on engine stop
+
+            return null;
+        }
+
+        #endregion
+
+        #region Fuel Efficiency Hook
+
+        /// <summary>
+        /// Modifies fuel usage based on the player's fuel perk level.
+        /// </summary>
+        /// <param name="fuelSystem">The fuel system of the vehicle.</param>
+        /// <param name="fuelContainer">The container holding the vehicle's fuel.</param>
+        /// <param name="seconds">The duration for which fuel is being consumed.</param>
+        /// <param name="fuelUsedPerSecond">The base amount of fuel consumed per second.</param>
+        /// <returns>Null to allow normal fuel consumption behavior, or 0 to prevent consumption.</returns>
+        private object CanUseFuel(EntityFuelSystem fuelSystem, StorageContainer fuelContainer, float seconds, float fuelUsedPerSecond)
+        {
+            if (fuelSystem == null || fuelContainer == null)
+            {
+                return null; // Invalid fuel system or container
+            }
+
+            var fuelStorageId = fuelSystem.fuelStorageInstance.uid.Value;
+
+            if (!FuelStorageEnginePerks.TryGetValue(fuelStorageId, out var perkData))
+            {
+                return null; // No perks registered for this fuel storage
+            }
+
+            var (driverId, fuelPerk) = perkData;
+
+            // Apply the fuel perk bonus to reduce consumption
+            var fuelBonus = (seconds * fuelUsedPerSecond) * (fuelPerk * 0.01f);
+            fuelSystem.pendingFuel -= fuelBonus; // Reduce pending fuel consumption
+
+            return null;
+        }
+
+        #endregion
+
         private (int baseXp, int baseXpRequired, int baseLevel) GetPlayerBaseLevel(ulong userId)
         {
             var cupboard = ToolcupboardTracker.GetPlayerMainCupboard(userId);
-            return (cupboard.Bounty - cupboard.LevelXp, cupboard.NextLevelXp - cupboard.LevelXp, cupboard.Level);
+            try
+            {
+                return (cupboard.Bounty - cupboard.LevelXp, cupboard.NextLevelXp - cupboard.LevelXp, cupboard.Level);
+            }
+            catch (Exception e)
+            {
+                return (0, 0, 0);
+            }
         }
 
         [ChatCommand("basebounty")]
@@ -350,6 +475,374 @@ namespace Carbon.Plugins
 
         }
 
+        // This command spawns or claims a horse for the player.
+        [ChatCommand("myhorse")]
+        private void MyHorseCommand(BasePlayer player, string command, string[] args)
+        {
+            // Check for level requirements first
+            var mainCupboard = ToolcupboardTracker.GetPlayerMainCupboard(player.userID);
+            if (mainCupboard == null)
+            {
+                SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You do not have a main cupboard set. Set one using /basebounty.setmain.");
+                return;
+            }
+
+            int animalPerkLevel = mainCupboard.Level;
+            if (animalPerkLevel < 5)
+            {
+                SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You must have a base bounty level of at least 5 to use this command.");
+                return;
+            }
+
+            var mountedEntity = player.GetMountedVehicle();
+            // Check if the player is mounted on a horse
+            if (mountedEntity is BaseMountable mountedHorse && mountedHorse.ShortPrefabName.Contains("horse"))
+            {
+                if (args.Length > 0 && args[0].ToLower() == "claim")
+                {
+                    // Claim the mounted horse
+                    if (mountedHorse.OwnerID != 0 || PlayerHorses.ContainsValue(mountedHorse))
+                    {
+                        SendReply(player, "<color=#c45508>[RustWipeDay]</color>: This horse is already owned.");
+                        return;
+                    }
+
+                    mountedHorse.OwnerID = player.userID; // Assign ownership
+                    PlayerHorses[player.userID] = mountedHorse;
+                    mountedHorse.gameObject.AddComponent<TeleportCooldown>().Initialize(180f); // Apply cooldown
+                    SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You have claimed this horse.");
+                    return;
+                }
+                else
+                {
+                    // Inform the player about /myhorse claim
+                    SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You are currently on a horse. Use <color=#00ff00>/myhorse claim</color> to claim it if it's unowned.");
+                    return;
+                }
+            }
+
+            // Check for existing horse owned by the player
+            if (PlayerHorses.TryGetValue(player.userID, out BaseEntity existingHorse) && existingHorse.IsValid())
+            {
+                // Teleport the horse to the player's location
+                if (existingHorse.GetComponent<TeleportCooldown>() != null)
+                {
+                    SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You must wait before teleporting your horse again.");
+                    return;
+                }
+
+                existingHorse.transform.position = FindSafeSpawnPosition(player.transform.position + player.transform.forward * 2f, 20f);
+                existingHorse.SendNetworkUpdate();
+
+                existingHorse.gameObject.AddComponent<TeleportCooldown>().Initialize(180f); // 3-minute cooldown
+                SendReply(player, "<color=#c45508>[RustWipeDay]</color>: Your horse has been teleported to a safe location near you.");
+                return;
+            }
+
+            // Find a safe spawn position for the horse
+            Vector3 spawnPosition = FindSafeSpawnPosition(player.transform.position + player.transform.forward * 5f, 20f);
+            if (spawnPosition == Vector3.zero)
+            {
+                SendReply(player, "<color=#c45508>[RustWipeDay]</color>: Unable to find a safe location to spawn your horse. Please try again.");
+                return;
+            }
+
+            // Spawn the horse
+            BaseEntity horse = GameManager.server.CreateEntity("assets/rust.ai/nextai/testridablehorse.prefab", spawnPosition, Quaternion.identity);
+            if (horse == null)
+            {
+                SendReply(player, "<color=#c45508>[RustWipeDay]</color>: Failed to spawn the horse. Please try again.");
+                return;
+            }
+
+            horse.Spawn();
+            horse.OwnerID = player.userID;
+            PlayerHorses[player.userID] = horse;
+
+            SendReply(player, "<color=#c45508>[RustWipeDay]</color>: Your horse has been granted.");
+        }
+
+
+        // This command spawns or claims a modular car for the player.
+        [ChatCommand("mycar")]
+        private void MyCarCommand(BasePlayer player, string command, string[] args)
+        {
+            // Check for level requirements first
+            var mainCupboard = ToolcupboardTracker.GetPlayerMainCupboard(player.userID);
+            if (mainCupboard == null)
+            {
+                SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You do not have a main cupboard set. Set one using /basebounty.setmain.");
+                return;
+            }
+
+            int vehiclePerkLevel = mainCupboard.Level;
+            if (vehiclePerkLevel < 10)
+            {
+                SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You must have a base bounty level of at least 10 to use this command.");
+                return;
+            }
+            var mountedVehicle = player.GetMountedVehicle();
+            // Check if the player is mounted in a vehicle
+            if (mountedVehicle)
+            {
+                if (args.Length > 0 && args[0].ToLower() == "claim")
+                {
+                    // Claim the mounted modular car
+                    if (mountedVehicle.OwnerID != 0 || PlayerCars.ContainsValue(mountedVehicle))
+                    {
+                        SendReply(player, "<color=#c45508>[RustWipeDay]</color>: This vehicle is already owned.");
+                        return;
+                    }
+
+                    if (IsFlyingVehicle(mountedVehicle))
+                    {
+                        SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You can only claim ground vehicles.");
+                        return;
+                    }
+
+                    mountedVehicle.OwnerID = player.userID; // Assign ownership
+                    PlayerCars[player.userID] = mountedVehicle;
+                    mountedVehicle.gameObject.AddComponent<TeleportCooldown>().Initialize(180f); // Apply cooldown
+                    SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You have claimed this vehicle.");
+                    return;
+                }
+                else
+                {
+                    // Inform the player about /mycar claim
+                    SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You are currently in a vehicle. Use <color=#00ff00>/mycar claim</color> to claim it if it's unowned.");
+                    return;
+                }
+            }
+
+            // Check for existing car owned by the player
+            if (PlayerCars.TryGetValue(player.userID, out BaseEntity existingCar) && existingCar.IsValid())
+            {
+                // Teleport the car to the player's location
+                if (existingCar.GetComponent<TeleportCooldown>() != null)
+                {
+                    SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You must wait before teleporting your vehicle again.");
+                    return;
+                }
+
+                existingCar.transform.position = FindSafeSpawnPosition(player.transform.position + player.transform.forward * 2f, 20f);
+                existingCar.SendNetworkUpdate();
+
+                existingCar.gameObject.AddComponent<TeleportCooldown>().Initialize(180f); // 3-minute cooldown
+                SendReply(player, "<color=#c45508>[RustWipeDay]</color>: Your vehicle has been teleported to a safe location near you.");
+                return;
+            }
+
+            // Find a safe spawn position for the car
+            Vector3 spawnPosition = FindSafeSpawnPosition(player.transform.position + player.transform.forward * 5f, 20f);
+            if (spawnPosition == Vector3.zero)
+            {
+                SendReply(player, "<color=#c45508>[RustWipeDay]</color>: Unable to find a safe location to spawn your vehicle. Please try again.");
+                return;
+            }
+
+            // Spawn the car
+            ModularCar car = GameManager.server.CreateEntity("assets/content/vehicles/modularcar/4module_car_spawned.entity.prefab", spawnPosition, Quaternion.identity) as ModularCar;
+            if (car == null)
+            {
+                SendReply(player, "<color=#c45508>[RustWipeDay]</color>: Failed to spawn the vehicle. Please try again.");
+                return;
+            }
+
+            car.Spawn();
+            CarSpawnSettings.Call("ProcessCar", car); // Equip, repair, and fuel the car
+            car.OwnerID = player.userID;
+            PlayerCars[player.userID] = car;
+
+            SendReply(player, "<color=#c45508>[RustWipeDay]</color>: Your vehicle has been granted.");
+        }
+
+        // This command spawns a minicopter for the player.
+        [ChatCommand("mymini")]
+        private void MyMiniCommand(BasePlayer player, string command, string[] args)
+        {
+            // Check for level requirements first
+            var mainCupboard = ToolcupboardTracker.GetPlayerMainCupboard(player.userID);
+            if (mainCupboard == null)
+            {
+                SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You do not have a main cupboard set. Set one using /basebounty.setmain.");
+                return;
+            }
+
+            int vehiclePerkLevel = mainCupboard.Level;
+            if (vehiclePerkLevel < 20)
+            {
+                SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You must have a base bounty level of at least 20 to use this command.");
+                return;
+            }
+
+            var mountedVehicle = player.GetMountedVehicle();
+            // Check if the player is mounted in a vehicle
+            if (mountedVehicle)
+            {
+                if (args.Length > 0 && args[0].ToLower() == "claim")
+                {
+                    // Claim the mounted flying vehicle
+                    if (mountedVehicle.OwnerID != 0 || PlayerMinis.ContainsValue(mountedVehicle))
+                    {
+                        SendReply(player, "<color=#c45508>[RustWipeDay]</color>: This vehicle is already owned.");
+                        return;
+                    }
+
+                    if (!IsFlyingVehicle(mountedVehicle))
+                    {
+                        SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You can only claim flying vehicles.");
+                        return;
+                    }
+
+                    mountedVehicle.OwnerID = player.userID; // Assign ownership
+                    PlayerMinis[player.userID] = mountedVehicle;
+                    mountedVehicle.gameObject.AddComponent<TeleportCooldown>().Initialize(180f); // Apply cooldown
+                    SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You have claimed this vehicle.");
+                    return;
+                }
+                else
+                {
+                    // Inform the player about /mymini claim
+                    SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You are currently in a vehicle. Use <color=#00ff00>/mymini claim</color> to claim it if it's unowned.");
+                    return;
+                }
+            }
+
+            // Check for existing minicopter owned by the player
+            if (PlayerMinis.TryGetValue(player.userID, out BaseEntity existingMini) && existingMini.IsValid())
+            {
+                // Teleport the minicopter to the player's location
+                if (existingMini.GetComponent<TeleportCooldown>() != null)
+                {
+                    SendReply(player, "<color=#c45508>[RustWipeDay]</color>: You must wait before teleporting your vehicle again.");
+                    return;
+                }
+
+                existingMini.transform.position = FindSafeSpawnPosition(player.transform.position + player.transform.forward * 2f, 20f);
+                existingMini.SendNetworkUpdate();
+
+                existingMini.gameObject.AddComponent<TeleportCooldown>().Initialize(180f); // 3-minute cooldown
+                SendReply(player, "<color=#c45508>[RustWipeDay]</color>: Your minicopter has been teleported to a safe location near you.");
+                return;
+            }
+
+            // Find a safe spawn position for the minicopter
+            Vector3 spawnPosition = FindSafeSpawnPosition(player.transform.position + player.transform.forward * 5f, 20f);
+            if (spawnPosition == Vector3.zero)
+            {
+                SendReply(player, "<color=#c45508>[RustWipeDay]</color>: Unable to find a safe location to spawn your vehicle. Please try again.");
+                return;
+            }
+
+            // Spawn the minicopter
+            BaseEntity mini = GameManager.server.CreateEntity("assets/content/vehicles/minicopter/minicopter.entity.prefab", spawnPosition, Quaternion.identity);
+            if (mini == null)
+            {
+                SendReply(player, "<color=#c45508>[RustWipeDay]</color>: Failed to spawn the minicopter. Please try again.");
+                return;
+            }
+
+            mini.Spawn();
+            mini.OwnerID = player.userID;
+            PlayerMinis[player.userID] = mini;
+
+            SendReply(player, "<color=#c45508>[RustWipeDay]</color>: Your minicopter has been granted.");
+        }
+
+        #region Helper Methods
+
+        /// <summary>
+        /// Finds a safe spawn position within a defined radius.
+        /// Ensures the position is free of players, entities, and water.
+        /// </summary>
+        /// <param name="startPosition">The initial position to search around.</param>
+        /// <param name="maxRadius">The maximum radius to search.</param>
+        /// <returns>A safe position or Vector3.zero if none is found.</returns>
+        private Vector3 FindSafeSpawnPosition(Vector3 startPosition, float maxRadius)
+        {
+            const int maxAttempts = 15;
+            const float safeDistance = 5f;
+
+            for (int i = 0; i < maxAttempts; i++)
+            {
+                Vector3 potentialPosition = startPosition + UnityEngine.Random.insideUnitSphere * maxRadius;
+                potentialPosition.y = TerrainMeta.HeightMap.GetHeight(potentialPosition);
+
+                if (IsPositionSafe(potentialPosition, safeDistance))
+                {
+                    return potentialPosition;
+                }
+            }
+
+            return Vector3.zero; // No safe position found
+        }
+
+        /// <summary>
+        /// Checks if a position is safe for spawning a car.
+        /// Ensures no nearby players, entities, or water.
+        /// </summary>
+        /// <param name="position">The position to check.</param>
+        /// <param name="safeDistance">The minimum safe distance from other entities or players.</param>
+        /// <returns>True if the position is safe; otherwise, false.</returns>
+        private bool IsPositionSafe(Vector3 position, float safeDistance)
+        {
+            // Ensure no players are nearby
+            foreach (BasePlayer player in BasePlayer.activePlayerList)
+            {
+                if (player.Distance(position) < safeDistance)
+                {
+                    return false;
+                }
+            }
+
+            // Ensure no significant entities are nearby
+            var entities = new List<BaseEntity>();
+            Vis.Entities(position, safeDistance, entities, LayerMask.GetMask("Default", "Deployed", "Construction"));
+
+            foreach (BaseEntity entity in entities)
+            {
+                if (entity != null && entity is BaseCombatEntity)
+                {
+                    return false;
+                }
+            }
+
+            // Ensure the position is on solid ground and not in water
+            return UnityEngine.Physics.Raycast(position + Vector3.up * 0.5f, Vector3.down, out RaycastHit hit, safeDistance, LayerMask.GetMask("Terrain")) &&
+                   hit.collider != null;
+        }
+
+
+        /// <summary>
+        /// Determines if a vehicle is a flying vehicle.
+        /// </summary>
+        /// <param name="vehicle">The vehicle to check.</param>
+        /// <returns>True if the vehicle can fly; otherwise, false.</returns>
+        private bool IsFlyingVehicle(BaseVehicle vehicle)
+        {
+            // Check for specific flying vehicle types (e.g., Minicopter, Scrap Transport Helicopter)
+            return vehicle.PrefabName.Contains("minicopter") || vehicle.PrefabName.Contains("scraptransport");
+        }
+
+        #endregion
+
+        private class TeleportCooldown : MonoBehaviour
+        {
+            private float cooldownTime;
+
+            public void Initialize(float cooldown)
+            {
+                cooldownTime = UnityEngine.Time.time + cooldown;
+                Invoke(nameof(RemoveCooldown), cooldown);
+            }
+
+            private void RemoveCooldown()
+            {
+                Destroy(this);
+            }
+        }
+
+
         [Command("basebounty.setmain")]
         private void Command_BaseBounty_SetMain(IPlayer player, string command, string[] args)
         {
@@ -406,6 +899,75 @@ namespace Carbon.Plugins
         }
 
         #region Harmony Patches
+
+        [HarmonyPatch(typeof(VehicleEngineController<GroundVehicle>), "TickFuel")]
+        public static class TickFuelPatch_GroundVehicle
+        {
+            // Prefix method to adjust fuel consumption before the original method executes
+            static void Prefix(ref float fuelPerSecond, VehicleEngineController<GroundVehicle> __instance)
+            {
+                // Validate that the engine is associated with a vehicle
+                if (__instance.owner is GroundVehicle vehicle)
+                {
+                    // Attempt to find the driver (BasePlayer) for the vehicle
+                    BasePlayer driver = vehicle.GetDriver() as BasePlayer;
+                    if (driver != null)
+                    {
+                        // Get the player's fuel perk level
+                        int fuelPerkLevel = GetPlayerFuelPerkLevel(driver);
+                        if (fuelPerkLevel > 0)
+                        {
+                            // Reduce fuel consumption by a percentage based on the perk level
+                            float multiplier = 1f - (fuelPerkLevel * 0.01f); // Example: Each level reduces fuel by 1%
+                            fuelPerSecond *= Mathf.Clamp(multiplier, 0.1f, 1f); // Clamp multiplier to prevent zero or negative fuel usage
+                        }
+                    }
+                }
+            }
+
+            // Example method to retrieve the player's fuel perk level
+            static int GetPlayerFuelPerkLevel(BasePlayer basePlayer)
+            {
+                // Replace with your logic to fetch the player's fuel perk level
+                return Instance.ToolcupboardTracker.GetHighestPerkLevel(basePlayer, BaseBountyPerk.BaseBountyPerkEnum.Fuel);
+                //return 30; // ToolcupboardTracker.GetPlayerBaseBountyPerkLevel(userID, );
+            }
+        }
+
+        [HarmonyPatch(typeof(VehicleEngineController<PlayerHelicopter>), "TickFuel")]
+        public static class TickFuelPatch_PlayerHelicopter
+        {
+            // Prefix method to adjust fuel consumption before the original method executes
+            static void Prefix(ref float fuelPerSecond, VehicleEngineController<PlayerHelicopter> __instance)
+            {
+                // Validate that the engine is associated with a vehicle
+                if (__instance.owner is PlayerHelicopter vehicle)
+                {
+                   
+                    // Attempt to find the driver (BasePlayer) for the vehicle
+                    BasePlayer driver = vehicle.GetDriver();
+                    if (driver != null)
+                    {
+                        
+                        // Get the player's fuel perk level
+                        int fuelPerkLevel = GetPlayerFuelPerkLevel(driver);
+                        if (fuelPerkLevel > 0)
+                        {
+                            // Reduce fuel consumption by a percentage based on the perk level
+                            float multiplier = 1f - (fuelPerkLevel * 0.01f); // Example: Each level reduces fuel by 1%
+                            fuelPerSecond *= Mathf.Clamp(multiplier, 0.1f, 1f); // Clamp multiplier to prevent zero or negative fuel usage
+                        }
+                    }
+                }
+            }
+
+            // Example method to retrieve the player's fuel perk level
+            static int GetPlayerFuelPerkLevel(BasePlayer basePlayer)
+            {
+                // Replace with your logic to fetch the player's fuel perk level
+                return Instance.ToolcupboardTracker.GetHighestPerkLevel(basePlayer, BaseBountyPerk.BaseBountyPerkEnum.Fuel);
+            }
+        }
 
         [HarmonyPatch(typeof(BuildingPrivlidge), "CalculateBuildingTaxRate", new Type[] { })]
         public class BuildingPrivlidge_CalculateBuildingTaxRate
@@ -566,8 +1128,9 @@ namespace Carbon.Plugins
             {
                 return cost;
             }
+            BaseBountyCupboard baseBountyCupboard = ToolcupboardTracker.FindOrCreate(buildingPrivlidge);
 
-            var level = Instance.ToolcupboardTracker.FindOrCreate(buildingPrivlidge).Data.BaseBountyPerkLevel[(int)BaseBountyPerk.BaseBountyPerkEnum.Upkeep];
+            var level = baseBountyCupboard.Level;
 
             return cost * (float)(1 - level * 0.02);
         }
@@ -582,9 +1145,12 @@ namespace Carbon.Plugins
                 return sentryInterference;
             }
 
-            var level = Instance.ToolcupboardTracker.FindOrCreate(buildingPrivlidge).Data.BaseBountyPerkLevel[(int)BaseBountyPerk.BaseBountyPerkEnum.TurretLimit];
+            BaseBountyCupboard baseBountyCupboard = ToolcupboardTracker.FindOrCreate(buildingPrivlidge);
 
-            return level + sentryInterference;
+            var level = baseBountyCupboard.Level;
+            var limit = CalculateTurretLimit(level);
+
+            return limit + sentryInterference;
         }
         #endregion
 
@@ -602,15 +1168,15 @@ namespace Carbon.Plugins
 
         public static readonly List<BaseBountyPerk> BaseBountyPerks = new List<BaseBountyPerk>
         {
-            new BaseBountyPerk("gathering rates", 10, 25, level => $"Increased gathering rates by {CalculatePercentage(level, 25, 25)}%."),
-            new BaseBountyPerk("honor gains", 1, 15, level => $"Increased honor gained by {CalculatePercentage(level, 100, 25)}%."),
-            new BaseBountyPerk("turret limit", 25, 12, level => $"Increased the main base turret limit by {CalculateTurretLimit(level)}.\nMax ({12+CalculateTurretLimit(level)})"),
-            new BaseBountyPerk("upkeep costs", 15, 30, level => $"Base upkeep costs are decreased by {CalculatePercentage(level, 25, 30)}%."),
-            new BaseBountyPerk("crafting time", 15, 50, level => $"The crafting time of items is decreased by {CalculatePercentage(level, 100, 50)}%."),
-            new BaseBountyPerk("fuel consumption", 5, 30, level => $"Your low-grade fuel consumption is decreased by {CalculatePercentage(level, 25, 30)}%."),
+            new BaseBountyPerk("gathering rates", 10, 25, level => $"Increased gathering rates by {CalculatePercentage(level, 200, 30):0.0}%."),
+            new BaseBountyPerk("honor gains", 1, 15, level => $"Increased honor gained by {CalculatePercentage(level, 100, 30):0.0}%."),
+            new BaseBountyPerk("turret limit", 25, 12, level => $"Increased the main base turret limit by {CalculateTurretLimit(level)}.\nMax ({12+CalculateTurretLimit(level):0.0})"),
+            new BaseBountyPerk("upkeep costs", 15, 30, level => $"Base upkeep costs are decreased by {CalculatePercentage(level, 75, 30):0.0}%."),
+            new BaseBountyPerk("crafting time", 15, 50, level => $"The crafting time of items is decreased by {CalculatePercentage(level, 100, 30):0.0}%."),
+            new BaseBountyPerk("fuel consumption", 5, 30, level => $"Your low-grade fuel consumption is decreased by {CalculatePercentage(level, 100, 30):0.0}%."),
             new BaseBountyPerk("raid alarm", 50, 1, level => $"Rust+ and Discord raid alerts are {GetRaidAlarmText(level)}."),
             new BaseBountyPerk("vehicle", 50, 10, level => GetVehicleUnlockText(level)),
-            new BaseBountyPerk("base protection", 25, 50, level => $"Increased online base protection by {CalculateBaseProtection(level)}% and offline base protection by {CalculateOfflineProtection(level)}%.")
+            new BaseBountyPerk("base protection", 25, 50, level => $"Increased online base protection by {CalculateBaseProtection(level):0.0}% and offline base protection by {CalculateOfflineProtection(level):0.0}%.")
         };
 
         public static string GetRaidAlarmText(int level)
@@ -621,10 +1187,12 @@ namespace Carbon.Plugins
         public static string GetVehicleUnlockText(int level)
         {
             if (level >= 20)
-                return "You have all vehicles unlocked.\nType /mymini or /mycar.";
+                return "You have unlocked /mymini. Type /mymini or /mycar or /myhorse.";
             if (level >= 10)
-                return "You have unlocked the first set of vehicles. Next unlock at level 20. Type /mycar";
-            return "You currently have no vehicles unlocked.\nNext unlock at level 10.";
+                return "You have unlocked /mycar. Next unlock at level 20. Type /mycar or /myhorse";
+            if (level >= 5)
+                return "You have unlocked /myhorse. Next unlock at level 10.";
+            return "You currently have no vehicles unlocked.\nNext unlock at level 5.";
         }
 
         public static double CalculatePercentage(int level, int maxLevel, int capLevel)
@@ -1232,7 +1800,18 @@ namespace Carbon.Plugins
             BaseBountyData.PlayerBuildingPrivlidges[userId].Add(buildingPrivlidge.net.ID.Value);
 
             var baseBountyCupboard = FindOrCreate(buildingPrivlidge);
-            baseBountyCupboard.UpdatePlayerRelationships();
+            // baseBountyCupboard.UpdatePlayerRelationships();
+
+            var mainCupboard = ToolcupboardTracker.GetPlayerMainCupboard(player.userID, true);
+
+            if (mainCupboard == null)
+            {
+                var newCupboard = FindOrCreate(buildingPrivlidge);
+                newCupboard.Data.IsMainCupboard = true;
+                Gui.CreateRaidProtectionButton(player, buildingPrivlidge.net.ID.Value, true);
+                player.ChatMessage("<color=#c45508>[RustWipeDay]</color>: Base Bounty enabled for your first TC.");
+            }
+
             return null;
         }
 

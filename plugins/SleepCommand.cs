@@ -4,7 +4,7 @@ using Oxide.Core.Libraries.Covalence;
 
 namespace Oxide.Plugins
 {
-    [Info("SleepCommand", "YourName", "1.0.0")]
+    [Info("SleepCommand", "Rust Wipe Day", "1.0.0")]
     public class SleepCommand : CovalencePlugin
     {
         private const int CombatCooldown = 180; // 3 minutes in seconds
